@@ -10,12 +10,12 @@ each contributing to a target property based on predefined group values.
 By summing these contributions, the GCM accurately predicts essential properties, 
 including the acentric factor, normal boiling point, liquid molar volume at standard conditions 
 (298 K) and more. This predictive capability is particularly useful for complex 
-mixtures such as sustainable aviation fuels (SAFs), where experimental thermodynamic data 
-is limited. `FuelLib` provides SAF developers with a means to estimate 
+mixtures such as synthetic aviation turbine fuels (SATFs), where experimental thermodynamic data 
+is limited. `FuelLib` provides SATF developers with a means to estimate 
 these critical properties without extensive physical testing, thereby aiding in 
 the identification of promising fuel compositions before committing to large-scale production.
 
-`FuelLib` was developed with SAF research in mind. It builds on 
+`FuelLib` builds on 
 `Pavan B. Govindaraju's Matlab implementation <https://github.com/gpavanb-old/GroupContribution>`_, 
 and includes gas chromatography data (GC x GC) for various jet fuels from the Air Force Research Laboratory\ :footcite:p:`edwards_jet_2020`.
 Additionally, `FuelLib` includes correlations for the thermodynamic properties of 
@@ -99,7 +99,7 @@ given that group contribution properties are only defined at standard conditions
 Unless noted otherwise in the individual correlation, all units are assumed to be SI: 
 length (m), mass (kg), time (s), temperature (K), mole (mol).
 The :ref:`tab-reduced-temps` are used throughout this section for each compound *i*, 
-provided :math:`T` in :math:`^{\circ}` K unless noted otherwise.
+provided :math:`T` in K unless noted otherwise.
 
 .. _tab-correlation-qtys:
 
@@ -306,9 +306,9 @@ This section contains correlations for estimating physical properties of the
 mixture from the individual compound and physical properties defined in 
 :ref:`eq-GCM-properties` and :ref:`eq-GCM-correlations`.  These correlations make 
 it possible to evaluate physical properties at non-standard temperatures and 
-pressures, given that group contribution properties are only defined at standard 
+pressures, as the group contribution properties are only defined at standard 
 conditions. The :ref:`tab-mixture-properties` available in `FuelLib` are listed in 
-table below.  Mass and mole fractions defined in Table \ref{tab:mass-mole-fracs} 
+table below.  Mass and mole fractions defined in Table :ref:`tab:mass-mole-fracs`` 
 are used throughout this section.
 
 .. _tab-mixture-properties:
@@ -326,6 +326,8 @@ are used throughout this section.
    :math:`\sigma`   N/m              Surface tension
    :math:`\lambda`  W/m/K            Thermal conductivity
    ===============  ===============  =====================
+
+.. _tab-mass-mole-fracs:
 
 .. table:: Mass and mole fractions
    :widths: auto
@@ -376,8 +378,8 @@ Mixture kinematic viscosity
 
 The kinematic viscosity of the mixture is computed using the Kendall-Monroe\ :footcite:p:`kendall_viscosity_1917` 
 mixing rule, with an option to use the Arrhenius\ :footcite:p:`arrhenius_uber_1887` 
-mixing rule. The viscosity of each component.  Hernandez et al.\ :footcite:p:`hernandez_evaluation_2021` 
-found, after evaluating thirty mixing rules, that both Kendall-Monroe and Arrhenius 
+mixing rule. The viscosity of each component. After evaluating thirty mixing rules,  Hernandez et al.\ :footcite:p:`hernandez_evaluation_2021` 
+found that both Kendall-Monroe and Arrhenius 
 were among the most effective without relying on additional data or parameter fitting. 
 The Kendall-Monroe rule is: 
 

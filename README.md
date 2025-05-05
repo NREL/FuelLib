@@ -4,7 +4,7 @@ FuelLib (SWR-25-26) utilizes the tables and functions of the Group Contribution 
 ## Python Environment
 The following conda environment is required to run this code:
 ~~~
-conda create --name fuellib-env matplotlib pandas
+conda create --name fuellib-env matplotlib pandas black 
 ~~~
 
 ## Running the code
@@ -15,7 +15,11 @@ New contributions are always welcome.  If you have an idea for a new feature fol
 1. Fork the main repository
 2. Create a `newFeature` branch that contains your changes
 3. Update the sphinx documentation in `newFeature`
-4. Open a Pull Request (PR) from `newFeature` on your fork to branch `main` GCM-Python repository.
+4. Format the source code files using the [Black code formatter](https://github.com/psf/black) by running the following command:
+   ~~~
+   find . -name "*.py" -print0 | xargs -0 black
+   ~~~
+5. Open a Pull Request (PR) from `newFeature` on your fork to branch `main` FuelLib repository.
 
 ## Sphinx Documentation
 This repository uses [Sphinx](https://www.sphinx-doc.org/en/master/usage/quickstart.html) to generate documentation.  This requires the following Conda environment:
