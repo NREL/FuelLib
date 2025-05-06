@@ -31,7 +31,7 @@ jobs:
 
       - name: Build docs
         run: |
-          sphinx-build -b html docs _build
+          sphinx-build -b html -W docs _build
 
       - name: Upload artifact (for PR preview or later steps)
         uses: actions/upload-artifact@v4
