@@ -590,7 +590,7 @@ class groupContribution:
         :type T: float
         :param correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
         :type correlation: str, optional
-        :return: Mixture kinematic viscosity in mm^2/s.
+        :return: Mixture kinematic viscosity in m^2/s.
         :rtype: float
         """
         nu_i = self.viscosity_kinematic(T)  # Viscosities of individual components
