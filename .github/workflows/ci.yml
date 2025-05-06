@@ -1,6 +1,11 @@
 name: FuelLib-CI
 
-on: [push, pull_request, workflow_dispatch]
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 concurrency:
   group: ${{github.ref}}-${{github.head_ref}}-ci
