@@ -5,8 +5,14 @@ import os
 
 class groupContribution:
     """
-    Class for handling group contribution calculations of thermodynamic properties
-    and mixture properties.
+    Class for handling group contribution calculations of thermodynamic and mixture properties.
+
+    :param name: Name of the mixture as it appears in its gcData file.
+    :type name: str
+    :param decompName: Name of the groupDecomposition file if different from name. Defaults to None.
+    :type decompName: str, optional
+    :param W: Determines whether to use first-order only approximation (W = 0). Defaults to 1.
+    :type W: int
     """
 
     # Paths to input directories
@@ -19,51 +25,16 @@ class groupContribution:
     # Path to GCM table
     gcmTableFile = os.path.join(gcmTableDir, "gcmTable.csv")
 
-    # Class-level variables to hold mixture-specific data and GCM table properties
-    name = ""
-    num_compounds = None
-
-    # Initial composition and functional group data for mixture
-    Y_0 = None  # Initial mass fraction for mixture (num_compounds,)
-    Nij = None  # Compound vs. group matrix (num_compounds, num_groups)
-
     # Number of first and second order groups from Constantinou and Gani
     N_g1 = 78
     N_g2 = 43
-
-    # critical properties at standard temp (num_compounds,)
-    MW = None
-    Tc = None
-    Pc = None
-    Vc = None
-    Tb = None
-    Tm = None
-    Hf = None
-    Gf = None
-    Hv_stp = None
-    omega = None
-    Vm_stp = None
-    Cp_stp = None
-    Cp_B = None
-    Cp_C = None
-    Lv_stp = None
-
-    # Classifying hydrocarbon family
-    fam = None
 
     # Boltzmann's constant J/K
     k_B = 1.380649e-23
 
     def __init__(self, name, decompName=None, W=1):
-        """
-        Initializes mixture-specific data and GCM properties for the specified
-        mixture. Reads GCM table and mixture data from files.
-
-        Parameters:
-        name (str): Name of the mixture as it appears in its gcData file.
-        decompName (str, optional): Name of the groupDecomposition file if different from name.
-        W (int, optional): Determines if first-order only approximation (i.e. W = 0)
-        """
+        # Initializes the composition and calculates the GCM properties for the
+        # specified mixture.
 
         self.name = name
         if decompName is None:
@@ -213,11 +184,10 @@ class groupContribution:
         """
         Calculate the mass fractions from the mass of each component.
 
-        Parameters:
-        mass (np.ndarray): Mass of each compound (shape: num_compounds,).
-
-        Returns:
-        Yi np.ndarray: Mass fractions of the compounds (shape: num_compounds,).
+        :param mass: Mass of each compound.
+        :type mass: np.ndarray
+        :return: Mass fractions of the compounds (shape: num_compounds,).
+        :rtype: np.ndarray
         """
         # Normalize to get group mole fractions
         total_mass = np.sum(mass)
@@ -232,11 +202,10 @@ class groupContribution:
         """
         Calculate the mole fractions from the mass of each component.
 
-        Parameters:
-        mass (np.ndarray): Mass of each compound in kg (shape: num_compounds,).
-
-        Returns:
-        Xi np.ndarray: Molar fractions of the compounds (shape: num_compounds,).
+        :param mass: Mass of each compound.
+        :type mass: np.ndarray
+        :return: Mass fractions of the compounds (shape: num_compounds,).
+        :rtype: np.ndarray
         """
         # Calculate the number of moles for each compound
         num_mole = mass / self.MW
@@ -254,11 +223,10 @@ class groupContribution:
         """
         Calculate the density of each component at temperature T.
 
-        Parameters:
-        T (float): Temperature of the mixture in Kelvin
-
-        Return:
-        rho (np.array): Density of each compound in kg/m^3 (shape: num_compounds,)
+        :param T: Temperature of the mixture in Kelvin.
+        :type T: float
+        :return: Density of each compound in kg/m^3.
+        :rtype: np.ndarray
         """
         MW = self.MW  # kg/mol
         Vm = self.molar_liquid_vol(T)  # m^3/mol
@@ -268,14 +236,15 @@ class groupContribution:
 
     def viscosity_kinematic(self, T):
         """
-        Calculate the viscosity of individual components in the mixture at a given
-        temperature using Dutt's equation (4.23) in Viscosity of Liquids.
+        Calculate the viscosity using Dutt's equation.
 
-        Parameters:
-        T (float): Temperature in Kelvin.
+        :meta private: This uses Dutt's equation (4.23) from "Viscosity of Liquids".
+        :meta private: The equation predicts viscosity in mm^2/s and is converted to SI units.
 
-        Returns:
-        np.array: Viscosity of each component in m^2/s.
+        :param T: Temperature in Kelvin.
+        :type T: float
+        :return: Viscosity of each component in m^2/s.
+        :rtype: np.ndarray
         """
 
         # Convert temperature to Celsius
@@ -293,15 +262,16 @@ class groupContribution:
 
     def viscosity_dynamic(self, T):
         """
-        Calculates liquid dynamic viscosity based on droplet temperature and
-        density using Dutt's Equation (4.23) in "Viscosity of Liquids".
+        Calculate liquid dynamic viscosity based on droplet temperature and density.
 
-        Parameters:
-        T (float): Temperature in Kelvin.
+        :meta private: Uses Dutt's equation (4.23) for kinematic viscosity, combined with density.
 
-        Returns:
-        mu (np.ndarray): Dynamic viscosity in Pa*s (shape: num_compounds,).
+        :param T: Temperature in Kelvin.
+        :type T: float
+        :return: Dynamic viscosity in Pa*s.
+        :rtype: np.ndarray
         """
+
         nu_i = self.viscosity_kinematic(T)  # m^2/s
         rho_i = self.density(T)  # kg/m^3
         mu_i = nu_i * rho_i  # Pa*s
@@ -309,42 +279,45 @@ class groupContribution:
 
     def Cp(self, T):
         """
-        Computes specific heat capacity at a given temperature.
+        Compute specific heat capacity at a given temperature.
 
-        Parameters:
-        T (float): Temperature in Kelvin.
-
-        Returns:
-        np.ndarray: Specific heat capacity in J/mol/K (shape: num_compounds,).
+        :param T: Temperature in Kelvin.
+        :type T: float
+        :return: Specific heat capacity in J/mol/K.
+        :rtype: np.ndarray
         """
+
         theta = (T - 298) / 700
         cp = self.Cp_stp + self.Cp_B * theta + self.Cp_C * theta**2
         return cp
 
     def Cl(self, T):
         """
-        Computes liquid specific heat capacity at a given temperature.
+        Compute liquid specific heat capacity in J/kg/K at a given temperature.
 
-        Parameters:
-        T (float): Temperature in Kelvin.
-
-        Returns:
-        np.ndarray: Specific heat capacity in J/kg/K (shape: num_compounds,).
+        :param T: Temperature in Kelvin.
+        :type T: float
+        :return: Specific heat capacity in J/kg/K.
+        :rtype: np.ndarray
         """
+
         cp = self.Cp(T)
         return cp / self.MW
 
     def psat(self, T, correlation="Lee-Kesler"):
         """
-        Computes the saturated vapor pressure.
+        Compute saturated vapor pressure.
 
-        Parameters:
-        T (float): Temperature in Kelvin.
-        correlation (str, optional): "Ambrose-Walton" or "Lee-Kesler".
+        :meta private: Can use Ambrose-Walton or Lee-Kesler correlations (default Lee-Kesler).
 
-        Returns:
-        np.ndarray: Saturated vapor pressure in Pa.
+        :param T: Temperature in Kelvin.
+        :type T: float
+        :param correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
+        :type correlation: str, optional
+        :return: Saturated vapor pressure in Pa.
+        :rtype: np.ndarray
         """
+
         Tr = T / self.Tc
 
         if correlation.casefold() == "Ambrose-Walton".casefold():
@@ -383,13 +356,12 @@ class groupContribution:
 
     def molar_liquid_vol(self, T):
         """
-        Computes molar liquid volumes with temperature correction.
+        Compute molar liquid volume with temperature correction.
 
-        Parameters:
-        T (float): Temperature in Kelvin.
-
-        Returns:
-        np.ndarray: Molar liquid volume in m^3/mol (num_compounds,)
+        :param T: Temperature in Kelvin.
+        :type T: float
+        :return: Molar liquid volume in m^3/mol.
+        :rtype: np.ndarray
         """
 
         Tstp = 298.0
@@ -407,13 +379,12 @@ class groupContribution:
 
     def latent_heat_vaporization(self, T):
         """
-        Calculates the letent heat of vaporization, adjusted for temperature.
+        Calculate latent heat of vaporization adjusted for temperature.
 
-        Parameters:
-        T (float): Temperature in Kelvin.
-
-        Returns:
-        np.ndarray: Adjusted latent heat of vaporization in J/kg (num_compounds,)
+        :param T: Temperature in Kelvin.
+        :type T: float
+        :return: Latent heat of vaporization in J/kg.
+        :rtype: np.ndarray
         """
         Lvi = np.zeros_like(self.Tc)
 
@@ -438,20 +409,25 @@ class groupContribution:
         correlation="Tee",
     ):
         """
-        Computes the diffusion coefficient using Lennard-Jones parameters according
-        to Wilke and Lee.  See equation (11-4.1) in Poling. Assumes ambient gas is air
-        with values from Poling (see end of Section 11-4.1).
+        Compute diffusion coefficients using Lennard-Jones parameters.
 
-        Parameters:
-        p (float): Pressure in Pa.
-        T (float): Temperature in Kelvin.
-        sigma_gas (float, optional): collision diameter (m), default is air
-        epsilonByKB_gas (float, optional): (well depth) / (Boltzmann_const) (K), default is air
-        MW_gas (float, optional): Mean molecular weight of gas (kg/mol), default is air
-        correlation (str, optional): Method for calculating sigma and epsilonByKB
+        :meta private: Uses Wilke and Lee method (Poling, equation 11-4.1).
+        :meta private: Ambient gas defaults to air parameters.
 
-        Returns:
-        D_AB (np.ndarray): Diffusion coefficient (num_compounds,).
+        :param p: Pressure in Pa.
+        :type p: float
+        :param T: Temperature in Kelvin.
+        :type T: float
+        :param sigma_gas: Collision diameter in m.
+        :type sigma_gas: float, optional
+        :param epsilonByKB_gas: Well depth over Boltzmann constant, in K.
+        :type epsilonByKB_gas: float, optional
+        :param MW_gas: Mean molecular weight of ambient gas in kg/mol.
+        :type MW_gas: float, optional
+        :param correlation: Method to calculate sigma and epsilon ("Tee" or "Wilke").
+        :type correlation: str, optional
+        :return: Diffusion coefficient.
+        :rtype: np.ndarray
         """
 
         # Method of Tee for calculating liquid sigma and epsilon
@@ -511,16 +487,16 @@ class groupContribution:
 
     def surface_tension(self, T, correlation="Brock-Bird"):
         """
-        Calculate the surface tension at a given temperature. Both
-        correlations can be found in Poling's book. Brock-Bird is eqt. 12-3.5 and
-        Pitzer is eqt. 12-3.7.
+        Calculate surface tension of each compound at a given temperature.
 
-        Parameters:
-        T (float): Temperature in Kelvin.
-        correlation (str, optional): "Brock-Bird" or "Pitzer".
+        :meta private: Uses Brock-Bird (default) or Pitzer correlations (Poling 12-3.5, 12-3.7).
 
-        Returns:
-        np.ndarray: Surface tension in N/m (num_compounds,)
+        :param T: Temperature in Kelvin.
+        :type T: float
+        :param correlation: Correlation method ("Brock-Bird" or "Pitzer").
+        :type correlation: str, optional
+        :return: Surface tension in N/m.
+        :rtype: np.ndarray
         """
         Tr = T / self.Tc
         Pc = self.Pc * 1e-5  # convert from Pa to bar
@@ -545,14 +521,14 @@ class groupContribution:
 
     def thermal_conductivity(self, T):
         """
-        Calculate the thermal conductivity at a given temperature using the
-        method of Latini et al. equation (10-9.1) in Poling.
+        Calculate thermal conductivity at a given temperature.
 
-        Parameters:
-        T (float): Temperature in Kelvin.
+        :meta private: Uses Latini et al. method (Poling equation 10-9.1).
 
-        Returns:
-        np.ndarray: Thermal conductivity in W/m/K (num_compounds,)
+        :param T: Temperature in Kelvin.
+        :type T: float
+        :return: Thermal conductivity in W/m/K.
+        :rtype: np.ndarray
         """
 
         Astar = 0.00350 + np.zeros(self.num_compounds)
@@ -585,14 +561,14 @@ class groupContribution:
     # --- Mixture functions ---
     def mixture_density(self, Yi, T):
         """
-        Calculate the mixture density at a given temperature.
+        Calculate mixture density at a given temperature.
 
-        Parameters:
-        Yi (np.ndarray): Mass fractions of each compound (shape: num_compounds,).
-        T (float): Temperature in Kelvin.
-
-        Returns:
-        float: Mixture density in kg/m^3.
+        :param Yi: Mass fractions of each compound.
+        :type Yi: np.ndarray
+        :param T: Temperature in Kelvin.
+        :type T: float
+        :return: Mixture density in kg/m^3.
+        :rtype: float
         """
         MW = self.MW  # Molecular weights of each component (kg/mol)
         Vmi = self.molar_liquid_vol(T)  # Molar volume of each component (m^3/mol)
@@ -604,15 +580,18 @@ class groupContribution:
 
     def mixture_kinematic_viscosity(self, mass, T, correlation="Kendall-Monroe"):
         """
-        Calculate the kinematic viscosity of the mixture at a given temperature.
+        Calculate kinematic viscosity of the mixture.
 
-        Parameters:
-        mass (np.ndarray): Mass of each compound of mixture (shape: num_compounds,).
-        T (float): Temperature in Kelvin.
-        correlation (str, optional): Mixing model "Kendall-Monroe" or "Arrhenius".
+        :meta private: Uses Kendall-Monroe (default) or Arrhenius mixing correlations.
 
-        Returns:
-        float: Mixture viscosity in mm^2/s.
+        :param mass: Mass of each compound in the mixture.
+        :type mass: np.ndarray
+        :param T: Temperature in Kelvin.
+        :type T: float
+        :param correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
+        :type correlation: str, optional
+        :return: Mixture kinematic viscosity in mm^2/s.
+        :rtype: float
         """
         nu_i = self.viscosity_kinematic(T)  # Viscosities of individual components
 
@@ -630,16 +609,18 @@ class groupContribution:
 
     def mixture_dynamic_viscosity(self, mass, T, correlation="Kendall-Monroe"):
         """
-        Calculate the dynamic viscosity of the mixture at a given temperature.
+        Calculate dynamic viscosity of the mixture.
 
-        Parameters:
-        mass (np.ndarray): Mass of each compound of mixture (shape: num_compounds,).
-        T (float): Temperature in Kelvin.
-        correlation (str, optional): Mixing model "Kendall-Monroe", "Arrhenius".
-
-        Returns:
-        float: Mixture viscosity in Pa*s.
+        :param mass: Mass of each compound in the mixture.
+        :type mass: np.ndarray
+        :param T: Temperature in Kelvin.
+        :type T: float
+        :param correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
+        :type correlation: str, optional
+        :return: Mixture dynamic viscosity in Pa*s.
+        :rtype: float
         """
+
         nu = self.mixture_kinematic_viscosity(mass, T, correlation)
         Yi = self.mass_frac(mass)
         rho = self.mixture_density(Yi, T)
@@ -648,15 +629,16 @@ class groupContribution:
 
     def mixture_vapor_pressure(self, mass, T, correlation="Lee-Kesler"):
         """
-        Calculate the vapor pressure the mixture.
+        Calculate vapor pressure of the mixture.
 
-        Parameters:
-        mass (np.ndarray): Mass of each compound of mixture (shape: num_compounds,).
-        T (float): Temperature in Kelvin.
-        correlation (str, optional): "Ambrose-Walton" or "Lee-Kesler".
-
-        Returns:
-        float: vapor pressure in Pa.
+        :param mass: Mass of each compound in the mixture.
+        :type mass: np.ndarray
+        :param T: Temperature in Kelvin.
+        :type T: float
+        :param correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
+        :type correlation: str, optional
+        :return: Mixture vapor pressure in Pa.
+        :rtype: float
         """
 
         # Group mole fraction for each compound
@@ -672,16 +654,18 @@ class groupContribution:
 
     def mixture_surface_tension(self, mass, T, correlation="Brock-Bird"):
         """
-        Calculate the surface tension of the mixture using an arithmetic psuedo-
-        property as recommended by Hugill and van Welsenes (1986).
+        Calculate surface tension of the mixture.
 
-        Parameters:
-        mass (np.ndarray): Mass of each compound of mixture (shape: num_compounds,).
-        T (float): Temperature in Kelvin.
-        correlation (str, optional): "Pitzer" or "Brock-Bird".
+        :meta private: Uses arithmetic pseudo-property method recommended by Hugill and van Welsenes (1986).
 
-        Returns:
-        float: surface tension in N/m.
+        :param mass: Mass of each compound in the mixture.
+        :type mass: np.ndarray
+        :param T: Temperature in Kelvin.
+        :type T: float
+        :param correlation: Correlation method ("Pitzer" or "Brock-Bird").
+        :type correlation: str, optional
+        :return: Mixture surface tension in N/m.
+        :rtype: float
         """
 
         # Group mole fraction for each compound
@@ -697,13 +681,14 @@ class groupContribution:
 
     def mixture_thermal_conductivity(self, mass, T):
         """
-        Calculate the thermal conductivity of the mixture.
+        Calculate thermal conductivity of the mixture.
 
-        Parameters:
-        T (float): Temperature in Kelvin.
-
-        Returns:
-        float: thermal conductivity in W/m/K.
+        :param mass: Mass of each compound in the mixture.
+        :type mass: np.ndarray
+        :param T: Temperature in Kelvin.
+        :type T: float
+        :return: Thermal conductivity in W/m/K.
+        :rtype: float
         """
         Yi = self.mass_frac(mass)
         tc = self.thermal_conductivity(T)
@@ -717,11 +702,10 @@ def C2K(T):
     """
     Convert temperature from Celsius to Kelvin.
 
-    Parameters:
-    T (float or np.array): Temperature in Celsius.
-
-    Returns:
-    float or np.array: Temperature in Kelvin.
+    :param T: Temperature in Celsius.
+    :type T: float or np.ndarray
+    :return: Temperature in Kelvin.
+    :rtype: float or np.ndarray
     """
     return T + 273.15
 
@@ -730,26 +714,26 @@ def K2C(T):
     """
     Convert temperature from Kelvin to Celsius.
 
-    Parameters:
-    T (float or np.array): Temperature in Kelvin.
-
-    Returns:
-    float or np.array: Temperature in Celsius.
+    :param T: Temperature in Kelvin.
+    :type T: float or np.ndarray
+    :return: Temperature in Celsius.
+    :rtype: float or np.ndarray
     """
     return T - 273.15
 
 
 def mixingRule(var_n, X, pseudo_prop="arithmetic"):
     """
-    Mixing rules for computing mixture properties from individual compound properties.
+    Mixing rules for computing mixture properties.
 
-    Parameters:
-    var_n (np.array): Individual compound properties (shape: num_compounds,).
-    X (np.array): Mole fraction (shape: num_compounds,).
-    pseudo_prop (str, optional): Type of mean (e.g. arithmetic of geometric).
-
-    Returns:
-    float: Single mixture property with units of var_n.
+    :param var_n: Individual compound properties.
+    :type var_n: np.ndarray
+    :param X: Mole fractions of the compounds.
+    :type X: np.ndarray
+    :param pseudo_prop: Type of mean ("arithmetic" or "geometric").
+    :type pseudo_prop: str, optional
+    :return: Mixture property value.
+    :rtype: float
     """
     num_comps = len(var_n)
     var_mix = 0.0

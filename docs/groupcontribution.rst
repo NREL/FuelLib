@@ -46,7 +46,7 @@ Table of GCM properties
    :math:`\Delta H_{v,\textit{stp},i}`   J/mol                  :math:`h_{v1k}`, :math:`h_{v2j}`             kJ/mol                Enthalpy of vaporization at 298 K\ :footcite:p:`constantinou_new_1994`.
    :math:`\omega_i`                      1                      :math:`\omega_{1k}`, :math:`\omega_{2j}`     1                     Acentric factor\ :footcite:p:`constantinou_estimation_1995`.
    :math:`V_{m,\textit{stp},i}`          m\ :sup:`3`\ /mol      :math:`v_{m1k}`, :math:`v_{m2j}`             m\ :sup:`3`\ /kmol    Liquid molar volume at 298 K\ :footcite:p:`constantinou_estimation_1995`. 
-   :math:`C_{p,\textit{stp},i}`          J/mol/K                :math:`C_{pA1_k}`, :math:`C_{pA2_k}`,...     J/mol/K               Specific heat capacity\ :footcite:p:`nielsen_molecular_1998,poling_properties_2001`.
+   :math:`C_{p,i}`                       J/mol/K                :math:`C_{pA1_k}`, :math:`C_{pA2_k}`,...     J/mol/K               Specific heat capacity\ :footcite:p:`nielsen_molecular_1998,poling_properties_2001`.
    ====================================  =====================  ===========================================  ====================  ===========================================================
 
 .. _eq-GCM-properties:
@@ -65,7 +65,8 @@ the number of second-order groups in each compound, where :math:`N_{g_2}` is the
 number of second-order groups. The total number of groups :math:`N_g = N_{g_1} + N_{g_2} = 121`. 
 Define a parameter :math:`W` such that :math:`W = 0` performs a first-order group only 
 calculation, while :math:`W = 1` includes second-order groups. The GCM properties for 
-the *i-th* compound in the mixture are calculated as follows\ :footcite:p:`constantinou_new_1994,constantinou_estimation_1995,poling_properties_2001`:
+the *i-th* compound in the mixture are calculated as 
+follows\ :footcite:p:`constantinou_new_1994,constantinou_estimation_1995,poling_properties_2001`:
 
 .. math::
 
@@ -81,11 +82,12 @@ the *i-th* compound in the mixture are calculated as follows\ :footcite:p:`const
     \Delta H_{v,\textit{stp},i} &= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} h_{v1k} + W                      \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} h_{v2j} \bigg] + 6.829\Bigg) \times 10^3, \\
     \omega_i &= 0.4085 \ln  \bigg( \Big[  \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} \omega_{1k} + W                  \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} \omega_{2j} + 1.1507\Big]^{1/0.5050} \bigg), \label{eq:gcm-omega}\\
     V_{m,\textit{stp},i} &= \Bigg( \bigg[ \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} v_{m1k} + W \sum_{j=1}^{N_{g_2}}          \mathbf{M}_{ij} v_{m2j} \bigg] + 0.01211 \Bigg)\times 10^{-3}, \\
-    C_{p,\textit{stp},i} & =\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pA1_k} + W \sum_{j=1}^{N_{g_2}}                \mathbf{M}_{ij} C_{pA2_j} -19.7779\bigg]  \nonumber \\
+    C_{p,i} & =\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pA1_k} + W \sum_{j=1}^{N_{g_2}}                \mathbf{M}_{ij} C_{pA2_j} -19.7779\bigg]  \nonumber \\
         & +\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pB1_k} + W \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pB2_j} + 22.5981\bigg] \theta \nonumber\\
         & +\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pC1_k} + W \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pC2_j} - 10.7983\bigg] \theta^2 \\
     \theta &= \frac{T - 298.15}{700}
     \end{align*}
+
 
 .. _eq-GCM-correlations:
 
@@ -114,6 +116,7 @@ provided :math:`T` in K unless noted otherwise.
    :math:`L_{v,\textit{stp},i}`   J/kg                   Latent heat of vaporization at 298 K\ :footcite:p:`govindaraju_group_2016`.
    :math:`L_{v,i}`                J/kg                   Temperature-adjusted latent heat of vaporization at 298 K\ :footcite:p:`govindaraju_group_2016`.
    :math:`V_{m,i}`                m\ :sup:`3`\ /mol      Temperature-adjusted liquid molar volume\ :footcite:p:`rackett_equation_1970,yamada_saturated_1973,govindaraju_group_2016`.
+   :math:`\rho_i`                 kg/m\ :sup:`3`         Density
    :math:`C_{\ell,i}`             J/kg/K                 Liquid specific heat capacity\ :footcite:p:`govindaraju_group_2016`. 
    :math:`p_{sat,i}`              Pa                     Saturated vapor pressure\ :footcite:p:`lee_generalized_1975,ambrose_vapour_1989`.
    :math:`\sigma_i`               N/m                    Surface tension\ :footcite:p:`brock_surface_1955`.
@@ -135,8 +138,13 @@ provided :math:`T` in K unless noted otherwise.
    :math:`T_{r,\textit{stp},i}`   :math:`\frac{298 \text{ (K)}}{T_{c,i}}`    Reduced standard temperature.
    =============================  =========================================  ======================================================
 
+
 Kinematic viscosity
 ^^^^^^^^^^^^^^^^^^^
+
+.. automethod:: GroupContributionMethod.groupContribution.viscosity_kinematic
+   :noindex:
+
 The kinematic viscosity of the *i-th* compound of the fuel, 
 
 .. math::
@@ -152,8 +160,13 @@ Liquids\ :footcite:p:`viswanath_viscosity_2007`) provided :math:`T` in :math:`^{
    \nu_i = 10^{-6} \times \exp \bigg\{-3.0171 + \frac{442.78 + 1.6452 \,T_{b,i}}{T + 239 - 0.19 \,T_{b,i}} \bigg\}.
    \end{align*}
 
+
+
 Latent heat of vaporization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automethod:: GroupContributionMethod.groupContribution.latent_heat_vaporization
+   :noindex:
 
 The latent heat of vaporization for each compound at standard pressure and 
 temperature is calculated from the enthalpy of vaporization as:
@@ -168,9 +181,11 @@ temperature\ :footcite:p:`govindaraju_group_2016`:
    L_{v,i} = L_{v,\textit{stp},i} \bigg(\frac{1 - T_{r,i}}{1-T_{r,b,i}} \bigg)^{0.38}.
 
 
-
 Liquid molar volume
 ^^^^^^^^^^^^^^^^^^^
+
+.. automethod:: GroupContributionMethod.groupContribution.molar_liquid_vol
+   :noindex:
 
 The liquid molar volume is calculated at a specific temperature :math:`T` using 
 the generalized Rackett equation\ :footcite:p:`rackett_equation_1970,yamada_saturated_1973` 
@@ -192,19 +207,36 @@ where
    \end{cases}. \label{eq:phi}
    \end{align*}
 
+Density
+^^^^^^^
+
+.. automethod:: GroupContributionMethod.groupContribution.density
+   :noindex:
+
+The density of the *i-th* compond is given by
+
+.. math::
+   \rho_i = \frac{M_{w,i}}{V_{m,i}}.
+
 
 Liquid specific heat capacity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. automethod:: GroupContributionMethod.groupContribution.Cl
+   :noindex:
+
 The liquid specific heat capacity for each compound at standard pressure temperature is calculated from the specific heat capacity as:
 
 .. math::
-   C_{\ell,i} = \dfrac{C_{p,\textit{stp},i}}{M_{w,i}} 
+   C_{\ell,i} = \dfrac{C_{p,i}}{M_{w,i}} 
 
 
 
 Saturated vapor pressure
 ^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automethod:: GroupContributionMethod.groupContribution.psat
+   :noindex:
 
 The saturated vapor pressure for each compound is calculated as a function of 
 temperature using either the Lee–Kesler method\ :footcite:p:`lee_generalized_1975` 
@@ -242,6 +274,9 @@ with :math:`\tau_i = 1 - T_{r,i}`.
 Surface tension
 ^^^^^^^^^^^^^^^
 
+.. automethod:: GroupContributionMethod.groupContribution.surface_tension
+   :noindex:
+
 Surface tension for each compound is approximated using the relation:
 
 .. math::
@@ -258,9 +293,13 @@ or by Curl and Pitzer\ :footcite:p:`poling_properties_2001,curl_volumetric_1958,
    Q_i = \frac{1.86 + 1.18 \omega_i}{19.05} \bigg[ \frac{3.75 + 0.91 \omega_i}{0.291 - 0.08\omega_i} \bigg]^{2/3}.
 
 
+
 Thermal conductivity
 ^^^^^^^^^^^^^^^^^^^^
- 
+
+.. automethod:: GroupContributionMethod.groupContribution.thermal_conductivity
+   :noindex:
+
 Thermal conductivity for each compound is computed according to the method of 
 Latini et al. as summarized in Poling's\ :footcite:p:`poling_properties_2001` book:
 
@@ -308,7 +347,7 @@ mixture from the individual compound and physical properties defined in
 it possible to evaluate physical properties at non-standard temperatures and 
 pressures, as the group contribution properties are only defined at standard 
 conditions. The :ref:`tab-mixture-properties` available in `FuelLib` are listed in 
-table below.  Mass and mole fractions defined in Table :ref:`tab:mass-mole-fracs`` 
+table below.  Mass and mole fractions defined in Table :ref:`tab-mass-mole-fracs`
 are used throughout this section.
 
 .. _tab-mixture-properties:
@@ -344,6 +383,10 @@ are used throughout this section.
 
 Conventional mixing rules
 ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: GroupContributionMethod.mixingRule
+   :noindex:
+
 While many of the mixture properties in FuelLib have a unique mixing rule,
 FuelLib's *mixingRule* function provides a general mixing rule based on the suggestions
 of Harstad et al\ :footcite:p:`harstad_efficient_1997`. For a given property :math:`Q`
@@ -366,6 +409,10 @@ where :math:`Q_i` is the property of the *i-th* compound of the multicomponent m
 
 Mixture density
 ^^^^^^^^^^^^^^^
+
+.. automethod:: GroupContributionMethod.groupContribution.mixture_density
+   :noindex:
+
 The mixture's density is calculated as:
 
 .. math::
@@ -375,6 +422,9 @@ The mixture's density is calculated as:
 
 Mixture kinematic viscosity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automethod:: GroupContributionMethod.groupContribution.mixture_kinematic_viscosity
+   :noindex:
 
 The kinematic viscosity of the mixture is computed using the Kendall-Monroe\ :footcite:p:`kendall_viscosity_1917` 
 mixing rule, with an option to use the Arrhenius\ :footcite:p:`arrhenius_uber_1887` 
@@ -398,6 +448,9 @@ The Arrhenius rule is:
 Mixture vapor pressure
 ^^^^^^^^^^^^^^^^^^^^^^
 
+.. automethod:: GroupContributionMethod.groupContribution.mixture_vapor_pressure
+   :noindex:
+
 The vapor pressure of the mixture is calculated according to Raoult's law:
 
 .. math::
@@ -407,6 +460,10 @@ The vapor pressure of the mixture is calculated according to Raoult's law:
 
 Mixture surface tension
 ^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automethod:: GroupContributionMethod.groupContribution.mixture_surface_tension
+   :noindex:
+
 The surface tension of the mixture is calculated using the :ref:`conventional-mixing-rules`
 with an arithmetic mean for the pseudo-property :math:`\sigma_{i,j}` as recommended by
 Hugill and van Welsenes\ :footcite:p:`hugill_surface_1986`:
@@ -416,6 +473,10 @@ Hugill and van Welsenes\ :footcite:p:`hugill_surface_1986`:
 
 Mixture thermal conductivity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automethod:: GroupContributionMethod.groupContribution.mixture_thermal_conductivity
+   :noindex:
+
 The thermal conductivity of the mixture is calculated using the power law method of 
 Vredeveld as described in Poling\ :footcite:p:`poling_properties_2001`:
 

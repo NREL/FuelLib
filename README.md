@@ -24,12 +24,7 @@ New contributions are always welcome.  If you have an idea for a new feature fol
 ## Sphinx Documentation
 This repository uses [Sphinx](https://www.sphinx-doc.org/en/master/usage/quickstart.html) to generate documentation.  This requires the following Conda environment:
 ~~~
-conda create --name sphinx-env
-conda activate sphinx-env
-conda install python
-conda install anaconda::sphinx
-conda install conda-forge::sphinx_rtd_theme 
-conda install conda-forge::sphinxcontrib-bibtex
+conda create --name sphinx-env sphinx sphinx_rtd_theme sphinxcontrib-bibtex pandas
 ~~~
 
 To view the documentation locally, build the html using the following: 

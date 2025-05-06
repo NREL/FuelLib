@@ -16,3 +16,11 @@ FuelLib File Structure
     - **groupDecompositionData:** directory containing a collection of functional group decompositions
     - **propertiesData:** directory containing measurement or predicted data for validation (see *dataReferences.md*)
 
+API
+---
+Click on GroupContributionMethod below for the full API. 
+
+.. autosummary::
+    :toctree: generated
+
+    GroupContributionMethod
