@@ -10,7 +10,7 @@ import GroupContributionMethod as gcm
 
 # Fuel for GCM and data for validation (see fuelData/propertiesData for fuels)
 # Options: 'decane','dodecane', 'heptane', 'posf10264', 'posf10325', 'posf10289'
-# fuel_names = ['heptane','decane','dodecane']
+#fuel_names = ['heptane','decane','dodecane']
 fuel_names = ["posf10264", "posf10325", "posf10289"]
 
 # Properties to plot
@@ -60,12 +60,21 @@ def leglab(name):
 
 
 # Ticks for x-axis of posf fuels only
-xticks = {
+xticks_posf = {
     "Density": [-40, -20, 0, 20, 40],
     "Viscosity": [-40, 0, 40, 100],
     "VaporPressure": [0, 25, 75, 125],
     "SurfaceTension": [-10, 20, 40],
     "ThermalConductivity": [0, 40, 80, 125],
+}
+
+# Ticks for x-axis of simple fuels only
+xticks_simp = {
+    "Density": [-50, 0, 50, 100],
+    "Viscosity": [-50, 0, 50, 100],
+    "VaporPressure": [-20, 30, 80, 130],
+    "SurfaceTension": [-20, 30, 80, 130],
+    "ThermalConductivity": [-10, 40, 90, 140],
 }
 
 # y-axis label
@@ -138,8 +147,8 @@ def getPredAndData(fuel_name, prop_name):
     return T_data, prop_data, T_pred, pred
 
 
-figW = 5 * len(prop_names)
-fig, ax = plt.subplots(1, len(prop_names), figsize=(figW, 5), constrained_layout=True)
+figW = 4.25 * len(prop_names)
+fig, ax = plt.subplots(1, len(prop_names), figsize=(figW, 5.5), constrained_layout=True)
 
 for i in range(len(prop_names)):
 
@@ -173,12 +182,13 @@ for i in range(len(prop_names)):
     # Add labels and adjust ticks
     ax[i].set_xlabel("T [°C]", fontsize=fsize)
     if "posf" in fuel_name:
-        ax[i].set_xticks(xticks[prop_names[i]])
+        ax[i].set_xticks(xticks_posf[prop_names[i]])
+    else:
+        ax[i].set_xticks(xticks_simp[prop_names[i]])
     ax[i].set_ylabel(ylab[prop_names[i]], fontsize=fsize)
     ax[i].tick_params(labelsize=ticksize)
 
 handles, labels = ax[0].get_legend_handles_labels()
-
 fig.legend(
     handles, labels, loc="outside lower center", ncol=len(fuel_names), fontsize=fsize
 )
