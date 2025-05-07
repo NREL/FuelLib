@@ -8,7 +8,7 @@ conda create --name fuellib-env matplotlib pandas black
 ~~~
 
 ## Running the code
-This repository includes an example `ex-mixtureProperties.py` that calculates a given mixture's density, viscosity and vapor pressure from GC x GC data of the mixture.  The results are plotted against data from NIST and [Edwards (2020)](https://apps.dtic.mil/sti/pdfs/AD1093317.pdf).
+This repository includes an example `ex_mixtureProperties.py` that calculates a given mixture's density, viscosity and vapor pressure from GC x GC data of the mixture.  The results are plotted against data from NIST and [Edwards (2020)](https://apps.dtic.mil/sti/pdfs/AD1093317.pdf).
 
 # Contributing
 New contributions are always welcome.  If you have an idea for a new feature follow these steps:

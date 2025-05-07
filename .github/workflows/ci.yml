@@ -38,4 +38,20 @@ jobs:
           python -m pip install --upgrade pip
           pip install codespell
       - name: Run codespell
-        run: codespell -S, --skip="*.bib,*.csv"
+        run: codespell --skip="*.bib,*.csv"
+  
+  Accuracy Test:
+    needs: Codespell
+    runs-on: ubuntu-latest
+    steps:
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Dependencies
+        run: |
+          # Install Python packages
+          python -m pip install --upgrade pip
+          pip install numpy pandas
+      - name: Run accuracy test
+        run: python -m unittest test_accuracy
