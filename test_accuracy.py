@@ -13,7 +13,7 @@ class CompTestCase(unittest.TestCase):
         fuellib_dir = os.path.dirname(__file__)
         baseline_dir = os.path.join(fuellib_dir, "fuelData/baselinePredictions")
 
-        # Set the precentage for variation in max error
+        # Set the percentage for variation in max error
         max_error_diff = 1e-6
 
         # Fuels to test
@@ -52,13 +52,13 @@ class CompTestCase(unittest.TestCase):
             for prop in prop_names:
                 # Baseline error
                 err_base = df_base[f"Error_{prop}"].dropna().to_numpy()
-                # err_base += err_base*max_error_diff
 
                 # Cumulative baseline error
                 sum_err_base = np.sum(err_base)
 
                 # Allow cumulative error within max_error_diff
-                sum_err_base += sum_err_base * max_error_diff
+                if prop != "Viscosity":
+                    sum_err_base += sum_err_base * max_error_diff
 
                 # Get predictions for current model
                 T, data, pred = fxns.getPredAndData(drop, fuel_name, prop)
