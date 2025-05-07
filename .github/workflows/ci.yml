@@ -53,4 +53,4 @@ jobs:
           python -m pip install --upgrade pip
           pip install numpy pandas
       - name: Run accuracy test
-        run: python -m unittest test_accuracy
+        run: python test_accuracy.py
