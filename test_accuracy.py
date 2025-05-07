@@ -68,7 +68,7 @@ class CompTestCase(unittest.TestCase):
                 np.testing.assert_array_less(
                     sum_err,
                     sum_err_base,
-                    err_msg=f"Prediction of {prop} for {fuel_name} is less accurate than previous model",
+                    err_msg=f"Error: Prediction of {prop} for {fuel_name} is less accurate than previous model!",
                 )
 
 
