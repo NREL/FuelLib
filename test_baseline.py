@@ -9,7 +9,7 @@ Use this to update threshold values in CI test as model improves
 """
 
 fuellib_dir = os.path.dirname(__file__)
-baseline_dir = os.path.join(fuellib_dir,"fuelData/baselinePredictions")
+baseline_dir = os.path.join(fuellib_dir, "fuelData/baselinePredictions")
 
 # Fuel for GCM and data for validation (see fuelData/propertiesData for fuels)
 # Options: 'decane','dodecane', 'heptane', 'posf10264', 'posf10325', 'posf10289'

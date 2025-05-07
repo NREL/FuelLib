@@ -10,7 +10,7 @@ import GroupContributionMethod as gcm
 
 # Fuel for GCM and data for validation (see fuelData/propertiesData for fuels)
 # Options: 'decane','dodecane', 'heptane', 'posf10264', 'posf10325', 'posf10289'
-#fuel_names = ["heptane","decane","dodecane"]
+# fuel_names = ["heptane","decane","dodecane"]
 fuel_names = ["posf10264", "posf10325", "posf10289"]
 
 # Properties to plot

@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import GroupContributionMethod as gcm
 
+
 def drop_mass(drop, fuel, Yi, T):
     return drop["V_0"] / (fuel.molar_liquid_vol(T) @ Yi) * Yi * fuel.MW  # (kg)
 
