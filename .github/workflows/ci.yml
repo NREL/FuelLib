@@ -40,7 +40,7 @@ jobs:
       - name: Run codespell
         run: codespell --skip="*.bib,*.csv"
   
-  Accuracy Test:
+  Accuracy:
     needs: Codespell
     runs-on: ubuntu-latest
     steps:
