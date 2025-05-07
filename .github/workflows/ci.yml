@@ -44,7 +44,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Python
-        uses: actions/checkout@v4
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -54,4 +53,5 @@ jobs:
           python -m pip install --upgrade pip
           pip install numpy pandas
       - name: Run accuracy test
+        uses: actions/checkout@v4
         run: python test_accuracy.py
