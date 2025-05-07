@@ -57,8 +57,7 @@ class CompTestCase(unittest.TestCase):
                 sum_err_base = np.sum(err_base)
 
                 # Allow cumulative error within max_error_diff
-                if prop != "Viscosity":
-                    sum_err_base += sum_err_base * max_error_diff
+                sum_err_base += sum_err_base * max_error_diff
 
                 # Get predictions for current model
                 T, data, pred = fxns.getPredAndData(drop, fuel_name, prop)
