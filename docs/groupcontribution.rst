@@ -19,7 +19,7 @@ the identification of promising fuel compositions before committing to large-sca
 `Pavan B. Govindaraju's Matlab implementation <https://github.com/gpavanb-old/GroupContribution>`_, 
 and includes gas chromatography data (GC x GC) for various jet fuels from the Air Force Research Laboratory\ :footcite:p:`edwards_jet_2020`.
 Additionally, `FuelLib` includes correlations for the thermodynamic properties of 
-mixture such as density, viscosity and vapor pressure. The Section :ref:`tab-GCM-properties` 
+mixture such as density, viscosity, vapor pressure, surface tension, and thermal conductivity. The Section :ref:`tab-GCM-properties` 
 outlines the properties for the *i-th* compound in a mixture, which depends on 
 the *k-th* first-order and *j-th* second-order group contributions.
 
@@ -493,7 +493,7 @@ Single Component Fuels
    :width: 600pt
    :align: center
    
-Properties of decane, dodecane, and heptane.  Data from NIST Chemistry WebBook.
+Properties of heptane, decane, and dodecane against predictive data from NIST Chemistry WebBook.
 
 Multi-Component Fuels
 ^^^^^^^^^^^^^^^^^^^^^
@@ -502,7 +502,7 @@ Multi-Component Fuels
    :width: 600pt
    :align: center
 
-Properties of JP-8 (POSF10264), Jet A (POSF10325), and JP-5 (POSF10289) against data 
+Properties of conventional jet fuels JP-8 (POSF10264), Jet A (POSF10325), and JP-5 (POSF10289) against data 
 from the Air Force Research Laboratory\ :footcite:p:`edwards_jet_2020`. Note that 
 the data sets for thermal conductivity are very inconsistent, but they typically show 
 linear decreases in thermal conductivity with temperature. 
