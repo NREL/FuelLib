@@ -15,7 +15,9 @@
    
       C2K
       K2C
-      mixingRule
+      drop_mass
+      droplet_volume
+      mixing_rule
    
    
 

@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from scipy.optimize import curve_fit
 import os
 
 
@@ -652,6 +653,50 @@ class groupContribution:
 
         return p_v
 
+    def mixture_vapor_pressure_antoine_coeffs(
+        self, mass, Trange, units="mks", correlation="Lee-Kesler"
+    ):
+        """
+        Estimate Antoine coefficients for vapor pressure of the mixture.
+
+        :param mass: Mass of each compound in the mixture.
+        :type mass: np.ndarray
+        :param Trange: Temperature range for fit in Kelvin.
+        :type Trange: np.ndarray (2,)
+        :param units: Units for pressure in fit
+        :type correlation: str, optional
+        :param correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
+        :type correlation: str, optional
+        :return: Coefficients A, B, C, D
+        :rtype: float
+        """
+
+        # Lower and upper temperature limits
+        Tmin = Trange[0]
+        Tmax = Trange[1]
+
+        # Antoine equation log10(p) = A - B/(C + T)
+        def antoine_eq(T, A, B, C):
+            return A - B / (T + C)
+
+        # Determine conversion factor for pressure in MKS, CGS or bar
+        D = 1  # default is Pa
+        if units.lower() == "bar":
+            D = 1e5
+        elif units.lower() == "cgs":
+            D = 10  # dyne/cm^2
+
+        T = np.linspace(Tmin, Tmax, 20)
+        Pvals = np.zeros_like(T)
+        for k in range(len(T)):
+            Pvals[k] = self.mixture_vapor_pressure(mass, T[k]) * D
+
+        logP = np.log10(Pvals)
+        popt, _ = curve_fit(antoine_eq, T, logP, p0=[1, 1e3, -1])  # initial guess
+        A, B, C = popt
+
+        return A, B, C, D
+
     def mixture_surface_tension(self, mass, T, correlation="Brock-Bird"):
         """
         Calculate surface tension of the mixture.
@@ -675,7 +720,7 @@ class groupContribution:
         sti = self.surface_tension(T, correlation)
 
         # Mixture surface tension via arithmetic mean, Poling (12-5.2)
-        st = mixingRule(sti, Xi, "arithmetic")
+        st = mixing_rule(sti, Xi, "arithmetic")
 
         return st
 
@@ -722,7 +767,7 @@ def K2C(T):
     return T - 273.15
 
 
-def mixingRule(var_n, X, pseudo_prop="arithmetic"):
+def mixing_rule(var_n, X, pseudo_prop="arithmetic"):
     """
     Mixing rules for computing mixture properties.
 
@@ -747,3 +792,38 @@ def mixingRule(var_n, X, pseudo_prop="arithmetic"):
                 var_ij = (var_n[i] + var_n[j]) / 2
             var_mix += X[i] * X[j] * var_ij
     return var_mix
+
+
+def droplet_volume(r):
+    """
+    Calculate spherical volume of a droplet given the radius.
+
+    :param r: Radius of the droplet in meters.
+    :type r: float
+    :return: Spherical volume of droplet in cubic meters.
+    :rtype: float
+    """
+    return 4.0 / 3.0 * np.pi * r**3
+
+
+def drop_mass(fuel, r, Yi, T):
+    """
+    Calculate the mass of each compound in the fuel provided the radius of the droplet.
+
+    :param fuel: An instance of the groupContribution class.
+    :type fuel: groupContribution object
+    :param r: Radius of the droplet in meters.
+    :type r: float
+    :param Yi: Mass fractions of each compound.
+    :type Yi: np.ndarray
+    :param T: Droplet temperature in Kelvin.
+    :type T: float
+    :return: Mass of each compound in droplet in kg.
+    :rtype: np.ndarray
+    """
+    MW = fuel.MW  # kg/mol
+    volume = droplet_volume(r)  # m^3
+    if volume > 0:
+        return volume / (fuel.molar_liquid_vol(T) @ Yi) * Yi * fuel.MW
+    else:
+        return np.zeros_like(MW)

@@ -4,10 +4,6 @@ import pandas as pd
 import GroupContributionMethod as gcm
 
 
-def drop_mass(drop, fuel, Yi, T):
-    return drop["V_0"] / (fuel.molar_liquid_vol(T) @ Yi) * Yi * fuel.MW  # (kg)
-
-
 def getPredAndData(drop, fuel_name, prop_name):
     # Get the fuel properties based on the GCM
     fuel = gcm.groupContribution(fuel_name)
@@ -38,7 +34,7 @@ def getPredAndData(drop, fuel_name, prop_name):
     if prop_name == "VaporPressure":
         for i in range(0, len(T_pred)):
             # Mass of the droplet at current temp
-            mass = drop_mass(drop, fuel, Y_li, T_pred[i])
+            mass = gcm.drop_mass(fuel, drop["r_0"], Y_li, T_pred[i])
             # Mixture vapor pressure (returns pv in Pa)
             pred[i] = fuel.mixture_vapor_pressure(mass, T_pred[i])
             # Convert vapor pressure to kPa
@@ -47,7 +43,7 @@ def getPredAndData(drop, fuel_name, prop_name):
     if prop_name == "Viscosity":
         for i in range(0, len(T_pred)):
             # Mass of the droplet at current temp
-            mass = drop_mass(drop, fuel, Y_li, T_pred[i])
+            mass = gcm.drop_mass(fuel, drop["r_0"], Y_li, T_pred[i])
             pred[i] = fuel.mixture_kinematic_viscosity(mass, T_pred[i])
             # Convert viscosity to mm^2/s
             pred[i] *= 1.0e06
@@ -55,13 +51,13 @@ def getPredAndData(drop, fuel_name, prop_name):
     if prop_name == "SurfaceTension":
         for i in range(0, len(T_pred)):
             # Mass of the droplet at current temp
-            mass = drop_mass(drop, fuel, Y_li, T_pred[i])
+            mass = gcm.drop_mass(fuel, drop["r_0"], Y_li, T_pred[i])
             pred[i] = fuel.mixture_surface_tension(mass, T_pred[i])
 
     if prop_name == "ThermalConductivity":
         for i in range(0, len(T_pred)):
             # Mass of the droplet at current temp
-            mass = drop_mass(drop, fuel, Y_li, T_pred[i])
+            mass = gcm.drop_mass(fuel, drop["r_0"], Y_li, T_pred[i])
             pred[i] = fuel.mixture_thermal_conductivity(mass, T_pred[i])
 
     return T_data, prop_data, pred

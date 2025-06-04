@@ -41,7 +41,6 @@ class CompTestCase(unittest.TestCase):
             100 * 1e-6
         )  # initial droplet diameter (m), note: size doesn't matter
         drop["r_0"] = drop["d_0"] / 2.0  # initial droplet radius (m)
-        drop["V_0"] = 4.0 / 3.0 * np.pi * drop["r_0"] ** 3  # initial droplet volume
 
         # Compare to NIST predictions and previous model predictions
         for fuel_name in fuel_names:

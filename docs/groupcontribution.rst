@@ -384,11 +384,11 @@ are used throughout this section.
 Conventional mixing rules
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. autofunction:: GroupContributionMethod.mixingRule
+.. autofunction:: GroupContributionMethod.mixing_rule
    :noindex:
 
 While many of the mixture properties in FuelLib have a unique mixing rule,
-FuelLib's *mixingRule* function provides a general mixing rule based on the suggestions
+FuelLib's *mixing_rule* function provides a general mixing rule based on the suggestions
 of Harstad et al\ :footcite:p:`harstad_efficient_1997`. For a given property :math:`Q`
 
 .. math::
@@ -457,6 +457,23 @@ The vapor pressure of the mixture is calculated according to Raoult's law:
    \begin{align*}
    p_{v} = \sum_{i = 1}^{N_c} X_i \, p_{\textit{sat},i}.
    \end{align*}
+
+.. automethod:: GroupContributionMethod.groupContribution.mixture_vapor_pressure_antoine_coeffs
+   :noindex:
+
+Users also have the option to return the coefficients from an Antoine fit based on 
+the mixture vapor pressure calculated from Raoult's law above.  Antoine's equation is:
+
+.. math:: 
+   \begin{align*}
+   \log_{10}(D \cdot p_{v}) = A - \frac{B}{C + T},
+   \end{align*}
+
+where :math:`D` is a conversion factor for converting :math:`p_v` to units of bar or dyne/cm :sup:`2` from Pa.
+This feature was added to provide `Pele <https://amrex-combustion.github.io>`_ users an option for estimating these coefficients for use in CFD
+simulations with spray. See the `PelePhysics documentaion <https://amrex-combustion.github.io/PelePhysics/Spray.html>`_
+for additional information. 
+
 
 Mixture surface tension
 ^^^^^^^^^^^^^^^^^^^^^^^
