@@ -654,16 +654,16 @@ class groupContribution:
         return p_v
 
     def mixture_vapor_pressure_antoine_coeffs(
-        self, mass, Trange, units="mks", correlation="Lee-Kesler"
+        self, mass, Tvals, units="mks", correlation="Lee-Kesler"
     ):
         """
         Estimate Antoine coefficients for vapor pressure of the mixture.
 
         :param mass: Mass of each compound in the mixture.
         :type mass: np.ndarray
-        :param Trange: Temperature range for fit in Kelvin.
-        :type Trange: np.ndarray (2,)
-        :param units: Units for pressure in fit
+        :param Tvals: Temperature range or nodes for Antoine fit in Kelvin.
+        :type Tvals: np.ndarray
+        :param units: Units for pressure in fit ("mks", "cgs", "bar", "atm")
         :type correlation: str, optional
         :param correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
         :type correlation: str, optional
@@ -671,22 +671,27 @@ class groupContribution:
         :rtype: float
         """
 
-        # Lower and upper temperature limits
-        Tmin = Trange[0]
-        Tmax = Trange[1]
+        # Define or get temperature nodes for fit
+        if len(Tvals) == 2:
+            T = np.linspace(Tvals[0], Tvals[1], 20)
+        elif len(Tvals) > 2:
+            T = Tvals
+        else:
+            raise ValueError("Invalid temperature range for Antoine fit")
 
         # Antoine equation log10(p) = A - B/(C + T)
         def antoine_eq(T, A, B, C):
             return A - B / (T + C)
 
-        # Determine conversion factor for pressure in MKS, CGS or bar
+        # Determine conversion factor for pressure in MKS, CGS, bar, or atm
         D = 1  # default is Pa
         if units.lower() == "bar":
             D = 1e5
+        elif units.lower() == "atm":
+            D = 1.01325e5
         elif units.lower() == "cgs":
             D = 10  # dyne/cm^2
 
-        T = np.linspace(Tmin, Tmax, 20)
         Pvals = np.zeros_like(T)
         for k in range(len(T)):
             Pvals[k] = self.mixture_vapor_pressure(mass, T[k]) * D

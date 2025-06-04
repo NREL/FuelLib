@@ -471,7 +471,7 @@ the mixture vapor pressure calculated from Raoult's law above.  Antoine's equati
 
 where :math:`D` is a conversion factor for converting :math:`p_v` to units of bar or dyne/cm :sup:`2` from Pa.
 This feature was added to provide `Pele <https://amrex-combustion.github.io>`_ users an option for estimating these coefficients for use in CFD
-simulations with spray. See the `PelePhysics documentaion <https://amrex-combustion.github.io/PelePhysics/Spray.html>`_
+simulations with spray. See the `PelePhysics documentation <https://amrex-combustion.github.io/PelePhysics/Spray.html>`_
 for additional information. 
 
 
