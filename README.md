@@ -4,7 +4,7 @@ FuelLib (SWR-25-26) utilizes the tables and functions of the Group Contribution 
 ## Python Environment
 The following conda environment is required to run this code:
 ~~~
-conda create --name fuellib-env matplotlib pandas black 
+conda create --name fuellib-env matplotlib pandas scipy black 
 ~~~
 
 ## Running the code
@@ -24,7 +24,7 @@ New contributions are always welcome.  If you have an idea for a new feature fol
 ## Sphinx Documentation
 This repository uses [Sphinx](https://www.sphinx-doc.org/en/master/usage/quickstart.html) to generate documentation.  This requires the following Conda environment:
 ~~~
-conda create --name sphinx-env sphinx sphinx_rtd_theme sphinxcontrib-bibtex pandas
+conda create --name sphinx-env sphinx sphinx_rtd_theme sphinxcontrib-bibtex pandas scipy
 ~~~
 
 To view the documentation locally, build the html using the following: 
