@@ -17,9 +17,10 @@ the identification of promising fuel compositions before committing to large-sca
 
 `FuelLib` builds on 
 `Pavan B. Govindaraju's Matlab implementation <https://github.com/gpavanb-old/GroupContribution>`_, 
-and includes gas chromatography data (GC x GC) for various jet fuels from the Air Force Research Laboratory\ :footcite:p:`edwards_jet_2020`.
+and includes gas chromatography data (GC x GC) for various jet fuels from the National Jet Fuel Combustion Program\ :footcite:p:`colket_overview_2017` (NJFCP) 
+Air Force Research Laboratory\ :footcite:p:`edwards_reference_2017` \ :footcite:p:`edwards_jet_2020` (AFRL) and Vozka et al.\ :footcite:p:`vozka_impact_2018`.
 Additionally, `FuelLib` includes correlations for the thermodynamic properties of 
-mixture such as density, viscosity, vapor pressure, surface tension, and thermal conductivity. The Section :ref:`tab-GCM-properties` 
+mixture such as density, viscosity, vapor pressure, surface tension, and thermal conductivity. :ref:`tab-GCM-properties` 
 outlines the properties for the *i-th* compound in a mixture, which depends on 
 the *k-th* first-order and *j-th* second-order group contributions.
 
@@ -46,7 +47,7 @@ Table of GCM properties
    :math:`\Delta H_{v,\textit{stp},i}`   J/mol                  :math:`h_{v1k}`, :math:`h_{v2j}`             kJ/mol                Enthalpy of vaporization at 298 K\ :footcite:p:`constantinou_new_1994`.
    :math:`\omega_i`                      1                      :math:`\omega_{1k}`, :math:`\omega_{2j}`     1                     Acentric factor\ :footcite:p:`constantinou_estimation_1995`.
    :math:`V_{m,\textit{stp},i}`          m\ :sup:`3`\ /mol      :math:`v_{m1k}`, :math:`v_{m2j}`             m\ :sup:`3`\ /kmol    Liquid molar volume at 298 K\ :footcite:p:`constantinou_estimation_1995`. 
-   :math:`C_{p,i}`                       J/mol/K                :math:`C_{pA1_k}`, :math:`C_{pA2_k}`,...     J/mol/K               Specific heat capacity\ :footcite:p:`nielsen_molecular_1998,poling_properties_2001`.
+   :math:`C_{p,i}`                       J/mol/K                :math:`C_{pA1_k}`, :math:`C_{pA2_k}`,...     J/mol/K               Specific heat capacity\ :footcite:p:`nielsen_molecular_1998` \ :footcite:p:`poling_properties_2001`.
    ====================================  =====================  ===========================================  ====================  ===========================================================
 
 .. _eq-GCM-properties:
@@ -66,7 +67,7 @@ number of second-order groups. The total number of groups :math:`N_g = N_{g_1} +
 Define a parameter :math:`W` such that :math:`W = 0` performs a first-order group only 
 calculation, while :math:`W = 1` includes second-order groups. The GCM properties for 
 the *i-th* compound in the mixture are calculated as 
-follows\ :footcite:p:`constantinou_new_1994,constantinou_estimation_1995,poling_properties_2001`:
+follows\ :footcite:p:`constantinou_new_1994` \ :footcite:p:`constantinou_estimation_1995` \ :footcite:p:`poling_properties_2001`:
 
 .. math::
 
@@ -115,10 +116,10 @@ provided :math:`T` in K unless noted otherwise.
    :math:`\nu_i`                  m\ :sup:`2`\ /s        Kinematic viscosity\ :footcite:p:`viswanath_viscosity_2007`.
    :math:`L_{v,\textit{stp},i}`   J/kg                   Latent heat of vaporization at 298 K\ :footcite:p:`govindaraju_group_2016`.
    :math:`L_{v,i}`                J/kg                   Temperature-adjusted latent heat of vaporization at 298 K\ :footcite:p:`govindaraju_group_2016`.
-   :math:`V_{m,i}`                m\ :sup:`3`\ /mol      Temperature-adjusted liquid molar volume\ :footcite:p:`rackett_equation_1970,yamada_saturated_1973,govindaraju_group_2016`.
+   :math:`V_{m,i}`                m\ :sup:`3`\ /mol      Temperature-adjusted liquid molar volume\ :footcite:p:`rackett_equation_1970` \ :footcite:p:`yamada_saturated_1973` \ :footcite:p:`govindaraju_group_2016`.
    :math:`\rho_i`                 kg/m\ :sup:`3`         Density
    :math:`C_{\ell,i}`             J/kg/K                 Liquid specific heat capacity\ :footcite:p:`govindaraju_group_2016`. 
-   :math:`p_{sat,i}`              Pa                     Saturated vapor pressure\ :footcite:p:`lee_generalized_1975,ambrose_vapour_1989`.
+   :math:`p_{sat,i}`              Pa                     Saturated vapor pressure\ :footcite:p:`lee_generalized_1975` \ :footcite:p:`ambrose_vapour_1989`.
    :math:`\sigma_i`               N/m                    Surface tension\ :footcite:p:`brock_surface_1955`.
    :math:`\lambda_i`              W/m/K                  Thermal conductivity\ :footcite:p:`poling_properties_2001`.
    =============================  =====================  ===============================================================
@@ -188,7 +189,7 @@ Liquid molar volume
    :noindex:
 
 The liquid molar volume is calculated at a specific temperature :math:`T` using 
-the generalized Rackett equation\ :footcite:p:`rackett_equation_1970,yamada_saturated_1973` 
+the generalized Rackett equation\ :footcite:p:`rackett_equation_1970` \ :footcite:p:`yamada_saturated_1973` 
 with an updated :math:`\phi_i` parameter\ :footcite:p:`govindaraju_group_2016`:
 
 .. math::
@@ -287,7 +288,7 @@ provided :math:`p_{c,i}` in bar.  The :math:`Q_i` term is defined by Brock and B
 .. math:: 
    Q_i = 0.1196 \bigg[1 + \frac{T_{r,b,i} \log(p_{c,i}/1.01325)}{1 - T_{r,b,i}}\bigg] - 0.279,
 
-or by Curl and Pitzer\ :footcite:p:`poling_properties_2001,curl_volumetric_1958,pitzer_thermodynamics_1995` as
+or by Curl and Pitzer\ :footcite:p:`poling_properties_2001` \ :footcite:p:`curl_volumetric_1958` \ :footcite:p:`pitzer_thermodynamics_1995` as
 
 .. math::
    Q_i = \frac{1.86 + 1.18 \omega_i}{19.05} \bigg[ \frac{3.75 + 0.91 \omega_i}{0.291 - 0.08\omega_i} \bigg]^{2/3}.
