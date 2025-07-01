@@ -213,7 +213,7 @@ Density
 .. automethod:: GroupContributionMethod.groupContribution.density
    :noindex:
 
-The density of the *i-th* compond is given by
+The density of the *i-th* compound is given by
 
 .. math::
    \rho_i = \frac{M_{w,i}}{V_{m,i}}.
@@ -506,23 +506,29 @@ Validation
 Single Component Fuels
 ^^^^^^^^^^^^^^^^^^^^^^
 
-.. image:: /figures/singleCompFuels.png
+.. figure:: /figures/singleCompFuels.png
    :width: 600pt
    :align: center
    
-Properties of heptane, decane, and dodecane against predictive data from NIST Chemistry WebBook.
+   Properties of heptane, decane, and dodecane against predictive data from NIST Chemistry WebBook.
 
 Multi-Component Fuels
 ^^^^^^^^^^^^^^^^^^^^^
 
-.. image:: /figures/multiCompFuels.png
+.. figure:: /figures/multiCompFuels.png
    :width: 600pt
    :align: center
 
-Properties of conventional jet fuels JP-8 (POSF10264), Jet A (POSF10325), and JP-5 (POSF10289) against data 
-from the Air Force Research Laboratory\ :footcite:p:`edwards_jet_2020`. Note that 
-the data sets for thermal conductivity are very inconsistent, but they typically show 
-linear decreases in thermal conductivity with temperature. 
+   Properties of conventional jet fuels JP-8 (POSF10264), Jet A (POSF10325), and JP-5 (POSF10289) against data from the Air Force Research Laboratory\ :footcite:p:`edwards_jet_2020`. Note that the data sets for thermal conductivity are very inconsistent, but they typically show linear decreases in thermal conductivity with temperature. 
+
+Fuel Blends
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. figure:: /figures/hefaBlends.png
+   :width: 250pt
+   :align: center
+   
+   Properties of three HEFA fuels produced from different feedstocks (camelina, tallow, and mixed fat) blended with Jet-A.  Measurement and GCxGC data from Vozka et al.\ :footcite:p:`vozka_impact_2018`. 
 
 
 References
