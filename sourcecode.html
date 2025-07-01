@@ -1,0 +1,193 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Source Code &mdash; FuelLib 2025 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=cb975c41"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="GroupContributionMethod" href="generated/GroupContributionMethod.html" />
+    <link rel="prev" title="Properties and Model Equations" href="groupcontribution.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FuelLib
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="groupcontribution.html">Properties and Model Equations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="groupcontribution.html#table-of-gcm-properties">Table of GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="groupcontribution.html#equations-for-gcm-properties">Equations for GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="groupcontribution.html#equations-for-individual-compound-correlations">Equations for individual compound correlations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="groupcontribution.html#kinematic-viscosity">Kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="groupcontribution.html#latent-heat-of-vaporization">Latent heat of vaporization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="groupcontribution.html#liquid-molar-volume">Liquid molar volume</a></li>
+<li class="toctree-l3"><a class="reference internal" href="groupcontribution.html#density">Density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="groupcontribution.html#liquid-specific-heat-capacity">Liquid specific heat capacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="groupcontribution.html#saturated-vapor-pressure">Saturated vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="groupcontribution.html#surface-tension">Surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="groupcontribution.html#thermal-conductivity">Thermal conductivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="groupcontribution.html#equations-for-mixture-properties-from-gcm">Equations for mixture properties from GCM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="groupcontribution.html#conventional-mixing-rules">Conventional mixing rules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="groupcontribution.html#mixture-density">Mixture density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="groupcontribution.html#mixture-kinematic-viscosity">Mixture kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="groupcontribution.html#mixture-vapor-pressure">Mixture vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="groupcontribution.html#mixture-surface-tension">Mixture surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="groupcontribution.html#mixture-thermal-conductivity">Mixture thermal conductivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="groupcontribution.html#validation">Validation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="groupcontribution.html#single-component-fuels">Single Component Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="groupcontribution.html#multi-component-fuels">Multi-Component Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="groupcontribution.html#fuel-blends">Fuel Blends</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="groupcontribution.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Source Code</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#fuellib-file-structure">FuelLib File Structure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ci-testing-scripts">CI testing scripts</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/GroupContributionMethod.html">GroupContributionMethod</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FuelLib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Source Code</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/sourcecode.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="source-code">
+<h1>Source Code<a class="headerlink" href="#source-code" title="Link to this heading"></a></h1>
+<p>This page provides an overview of the source code available at <a class="reference external" href="https://github.com/NREL/FuelLib">github.com/NREL/FuelLib</a>.</p>
+<section id="fuellib-file-structure">
+<span id="source-code-structure"></span><h2>FuelLib File Structure<a class="headerlink" href="#fuellib-file-structure" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><em>GroupContributionMethod.py</em>: class for enabling GCM predictions</p></li>
+<li><p><em>ex_mixtureProperties.py</em>: validation script that calculates mixture properties</p></li>
+<li><p><em>ex_hefaBlends.py</em>: example script that calculates properties of HEFA:Jet-A blends</p></li>
+<li><p><strong>gcmTableData:</strong> directory that contains the pre-tabulated group contributions</p></li>
+<li><dl class="simple">
+<dt><strong>fuelData:</strong></dt><dd><ul>
+<li><p><strong>gcData:</strong> directory containing a collection of GCxGC compositional data by weight percentages</p></li>
+<li><p><strong>groupDecompositionData:</strong> directory containing a collection of functional group decompositions</p></li>
+<li><p><strong>propertiesData:</strong> directory containing measurement or predicted data for validation (see <em>dataReferences.md</em>)</p></li>
+<li><p><strong>baselinePredictions:</strong> directory that contains FuelLib’s baseline predictions for specified fuels and properties, which are used in CI test to ensure future changes preserve model accuracy (see next section).</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<section id="ci-testing-scripts">
+<h3>CI testing scripts<a class="headerlink" href="#ci-testing-scripts" title="Link to this heading"></a></h3>
+<p>The following scripts are used to ensure new changes don’t negatively impact FuelLib’s
+predictive capabilities.  Specifically, the CI test checks if the cumulative error of
+property predictions of a new proposed model are less than or equal to the current model.</p>
+<ul class="simple">
+<li><p><em>test_baseline.py</em>: generates .csv files for the baseline model predictions, which are stored in <strong>baselinePredictions</strong></p></li>
+<li><p><em>test_accuracy.py</em>: unit test for verifying new model predictions preserve accuracy</p></li>
+<li><p><em>test_functions.py</em>: collection of functions used by <em>test_baseline.py</em> and <em>test_accuracy.py</em>.</p></li>
+</ul>
+</section>
+</section>
+<section id="api">
+<h2>API<a class="headerlink" href="#api" title="Link to this heading"></a></h2>
+<p>Click on GroupContributionMethod below for the full API.</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/GroupContributionMethod.html#module-GroupContributionMethod" title="GroupContributionMethod"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GroupContributionMethod</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="groupcontribution.html" class="btn btn-neutral float-left" title="Properties and Model Equations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="generated/GroupContributionMethod.html" class="btn btn-neutral float-right" title="GroupContributionMethod" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025 Alliance for Sustainable Energy, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
