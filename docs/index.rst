@@ -10,6 +10,11 @@ pure organic compounds. If you need help or have questions, please use the
 `GitHub discussion <https://github.com/NREL/FuelLib/discussions>`_.
 The source code is available at `github.com/NREL/FuelLib <https://github.com/NREL/FuelLib>`_.
 
+.. figure:: /figures/info-graphic.png
+   :width: 600pt
+   :align: center
+
+
 .. toctree::
    :maxdepth: 4
    :includehidden:

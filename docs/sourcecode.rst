@@ -9,8 +9,9 @@ FuelLib File Structure
 ----------------------
 
 - *GroupContributionMethod.py*: class for enabling GCM predictions
-- *ex_mixtureProperties.py*: validation script that calculates mixture properties
+- *ex_mixtureProperties.py*: validation script that calculates properties of single component fuels and mixture properties of multicomponent fuels.
 - *ex_hefaBlends.py*: example script that calculates properties of HEFA:Jet-A blends
+- *ex_compositionPlots.py*: example script that generates composition plots for a given fuel
 - **gcmTableData:** directory that contains the pre-tabulated group contributions
 - **fuelData:** 
     - **gcData:** directory containing a collection of GCxGC compositional data by weight percentages
