@@ -50,4 +50,4 @@ jobs:
       - run: |
           python -m pip install --upgrade pip
           pip install numpy pandas scipy
-      - run: python test_accuracy.py
+      - run: python tests/test_accuracy.py

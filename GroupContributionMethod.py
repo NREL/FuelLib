@@ -17,9 +17,9 @@ class groupContribution:
     """
 
     # Paths to input directories
-    FuelLib_PATH = os.path.dirname(os.path.abspath(__file__))
-    gcmTableDir = os.path.join(FuelLib_PATH, "gcmTableData")
-    fuelDataDir = os.path.join(FuelLib_PATH, "fuelData")
+    fuellibDir = os.path.dirname(os.path.abspath(__file__))
+    gcmTableDir = os.path.join(fuellibDir, "gcmTableData")
+    fuelDataDir = os.path.join(fuellibDir, "fuelData")
     groupDecompDir = os.path.join(fuelDataDir, "groupDecompositionData")
     gcxgcDir = os.path.join(fuelDataDir, "gcData")
 
