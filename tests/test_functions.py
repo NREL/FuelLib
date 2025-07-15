@@ -1,6 +1,11 @@
 import os
 import numpy as np
 import pandas as pd
+import sys
+
+# Add the FuelLib directory to the Python path
+fuellib_dir = os.path.dirname(os.path.dirname(__file__))
+sys.path.append(fuellib_dir)
 import GroupContributionMethod as gcm
 
 

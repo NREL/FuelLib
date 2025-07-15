@@ -2,8 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
-import GroupContributionMethod as gcm
 import re
+import sys
+
+# Add the FuelLib directory to the Python path
+fuellib_dir = os.path.dirname(os.path.dirname(__file__))
+sys.path.append(fuellib_dir)
+import GroupContributionMethod as gcm
 
 fuel_name = "posf10325"
 

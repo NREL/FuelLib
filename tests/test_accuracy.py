@@ -10,8 +10,8 @@ class CompTestCase(unittest.TestCase):
 
     def test_accuracy(self):
         """Does the PR impact the accuracy of single component fuel predictions?"""
-        fuellib_dir = os.path.dirname(__file__)
-        baseline_dir = os.path.join(fuellib_dir, "fuelData/baselinePredictions")
+        test_dir = os.path.dirname(__file__)
+        baseline_dir = os.path.join(test_dir, "baselinePredictions")
 
         # Set the percentage for variation in max error
         max_error_diff = 1e-6
