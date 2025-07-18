@@ -14,27 +14,26 @@ fuel_name = "posf10325"
 
 fuel = gcm.groupContribution(fuel_name)
 
-# Read gcxgc file
-gcxgcFile = os.path.join(fuel.gcxgcDir, f"{fuel.name}_init.csv")
-df = pd.read_csv(
-    gcxgcFile,
-)
+# Classify compounds into families
+aromatic = [
+    True if re.search(r"Toluene|Benzene|Aromatic", comp, re.IGNORECASE) else False
+    for comp in fuel.compounds
+]
+n_alkane = [
+    True if re.search(r"n-C", comp, re.IGNORECASE) else False for comp in fuel.compounds
+]
+isoalkane = [
+    True if re.search(r"Isoparaffin", comp, re.IGNORECASE) else False
+    for comp in fuel.compounds
+]
+cycloalkane = [
+    True if re.search(r"Cycloparaffin", comp, re.IGNORECASE) else False
+    for comp in fuel.compounds
+]
 
-# Get column names
-colNames = df.columns.tolist()
-
-# Classify rows based on the first column:
-# if df[colNames[0]] contains Toluene, Benzene or aromatic, then classify as aromatic
-aromatic = df[colNames[0]].str.contains(
-    "Toluene|Benzene|Aromatic", case=False, na=False
-)
-# if df[colNames[0]] contains n-C, then classify as n-alkane
-n_alkane = df[colNames[0]].str.contains("n-C", case=False, na=False)
-# if df[colNames[0]] contains isoparaffin, then classify as iso-alkane
-isoalkane = df[colNames[0]].str.contains("Isoparaffin", case=False, na=False)
-# if df[colNames[0]] contains cycloparaffin, then classify as cyclo-alkane
-cycloalkane = df[colNames[0]].str.contains("Cycloparaffin", case=False, na=False)
-
+# Create a DataFrame with the compounds and their families
+colNames = ["Compound", "Weight %"]
+df = pd.DataFrame({"Compounds": fuel.compounds, "Weight %": fuel.Y_0 * 100})
 # Append classification as a new column
 family_names = ["n-alkane", "iso-alkane", "cyclo-alkane", "aromatic"]
 df["Family"] = np.select(
@@ -70,10 +69,10 @@ def determine_carbon_number(compound):
 
 
 # Apply the function to the column and append as a new column
-df["nC"] = df[colNames[0]].apply(determine_carbon_number)
+df["nC"] = df.Compounds.apply(determine_carbon_number)
 
 # Remove rows <= 0.01 in weight % column at max(nC)
-df = df[df[colNames[1]] > 0.01]
+df = df[df["Weight %"] > 0.01]
 
 # Plotting parameters
 spacing = [-0.2985, -0.099, 0.099, 0.2985]
@@ -89,16 +88,16 @@ plt.figure(figsize=(7, 5))
 N = df.nC.unique()
 for k, family in enumerate(family_names):
     nC = df[df["Family"] == family].nC
-    weight = df[df["Family"] == family][colNames[1]]
+    weight = df[df["Family"] == family]["Weight %"]
 
     # check duplicate nC values
     if len(nC) != len(set(nC)):
         # If there are duplicates, sum the weights for each nC
         df_grouped = (
-            df[df["Family"] == family].groupby("nC")[colNames[1]].sum().reset_index()
+            df[df["Family"] == family].groupby("nC")["Weight %"].sum().reset_index()
         )
         nC = df_grouped["nC"]
-        weight = df_grouped[colNames[1]]
+        weight = df_grouped["Weight %"]
     plt.bar(
         nC + spacing[k], weight, label=family, alpha=1, color=colors[family], width=0.2
     )

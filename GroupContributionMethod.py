@@ -73,8 +73,9 @@ class groupContribution:
                 self.fam[i] = 3
 
         # Read initial liquid composition of mixture and normalize to get mass frac
-        df_gcxgc = pd.read_csv(gcxgcFile, usecols=[1])
-        self.Y_0 = df_gcxgc.to_numpy().flatten().astype(float)
+        df_gcxgc = pd.read_csv(gcxgcFile)
+        self.compounds = df_gcxgc.iloc[:, 0].to_list()
+        self.Y_0 = df_gcxgc.iloc[:, 1].to_numpy().flatten().astype(float)
         self.Y_0 /= np.sum(self.Y_0)
 
         # Make sure mixture data is consistent:

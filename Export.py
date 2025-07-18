@@ -1,7 +1,8 @@
 import pandas as pd
 import os
-import sys
+import argparse
 import GroupContributionMethod as gcm
+
 """
 Script that exports critical properties and initial mass and mole fraction data
 for use in Pele simulations.
@@ -10,9 +11,26 @@ Usage:
 python Export.py [fuel_name]
 """
 
-def export_4_pele(fuel, path="FuelLibProps", units="mks"):
+
+def vec_to_str(vec):
     """
-    Export fuel properties to .cpp and .H files for use in Pele.
+    Convert a list or numpy array to a string representation.
+
+    :param vec: List or numpy array to convert.
+    :return: String representation of the vector.
+    """
+
+    # If strings return string[0] string[1] ... string[n]
+    if isinstance(vec, list):
+        return " ".join(f"{v}" for v in vec)
+    # Else if numbers, format with spaces between no commas or []
+    elif isinstance(vec, (pd.Series, pd.DataFrame)):
+        return " ".join(f"{v}" for v in vec.values)
+
+
+def export_pele(fuel, path="SprayPropsGCM", units="mks"):
+    """
+    Export fuel properties to input file for Pele simulations.
 
     :param fuel: An instance of the groupContribution class.
     :type fuel: groupContribution object
@@ -23,95 +41,150 @@ def export_4_pele(fuel, path="FuelLibProps", units="mks"):
     :return: None
     :rtype: None
     """
-    
+
     if not os.path.exists(path):
         os.makedirs(path)
-    
 
-    # Terms for liquid specific heat capacity in (J/kg/K) or (erg/g/K)
-    Cp_stp = fuel.Cp_stp / fuel.MW  
-    Cp_B = fuel.Cp_B / fuel.MW  
-    Cp_C = fuel.Cp_C / fuel.MW  
+    # Names of the input file
+    file_name = os.path.join(path, "SprayPropsGCM.inp")
 
-    # Conversion factors:
+    # Unit conversion factors:
     if units.lower() == "cgs":
         # Convert from MKS to CGS
-        conv_MW = 1e3 # kg/mol to g/mol
-        conv_Cp = 1e7 # J/kg/K to erg/g/K
-        conv_Vm = 1e6 # m^3/mol to cm^3/mol
-        conv_Lv = 1e3 # J/kg to erg/g
-        conv_P  = 1e1 # Pa to dyne/cm^2
+        conv_MW = 1e3  # kg/mol to g/mol
+        conv_Cp = 1e7  # J/kg/K to erg/g/K
+        conv_Vm = 1e6  # m^3/mol to cm^3/mol
+        conv_Lv = 1e3  # J/kg to erg/g
+        conv_P = 1e1  # Pa to dyne/cm^2
     else:
-        conv_MW = 1e3 # kg/mol to g/mol
-        conv_Cp = 1.0 
-        conv_Vm = 1.0 
-        conv_Lv = 1.0 
-        conv_P  = 1.0
+        conv_MW = 1e3  # kg/mol to g/mol
+        conv_Cp = 1.0
+        conv_Vm = 1.0
+        conv_Lv = 1.0
+        conv_P = 1.0
 
-    df = pd.DataFrame({
-        "Compound": fuel.name,
-        "MW": fuel.MW * conv_MW, 
-        "Tc": fuel.Tc, 
-        "Pc": fuel.Pc * conv_P,
-        "Vc": fuel.Vc,
-        "Tb": fuel.Tb,
-        "omega": fuel.omega,
-        "Vm_stp": fuel.Vm_stp,
-        "Cp_stp": Cp_stp,
-        "Cp_B": Cp_B,
-        "Cp_C": Cp_C,
-        "Lv_stp": fuel.Lv_stp
-    })
-    
-    # Create .H and .cpp files for export
-    header_file = os.path.join(path, "FuelLibProps.H")
-    cpp_file = os.path.join(path, "FuelLibProps.cpp")
-    with open(header_file, 'w') as f:
-        f.write("#ifndef FUELLIBPROPS_H\n#define FUELLIBPROPS_H\n")
-        f.write("\n#include <AMReX_Gpu.H>\n#include <AMReX_REAL.H>\n")
-    with open(cpp_file, 'w') as f:
-        f.write("#include FuelLibProps.H\n")
-    
-    # Write compound names
-    
-    # Close files
-    with open(header_file, 'a') as f:
-        f.write("#endif // FUELLIBPROPS_H\n")
+    # Terms for liquid specific heat capacity in (J/kg/K) or (erg/g/K)
+    # Cp(T) = Cp_stp + Cp_B * theta + Cp_C * theta^2
+    # where theta = (T - 298.15) / 700
+    Cp_stp = fuel.Cp_stp / fuel.MW
+    Cp_B = fuel.Cp_B / fuel.MW
+    Cp_C = fuel.Cp_C / fuel.MW
+
+    # Dataframe of all properties with unit conversions to be exported
+    df = pd.DataFrame(
+        {
+            "Compound": fuel.compounds,
+            "Y_0": fuel.Y_0,
+            "MW": fuel.MW * conv_MW,
+            "Tc": fuel.Tc,
+            "Pc": fuel.Pc * conv_P,
+            "Vc": fuel.Vc * conv_Vm,
+            "Tb": fuel.Tb,
+            "omega": fuel.omega,
+            "Vm_stp": fuel.Vm_stp * conv_Vm,
+            "Cp_stp": Cp_stp * conv_Cp,
+            "Cp_B": Cp_B * conv_Cp,
+            "Cp_C": Cp_C * conv_Cp,
+            "Lv_stp": fuel.Lv_stp * conv_Lv,
+        }
+    )
+    # Get the proerty names
+    prop_names = df.columns[2:].tolist()
+
+    formatted_names = {
+        "MW": ("molar_weight", ["g/mol", "g/mol"]),
+        "Tc": ("crit_temp", ["K", "K"]),
+        "Pc": ("crit_press", ["Pa", "dyne/cm^2"]),
+        "Vc": ("crit_vol", ["m^3/mol", "cm^3/mol"]),
+        "Tb": ("boil_temp", ["K", "K"]),
+        "omega": ("acentric_factor", ["", ""]),
+        "Vm_stp": ("molar_vol", ["m^3/mol", "cm^3/mol"]),
+        "Cp_stp": ("cp", ["J/kg/K", "erg/g/K"]),
+        "Cp_B": ("cp_B", ["J/kg/K", "erg/g/K"]),
+        "Cp_C": ("cp_C", ["J/kg/K", "erg/g/K"]),
+        "Lv_stp": ("latent", ["J/kg", "erg/g"]),
+    }
+
+    # Write the properties to the input file
+    if os.path.exists(file_name):
+        os.remove(file_name)
+    with open(file_name, "a") as f:
+        f.write(f"particles.do_gcm = 1\n")
+        f.write(f"particles.spray_fuel_num = {len(fuel.compounds)}\n")
+        f.write(f"particles.fuel_species = {vec_to_str(df['Compound'].tolist())}\n")
+        f.write(f"particles.Y_0 = {vec_to_str(df['Y_0'].tolist())}\n")
+        if len(fuel.compounds) < 10:
+            f.write(f"particles.dep_fuel_names = {vec_to_str(fuel.compounds)}\n")
+        else:
+            # Assume all liquid species contribute to single gas species
+            f.write(f"particles.dep_fuel_names = {fuel.name.upper()}\n")
+
+        for comp_name in fuel.compounds:
+            f.write(f"\n# Properties for {comp_name} in {units.upper()}\n")
+            for prop in prop_names:
+                if prop in formatted_names:
+                    value = df.loc[df["Compound"] == comp_name, prop].values[0]
+                    prop_name, unit_txt = formatted_names[prop]
+                    if units.lower() == "cgs":
+                        unit_txt = unit_txt[1]
+                    else:
+                        unit_txt = unit_txt[0]
+                    f.write(
+                        f"particles.{comp_name}_{prop_name} = {value:.6f} # {unit_txt}\n"
+                    )
+
 
 def main():
     """
     Main function to execute the export process.
+    Usage:
+    python Export.py --fuel_name <fuel_name> [--export_dir <export_dir>]
     """
 
-    # For testing and debugging purposes, use a default fuel name
-    fuel_name = "posf10325"
+    # Set up argument parser
+    parser = argparse.ArgumentParser(
+        description="Export fuel properties for Pele simulations."
+    )
+    parser.add_argument(
+        "--fuel_name",
+        required=True,
+        help="Name of the fuel (mandatory).",
+    )
+    parser.add_argument(
+        "--export_dir",
+        default="SprayPropsGCM",
+        help="Directory to export the properties (optional, default: SprayPropsGCM).",
+    )
 
-    # Export directory given by second command line argument or default to "FuelLibProps"
-    export_dir = "FuelLibProps"
-    #if len(sys.argv) > 1:
-    #    fuel_name = sys.argv[1]
-    #    if len(sys.argv) > 2:
-    #        export_dir = sys.argv[2]
+    # Parse arguments
+    args = parser.parse_args()
+    fuel_name = args.fuel_name
+    export_dir = args.export_dir
 
-    #if len(sys.argv) > 1:
-    #fuel_name = sys.argv[1]
     # Check if necessary files exist in the fuelData directory
-    decomp_dir = os.path.join(gcm.groupContribution.fuelDataDir, "groupDecompositionData")
+    decomp_dir = os.path.join(
+        gcm.groupContribution.fuelDataDir, "groupDecompositionData"
+    )
     gcxgc_dir = os.path.join(gcm.groupContribution.fuelDataDir, "gcData")
     gcxgc_file = os.path.join(gcxgc_dir, f"{fuel_name}_init.csv")
     decomp_file = os.path.join(decomp_dir, f"{fuel_name}.csv")
     if not os.path.exists(gcxgc_file):
-        raise FileNotFoundError(f"GCXGC file for {fuel_name} not found in {gcxgc_dir}. gxcgc_file = {gcxgc_file}")
+        raise FileNotFoundError(
+            f"GCXGC file for {fuel_name} not found in {gcxgc_dir}. gxcgc_file = {gcxgc_file}"
+        )
     if not os.path.exists(decomp_file):
-        raise FileNotFoundError(f"Decomposition file for {fuel_name} not found in {decomp_dir}.")
-    #else: 
+        raise FileNotFoundError(
+            f"Decomposition file for {fuel_name} not found in {decomp_dir}."
+        )
+    # else:
     #    # Throw an error if no fuel name is provided
     #    raise ValueError("Please provide a fuel name as a command line argument.")
 
     fuel = gcm.groupContribution(fuel_name)
 
     # Export properties for Pele
-    export_4_pele(fuel, path=export_dir, units="mks")   
+    export_pele(fuel, path=export_dir, units="mks")
+
 
 if __name__ == "__main__":
     main()
