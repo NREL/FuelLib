@@ -28,16 +28,27 @@ def vec_to_str(vec):
         return " ".join(f"{v}" for v in vec.values)
 
 
-def export_pele(fuel, path="SprayPropsGCM", units="mks"):
+def export_pele(
+    fuel, path="SprayPropsGCM", units="mks", dep_fuel_names=None, max_dep_fuels=30
+):
     """
     Export fuel properties to input file for Pele simulations.
 
     :param fuel: An instance of the groupContribution class.
     :type fuel: groupContribution object
+
     :param path: Directory to save the CSV file.
     :type path: str, optional
+
     :param units: Units for the properties ("mks" for SI, "cgs" for CGS).
     :type units: str, optional
+
+    :param dep_fuel_names: List or single fuel that each compound deposits to.
+    :type dep_fuel_names: str, optional
+
+    :param max_dep_fuels: Maximum number of deposition fuels to consider.
+    :type max_dep_fuels: int, optional
+
     :return: None
     :rtype: None
     """
@@ -47,6 +58,23 @@ def export_pele(fuel, path="SprayPropsGCM", units="mks"):
 
     # Names of the input file
     file_name = os.path.join(path, "SprayPropsGCM.inp")
+
+    # If dep_fuel_names is not provided, use fuel.compounds
+    if dep_fuel_names is None:
+        if len(fuel.compounds) <= max_dep_fuels:
+            # If no deposition fuel names are provided, use the compounds as deposition fuels
+            dep_fuel_names = fuel.compounds
+        else:
+            # If more than max_dep_fuels, deposit all compoudns to fuel.name.upper()
+            # This assumes a POSF fuel with a single deposition fuel
+            dep_fuel_names = [fuel.name.upper()] * len(fuel.compounds)
+    elif len(dep_fuel_names) == 1:
+        # If a single deposition fuel name is provided, use it for all compounds
+        dep_fuel_names = [dep_fuel_names[0]] * len(fuel.compounds)
+    elif len(dep_fuel_names) != len(fuel.compounds):
+        raise ValueError(
+            "Length of dep_fuel_names must be one or match the number of compounds in the fuel."
+        )
 
     # Unit conversion factors:
     if units.lower() == "cgs":
@@ -97,7 +125,7 @@ def export_pele(fuel, path="SprayPropsGCM", units="mks"):
         "Pc": ("crit_press", ["Pa", "dyne/cm^2"]),
         "Vc": ("crit_vol", ["m^3/mol", "cm^3/mol"]),
         "Tb": ("boil_temp", ["K", "K"]),
-        "omega": ("acentric_factor", ["", ""]),
+        "omega": ("acentric_factor", ["-", "-"]),
         "Vm_stp": ("molar_vol", ["m^3/mol", "cm^3/mol"]),
         "Cp_stp": ("cp", ["J/kg/K", "erg/g/K"]),
         "Cp_B": ("cp_B", ["J/kg/K", "erg/g/K"]),
@@ -113,11 +141,7 @@ def export_pele(fuel, path="SprayPropsGCM", units="mks"):
         f.write(f"particles.spray_fuel_num = {len(fuel.compounds)}\n")
         f.write(f"particles.fuel_species = {vec_to_str(df['Compound'].tolist())}\n")
         f.write(f"particles.Y_0 = {vec_to_str(df['Y_0'].tolist())}\n")
-        if len(fuel.compounds) < 10:
-            f.write(f"particles.dep_fuel_names = {vec_to_str(fuel.compounds)}\n")
-        else:
-            # Assume all liquid species contribute to single gas species
-            f.write(f"particles.dep_fuel_names = {fuel.name.upper()}\n")
+        f.write(f"particles.dep_fuel_names = {vec_to_str(dep_fuel_names)}\n")
 
         for comp_name in fuel.compounds:
             f.write(f"\n# Properties for {comp_name} in {units.upper()}\n")
@@ -137,19 +161,69 @@ def export_pele(fuel, path="SprayPropsGCM", units="mks"):
 def main():
     """
     Main function to execute the export process.
+
     Usage:
-    python Export.py --fuel_name <fuel_name> [--export_dir <export_dir>]
+        python Export.py --fuel_name <fuel_name>
+                         [--units <units>]
+                         [--dep_fuel_names <dep_fuel_names>]
+                         [--max_dep_fuels <max_dep_fuels>]
+                         [--export_dir <export_dir>]
+
+    :param --fuel_name: Name of the fuel (mandatory).
+    :type --fuel_name: str
+
+    :param --units: Units for critical properties. Options are "mks" (default) or "cgs".
+    :type --units: str, optional
+
+    :param --dep_fuel_names: Space-separated list with len(fuel.compounds) or single fuel that all compounds deposit. Default is fuel.compounds.
+    :type --dep_fuel_names: str, optional
+
+    :param --max_dep_fuels: Maximum number of deposition fuels to consider. Default is 30.
+    :type --max_dep_fuels: int, optional
+
+    :param --export_dir: Directory to export the properties. Default is "SprayPropsGCM".
+    :type --export_dir: str, optional
+
+    :raises FileNotFoundError: If required files for the specified fuel are not found.
     """
 
     # Set up argument parser
     parser = argparse.ArgumentParser(
         description="Export fuel properties for Pele simulations."
     )
+
+    # Mandatory argument for fuel name
     parser.add_argument(
         "--fuel_name",
         required=True,
         help="Name of the fuel (mandatory).",
     )
+
+    # Optional argument for units
+    # Default is 'mks', but can be set to 'cgs'
+    parser.add_argument(
+        "--units",
+        default="mks",
+        help="Units for critical properties: mks or cgs (optional, default: mks).",
+    )
+
+    # Optional argument for deposition fuel names
+    parser.add_argument(
+        "--dep_fuel_names",
+        nargs="+",  # Accepts one or more values
+        default=None,
+        help="Space-separated list or single fuel that each compound deposits to (optional, default: fuel.compounds).",
+    )
+
+    # Optional argument for maximum number of deposition fuels
+    parser.add_argument(
+        "--max_dep_fuels",
+        type=int,
+        default=30,
+        help="Maximum number of deposition fuels to consider (optional, default: 30).",
+    )
+
+    # Optional argument for export directory
     parser.add_argument(
         "--export_dir",
         default="SprayPropsGCM",
@@ -159,6 +233,9 @@ def main():
     # Parse arguments
     args = parser.parse_args()
     fuel_name = args.fuel_name
+    units = args.units.lower()
+    dep_fuel_names = args.dep_fuel_names
+    max_dep_fuels = args.max_dep_fuels
     export_dir = args.export_dir
 
     # Check if necessary files exist in the fuelData directory
@@ -176,14 +253,18 @@ def main():
         raise FileNotFoundError(
             f"Decomposition file for {fuel_name} not found in {decomp_dir}."
         )
-    # else:
-    #    # Throw an error if no fuel name is provided
-    #    raise ValueError("Please provide a fuel name as a command line argument.")
 
+    # Create the groupContribution object for the specified fuel
     fuel = gcm.groupContribution(fuel_name)
 
     # Export properties for Pele
-    export_pele(fuel, path=export_dir, units="mks")
+    export_pele(
+        fuel,
+        path=export_dir,
+        units=units,
+        dep_fuel_names=dep_fuel_names,
+        max_dep_fuels=max_dep_fuels,
+    )
 
 
 if __name__ == "__main__":
