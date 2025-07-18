@@ -7,10 +7,18 @@ import GroupContributionMethod as gcm
 Script that exports critical properties and initial mass fraction data
 for use in Pele simulations.
 
-See main() for usage details.
 This script is designed to be run from the command line and will create
 a file named "SprayPropsGCM.inp" in the specified directory.
 The file contains properties for each compound in the fuel, formatted for Pele.
+
+Usage:
+    python Export.py --fuel_name <fuel_name>
+
+Options:
+        --units <units>
+        --dep_fuel_names <dep_fuel_names>
+        --max_dep_fuels <max_dep_fuels>
+        --export_dir <export_dir>
 """
 
 
@@ -39,7 +47,7 @@ def export_pele(
     :param fuel: An instance of the groupContribution class.
     :type fuel: groupContribution object
 
-    :param path: Directory to save the CSV file.
+    :param path: Directory to save the input file.
     :type path: str, optional
 
     :param units: Units for the properties ("mks" for SI, "cgs" for CGS).
@@ -163,13 +171,6 @@ def export_pele(
 def main():
     """
     Main function to execute the export process.
-
-    Usage:
-        python Export.py --fuel_name <fuel_name>
-                         [--units <units>]
-                         [--dep_fuel_names <dep_fuel_names>]
-                         [--max_dep_fuels <max_dep_fuels>]
-                         [--export_dir <export_dir>]
 
     :param --fuel_name: Name of the fuel (mandatory).
     :type --fuel_name: str

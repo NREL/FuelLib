@@ -3,7 +3,7 @@ Properties and Model Equations
 
 The **Fuel Library** for advanced research on evaporation **(FuelLib)** utilizes
 the group contribution method (GCM), as developed by Constantinou and 
-Gani\ :footcite:p:`constantinou_new_1994,constantinou_estimation_1995` in the mid-1990s, 
+Gani\ :footcite:p:`constantinou_new_1994` \ :footcite:p:`constantinou_estimation_1995` in the mid-1990s, 
 to provide a systematic approach for estimating the thermodynamic properties of
 pure organic compounds. The GCM decomposes molecules into structural groups, 
 each contributing to a target property based on predefined group values. 

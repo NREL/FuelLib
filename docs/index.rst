@@ -21,6 +21,7 @@ The source code is available at `github.com/NREL/FuelLib <https://github.com/NRE
    :caption: Contents:
 
    groupcontribution
+   export4pele
    sourcecode
 
 .. footbibliography::
