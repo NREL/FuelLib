@@ -4,11 +4,13 @@ import argparse
 import GroupContributionMethod as gcm
 
 """
-Script that exports critical properties and initial mass and mole fraction data
+Script that exports critical properties and initial mass fraction data
 for use in Pele simulations.
 
-Usage: 
-python Export.py [fuel_name]
+See main() for usage details.
+This script is designed to be run from the command line and will create
+a file named "SprayPropsGCM.inp" in the specified directory.
+The file contains properties for each compound in the fuel, formatted for Pele.
 """
 
 
@@ -85,7 +87,7 @@ def export_pele(
         conv_Lv = 1e3  # J/kg to erg/g
         conv_P = 1e1  # Pa to dyne/cm^2
     else:
-        conv_MW = 1e3  # kg/mol to g/mol
+        conv_MW = 1.0
         conv_Cp = 1.0
         conv_Vm = 1.0
         conv_Lv = 1.0
@@ -120,16 +122,16 @@ def export_pele(
     prop_names = df.columns[2:].tolist()
 
     formatted_names = {
-        "MW": ("molar_weight", ["g/mol", "g/mol"]),
+        "MW": ("molar_weight", ["kg/mol", "g/mol"]),
         "Tc": ("crit_temp", ["K", "K"]),
         "Pc": ("crit_press", ["Pa", "dyne/cm^2"]),
         "Vc": ("crit_vol", ["m^3/mol", "cm^3/mol"]),
         "Tb": ("boil_temp", ["K", "K"]),
         "omega": ("acentric_factor", ["-", "-"]),
         "Vm_stp": ("molar_vol", ["m^3/mol", "cm^3/mol"]),
-        "Cp_stp": ("cp", ["J/kg/K", "erg/g/K"]),
-        "Cp_B": ("cp_B", ["J/kg/K", "erg/g/K"]),
-        "Cp_C": ("cp_C", ["J/kg/K", "erg/g/K"]),
+        "Cp_stp": ("cp0", ["J/kg/K", "erg/g/K"]),
+        "Cp_B": ("cp1", ["J/kg/K", "erg/g/K"]),
+        "Cp_C": ("cp2", ["J/kg/K", "erg/g/K"]),
         "Lv_stp": ("latent", ["J/kg", "erg/g"]),
     }
 
