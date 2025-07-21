@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import os
 import argparse
 import GroupContributionMethod as gcm
@@ -127,7 +128,7 @@ def export_pele(
         }
     )
     # Get the proerty names
-    prop_names = df.columns[2:].tolist()
+    prop_names = ["MW", "Tc", "Pc", "Vc", "Tb", "omega", "Vm_stp", "Cp_stp", "Lv_stp"]
 
     formatted_names = {
         "MW": ("molar_weight", ["kg/mol", "g/mol"]),
@@ -137,9 +138,7 @@ def export_pele(
         "Tb": ("boil_temp", ["K", "K"]),
         "omega": ("acentric_factor", ["-", "-"]),
         "Vm_stp": ("molar_vol", ["m^3/mol", "cm^3/mol"]),
-        "Cp_stp": ("cp0", ["J/kg/K", "erg/g/K"]),
-        "Cp_B": ("cp1", ["J/kg/K", "erg/g/K"]),
-        "Cp_C": ("cp2", ["J/kg/K", "erg/g/K"]),
+        "Cp_stp": ("cp", ["J/kg/K", "erg/g/K"]),
         "Lv_stp": ("latent", ["J/kg", "erg/g"]),
     }
 
@@ -157,15 +156,27 @@ def export_pele(
             f.write(f"\n# Properties for {comp_name} in {units.upper()}\n")
             for prop in prop_names:
                 if prop in formatted_names:
-                    value = df.loc[df["Compound"] == comp_name, prop].values[0]
+                    if prop == "Cp_stp":
+                        value = np.array([df.loc[df["Compound"] == comp_name, prop].values[0],
+                                 df.loc[df["Compound"] == comp_name, "Cp_B"].values[0],
+                                 df.loc[df["Compound"] == comp_name, "Cp_C"].values[0]])
+                    else:
+                        value = df.loc[df["Compound"] == comp_name, prop].values[0]
                     prop_name, unit_txt = formatted_names[prop]
                     if units.lower() == "cgs":
                         unit_txt = unit_txt[1]
                     else:
                         unit_txt = unit_txt[0]
-                    f.write(
-                        f"particles.{comp_name}_{prop_name} = {value:.6f} # {unit_txt}\n"
+                    # Write the property to the file
+                    if prop == "Cp_stp":
+                        value = value.tolist()
+                        f.write(
+                        f"particles.{comp_name}_{prop_name} = {vec_to_str(value)} # {unit_txt}\n"
                     )
+                    else:
+                        f.write(
+                            f"particles.{comp_name}_{prop_name} = {value:.6f} # {unit_txt}\n"
+                        )
 
 
 def main():

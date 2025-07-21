@@ -18,7 +18,7 @@ the necessary properties for each compound in the fuel. The properties are forma
 - Boiling point
 - Accentric factor
 - Molar volume
-- Specif heat
+- Specific heat
 - Latent heat of vaporization
 
 .. warning::
@@ -51,9 +51,7 @@ This generates the following input file ``FuelLib/SprayPropsGCM/SprayPropsGCM.in
     particles.NC7H16_boil_temp = 379.073212 # K
     particles.NC7H16_acentric_factor = 0.336945 # -
     particles.NC7H16_molar_vol = 0.000146 # m^3/mol
-    particles.NC7H16_cp0 = 1636.255000 # J/kg/K
-    particles.NC7H16_cp1 = 3046.511000 # J/kg/K
-    particles.NC7H16_cp2 = -983.629000 # J/kg/K
+    particles.NC7H16_cp = 1636.255 3046.5109999999995 -983.6289999999999 # J/kg/K
     particles.NC7H16_latent = 383110.000000 # J/kg
 
     # Properties for NC10H22 in MKS
@@ -64,9 +62,7 @@ This generates the following input file ``FuelLib/SprayPropsGCM/SprayPropsGCM.in
     particles.NC10H22_boil_temp = 452.596977 # K
     particles.NC10H22_acentric_factor = 0.468050 # -
     particles.NC10H22_molar_vol = 0.000196 # m^3/mol
-    particles.NC10H22_cp0 = 1630.488028 # J/kg/K
-    particles.NC10H22_cp1 = 3098.105634 # J/kg/K
-    particles.NC10H22_cp2 = -1024.456338 # J/kg/K
+    particles.NC10H22_cp = 1630.488028169014 3098.1056338028166 -1024.456338028169 # J/kg/K
     particles.NC10H22_latent = 368035.211268 # J/kg
 
 To include these parameters in your Pele simulation, copy the ``SprayPropsGCM.inp`` 
