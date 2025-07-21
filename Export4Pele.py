@@ -157,9 +157,13 @@ def export_pele(
             for prop in prop_names:
                 if prop in formatted_names:
                     if prop == "Cp_stp":
-                        value = np.array([df.loc[df["Compound"] == comp_name, prop].values[0],
-                                 df.loc[df["Compound"] == comp_name, "Cp_B"].values[0],
-                                 df.loc[df["Compound"] == comp_name, "Cp_C"].values[0]])
+                        value = np.array(
+                            [
+                                df.loc[df["Compound"] == comp_name, prop].values[0],
+                                df.loc[df["Compound"] == comp_name, "Cp_B"].values[0],
+                                df.loc[df["Compound"] == comp_name, "Cp_C"].values[0],
+                            ]
+                        )
                     else:
                         value = df.loc[df["Compound"] == comp_name, prop].values[0]
                     prop_name, unit_txt = formatted_names[prop]
@@ -171,8 +175,8 @@ def export_pele(
                     if prop == "Cp_stp":
                         value = value.tolist()
                         f.write(
-                        f"particles.{comp_name}_{prop_name} = {vec_to_str(value)} # {unit_txt}\n"
-                    )
+                            f"particles.{comp_name}_{prop_name} = {vec_to_str(value)} # {unit_txt}\n"
+                        )
                     else:
                         f.write(
                             f"particles.{comp_name}_{prop_name} = {value:.6f} # {unit_txt}\n"
