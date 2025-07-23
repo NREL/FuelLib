@@ -146,7 +146,6 @@ def export_pele(
     if os.path.exists(file_name):
         os.remove(file_name)
     with open(file_name, "a") as f:
-        f.write(f"particles.do_gcm = 1\n")
         f.write(f"particles.spray_fuel_num = {len(fuel.compounds)}\n")
         f.write(f"particles.fuel_species = {vec_to_str(df['Compound'].tolist())}\n")
         f.write(f"particles.Y_0 = {vec_to_str(df['Y_0'].tolist())}\n")
