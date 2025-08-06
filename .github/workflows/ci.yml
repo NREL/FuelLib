@@ -38,7 +38,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install codespell
       - name: Run codespell
-        run: codespell --skip="*.bib,*.csv"
+        run: codespell --skip="*.bib,*.csv,*.pdf"
   
   AccuracyTest:
     runs-on: ubuntu-latest
