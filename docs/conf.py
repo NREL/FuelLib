@@ -34,6 +34,10 @@ source_suffix = ".rst"
 # The master toctree document.
 master_doc = "index"
 
+# The name of an image file (relative to this directory) to place at the top
+# of the sidebar.
+html_logo = "comms/FuelLibLogo_Blue.pdf"
+
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
