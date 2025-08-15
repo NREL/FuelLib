@@ -3,3 +3,5 @@
 *.dat
 __pycache__*
 _build*
+SprayPropsGCM*
+generated*

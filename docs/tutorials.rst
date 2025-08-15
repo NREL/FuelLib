@@ -1,5 +1,10 @@
+Tutorials
+=========
+
+This section provides tutorials on how to use the FuelLib library. 
+
 Exporting GCM Properties for Pele
-=================================
+---------------------------------
 
 The development of FuelLib was motivated by the need for more accurate liquid fuel
 property prediction in computational fluid dynamics (CFD) simulations. The fundamental GCM 
@@ -24,9 +29,7 @@ the necessary properties for each compound in the fuel. The properties are forma
 .. warning::
     The incorporation of the GCM in Pele is still under development and additional testing is required.
 
-Tutorial
---------
-This example walks throgh the process and the available options for exporting GCM properties of a fuel named 
+This example walks through the process and the available options for exporting GCM properties of a fuel named
 "heptane-decane", which is a binary mixture of heptane and decane, using the ``Export4Pele.py`` script.
 
 Default Options

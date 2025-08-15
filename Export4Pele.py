@@ -110,6 +110,7 @@ def export_pele(
     Cp_C = fuel.Cp_C / fuel.MW
 
     # Dataframe of all properties with unit conversions to be exported
+    print("\nCalculating GCM properties at standard conditions...")
     df = pd.DataFrame(
         {
             "Compound": fuel.compounds,
@@ -143,6 +144,7 @@ def export_pele(
     }
 
     # Write the properties to the input file
+    print(f"Writing properties to {file_name}...")
     if os.path.exists(file_name):
         os.remove(file_name)
     with open(file_name, "a") as f:
@@ -209,6 +211,7 @@ def main():
         description="Export fuel properties for Pele simulations."
     )
 
+
     # Mandatory argument for fuel name
     parser.add_argument(
         "--fuel_name",
@@ -255,7 +258,14 @@ def main():
     max_dep_fuels = args.max_dep_fuels
     export_dir = args.export_dir
 
+    # Print the parsed arguments
+    print(f"Preparing to export properties:")
+    print(f"    Fuel Name: {fuel_name}")
+    print(f"    Units: {units}")
+    print(f"    Export Directory: {export_dir}")
+
     # Check if necessary files exist in the fuelData directory
+    print("\nChecking for required files...")
     decomp_dir = os.path.join(
         gcm.groupContribution.fuelDataDir, "groupDecompositionData"
     )
@@ -270,6 +280,7 @@ def main():
         raise FileNotFoundError(
             f"Decomposition file for {fuel_name} not found in {decomp_dir}."
         )
+    print("All required files found.")
 
     # Create the groupContribution object for the specified fuel
     fuel = gcm.groupContribution(fuel_name)
@@ -282,6 +293,8 @@ def main():
         dep_fuel_names=dep_fuel_names,
         max_dep_fuels=max_dep_fuels,
     )
+
+    print("\nExport completed successfully!")
 
 
 if __name__ == "__main__":
