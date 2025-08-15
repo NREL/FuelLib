@@ -13,7 +13,7 @@ a file named "sprayPropsGCM.inp" in the specified directory.
 The file contains properties for each compound in the fuel, formatted for Pele.
 
 Usage:
-    python Export.py --fuel_name <fuel_name>
+    python Export4Pele.py --fuel_name <fuel_name>
 
 Options:
         --units <units>
@@ -260,9 +260,9 @@ def main():
 
     # Print the parsed arguments
     print(f"Preparing to export properties:")
-    print(f"    Fuel Name: {fuel_name}")
+    print(f"    Fuel name: {fuel_name}")
     print(f"    Units: {units}")
-    print(f"    Export Directory: {export_dir}")
+    print(f"    Export directory: {export_dir}")
 
     # Check if necessary files exist in the fuelData directory
     print("\nChecking for required files...")

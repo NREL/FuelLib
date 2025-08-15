@@ -49,12 +49,8 @@ def get_unit_for_column(col_name):
     return ""
 
 
-# droplet specs
-drop = {}
-drop["d_0"] = 100 * 1e-6  # initial droplet diameter (m), note: size doesn't matter
-drop["r_0"] = drop["d_0"] / 2.0  # initial droplet radius (m)
-drop["V_0"] = 4.0 / 3.0 * np.pi * drop["r_0"] ** 3  # initial droplet volume
-
+# Assume a droplet of fuel with radius 50 microns (r doesn't matter)
+drop_r = 50 * 1e-6  # initial droplet diameter (m)
 
 # Loop through each fuel and generate csv of baseline property predictions
 for fuel_name in fuel_names:
@@ -63,7 +59,7 @@ for fuel_name in fuel_names:
     df_combined = None
 
     for prop in prop_names:
-        T, data, pred = fxns.getPredAndData(drop, fuel_name, prop)
+        T, data, pred = fxns.getPredAndData(fuel_name, prop)
 
         # Create a dataframe for this property
         df_prop = pd.DataFrame(

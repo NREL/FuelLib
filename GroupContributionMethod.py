@@ -3,7 +3,6 @@ import numpy as np
 from scipy.optimize import curve_fit
 import os
 
-
 class groupContribution:
     """
     Class for handling group contribution calculations of thermodynamic and mixture properties.
@@ -182,7 +181,7 @@ class groupContribution:
     # -------------------------------------------------------------------------
     # Member functions
     # -------------------------------------------------------------------------
-    def mass_frac(self, mass):
+    def mass2Y(self, mass):
         """
         Calculate the mass fractions from the mass of each component.
 
@@ -200,7 +199,7 @@ class groupContribution:
 
         return Yi
 
-    def mole_frac(self, mass):
+    def mass2X(self, mass):
         """
         Calculate the mole fractions from the mass of each component.
 
@@ -216,6 +215,44 @@ class groupContribution:
         total_moles = np.sum(num_mole)
         if total_moles != 0:
             Xi = num_mole / total_moles
+        else:
+            Xi = np.zeros_like(self.MW)
+
+        return Xi
+
+    def X2Y(self, Xi):
+        """
+        Calculate the mass fractions from the mole fractions of each component.
+
+        :param Xi: Mole fractions of each compound.
+        :type Xi: np.ndarray
+        :return: Mass fractions of the compounds (shape: num_compounds,).
+        :rtype: np.ndarray
+        """
+        # Calculate the mass for each compound
+        mass = Xi * self.MW
+
+        # Normalize to get group mass fractions
+        total_mass = np.sum(mass)
+        if total_mass != 0:
+            Yi = mass / total_mass
+        else:
+            Yi = np.zeros_like(self.MW)
+
+        return Yi
+
+    def Y2X(self, Yi):
+        """
+        Calculate the mole fractions from the mass fractions of each component.
+
+        :param Yi: Mass fractions of each compound.
+        :type Yi: np.ndarray
+        :return: Mole fractions of the compounds (shape: num_compounds,).
+        :rtype: np.ndarray
+        """
+        if np.sum(Yi) != 0:
+            Mbar = 1 / np.sum(Yi / self.MW) # mean molar weight of the mixture
+            Xi = Mbar * Yi / self.MW
         else:
             Xi = np.zeros_like(self.MW)
 
@@ -580,14 +617,14 @@ class groupContribution:
 
         return rho
 
-    def mixture_kinematic_viscosity(self, mass, T, correlation="Kendall-Monroe"):
+    def mixture_kinematic_viscosity(self, Yi, T, correlation="Kendall-Monroe"):
         """
         Calculate kinematic viscosity of the mixture.
 
         :meta private: Uses Kendall-Monroe (default) or Arrhenius mixing correlations.
 
-        :param mass: Mass of each compound in the mixture.
-        :type mass: np.ndarray
+        :param Yi: Mass fractions of each compound.
+        :type Yi: np.ndarray
         :param T: Temperature in Kelvin.
         :type T: float
         :param correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
@@ -597,8 +634,8 @@ class groupContribution:
         """
         nu_i = self.viscosity_kinematic(T)  # Viscosities of individual components
 
-        # Calculate group mole fractions for each species
-        Xi = self.mole_frac(mass)
+        # Calculate mole fractions for each species
+        Xi = self.Y2X(Yi)
 
         if correlation.casefold() == "Arrhenius".casefold():
             # Arrhenius mixing correlation
@@ -609,12 +646,12 @@ class groupContribution:
 
         return nu
 
-    def mixture_dynamic_viscosity(self, mass, T, correlation="Kendall-Monroe"):
+    def mixture_dynamic_viscosity(self, Yi, T, correlation="Kendall-Monroe"):
         """
         Calculate dynamic viscosity of the mixture.
 
-        :param mass: Mass of each compound in the mixture.
-        :type mass: np.ndarray
+        :param Yi: Mass fractions of each compound.
+        :type Yi: np.ndarray
         :param T: Temperature in Kelvin.
         :type T: float
         :param correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
@@ -623,18 +660,17 @@ class groupContribution:
         :rtype: float
         """
 
-        nu = self.mixture_kinematic_viscosity(mass, T, correlation)
-        Yi = self.mass_frac(mass)
+        nu = self.mixture_kinematic_viscosity(Yi, T, correlation)
         rho = self.mixture_density(Yi, T)
 
         return rho * nu
 
-    def mixture_vapor_pressure(self, mass, T, correlation="Lee-Kesler"):
+    def mixture_vapor_pressure(self, Yi, T, correlation="Lee-Kesler"):
         """
         Calculate vapor pressure of the mixture.
 
-        :param mass: Mass of each compound in the mixture.
-        :type mass: np.ndarray
+        :param Yi: Mass fractions of each compound in the mixture.
+        :type Yi: np.ndarray
         :param T: Temperature in Kelvin.
         :type T: float
         :param correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
@@ -643,8 +679,8 @@ class groupContribution:
         :rtype: float
         """
 
-        # Group mole fraction for each compound
-        Xi = self.mole_frac(mass)
+        # Mole fraction for each compound
+        Xi = self.Y2X(Yi)
 
         # Saturated vapor pressure for each compound (Pa)
         p_sati = self.psat(T, correlation)
@@ -655,13 +691,13 @@ class groupContribution:
         return p_v
 
     def mixture_vapor_pressure_antoine_coeffs(
-        self, mass, Tvals, units="mks", correlation="Lee-Kesler"
+        self, Yi, Tvals, units="mks", correlation="Lee-Kesler"
     ):
         """
         Estimate Antoine coefficients for vapor pressure of the mixture.
 
-        :param mass: Mass of each compound in the mixture.
-        :type mass: np.ndarray
+        :param Yi: Mass fractions of each compound in the mixture.
+        :type Yi: np.ndarray
         :param Tvals: Temperature range or nodes for Antoine fit in Kelvin.
         :type Tvals: np.ndarray
         :param units: Units for pressure in fit ("mks", "cgs", "bar", "atm")
@@ -695,7 +731,7 @@ class groupContribution:
 
         Pvals = np.zeros_like(T)
         for k in range(len(T)):
-            Pvals[k] = self.mixture_vapor_pressure(mass, T[k]) * D
+            Pvals[k] = self.mixture_vapor_pressure(Yi, T[k]) * D
 
         logP = np.log10(Pvals)
         popt, _ = curve_fit(antoine_eq, T, logP, p0=[1, 1e3, -1])  # initial guess
@@ -703,14 +739,14 @@ class groupContribution:
 
         return A, B, C, D
 
-    def mixture_surface_tension(self, mass, T, correlation="Brock-Bird"):
+    def mixture_surface_tension(self, Yi, T, correlation="Brock-Bird"):
         """
         Calculate surface tension of the mixture.
 
         :meta private: Uses arithmetic pseudo-property method recommended by Hugill and van Welsenes (1986).
 
-        :param mass: Mass of each compound in the mixture.
-        :type mass: np.ndarray
+        :param Yi: Mass fractions of each compound in the mixture.
+        :type Yi: np.ndarray
         :param T: Temperature in Kelvin.
         :type T: float
         :param correlation: Correlation method ("Pitzer" or "Brock-Bird").
@@ -719,8 +755,8 @@ class groupContribution:
         :rtype: float
         """
 
-        # Group mole fraction for each compound
-        Xi = self.mole_frac(mass)
+        # Mole fraction for each compound
+        Xi = self.Y2X(Yi)
 
         # Surface tension for each compound (N/m)
         sti = self.surface_tension(T, correlation)
@@ -730,18 +766,17 @@ class groupContribution:
 
         return st
 
-    def mixture_thermal_conductivity(self, mass, T):
+    def mixture_thermal_conductivity(self, Yi, T):
         """
         Calculate thermal conductivity of the mixture.
 
-        :param mass: Mass of each compound in the mixture.
-        :type mass: np.ndarray
+        :param Yi: Mass fractions of each compound in the mixture.
+        :type Yi: np.ndarray
         :param T: Temperature in Kelvin.
         :type T: float
         :return: Thermal conductivity in W/m/K.
         :rtype: float
         """
-        Yi = self.mass_frac(mass)
         tc = self.thermal_conductivity(T)
         return np.sum(Yi * tc ** (-2)) ** (-0.5)
 
@@ -771,7 +806,6 @@ def K2C(T):
     :rtype: float or np.ndarray
     """
     return T - 273.15
-
 
 def mixing_rule(var_n, X, pseudo_prop="arithmetic"):
     """
@@ -812,7 +846,7 @@ def droplet_volume(r):
     return 4.0 / 3.0 * np.pi * r**3
 
 
-def drop_mass(fuel, r, Yi, T):
+def droplet_mass(fuel, r, Yi, T):
     """
     Calculate the mass of each compound in the fuel provided the radius of the droplet.
 
@@ -827,9 +861,8 @@ def drop_mass(fuel, r, Yi, T):
     :return: Mass of each compound in droplet in kg.
     :rtype: np.ndarray
     """
-    MW = fuel.MW  # kg/mol
     volume = droplet_volume(r)  # m^3
     if volume > 0:
         return volume / (fuel.molar_liquid_vol(T) @ Yi) * Yi * fuel.MW
     else:
-        return np.zeros_like(MW)
+        return np.zeros_like(fuel.MW)

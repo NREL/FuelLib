@@ -21,17 +21,14 @@ blends = np.linspace(0, 100, 100)  # Weight percentages of hefa in blend
 # Properties to plot
 prop_names = ["Density", "Viscosity"]
 
+# Assume a droplet of fuel with radius 50 microns (r doesn't matter)
+drop_r = 50 * 1e-6  # initial droplet diameter (m)
+
 # Plotting parameters
 fsize = 18
 ticksize = 18
 line_thickness = 4
 marker_size = 75
-
-# droplet specs
-drop = {}
-drop["d_0"] = 100 * 1e-6  # initial droplet diameter (m), note: size doesn't matter
-drop["r_0"] = drop["d_0"] / 2.0  # initial droplet radius (m)
-
 
 # Line specifications for plotting
 def linespecs(name):
@@ -84,22 +81,29 @@ def getPredAndData(fuel_name, prop_name, blend):
     # Vector for FuelLib predictions
     prop_pred = np.zeros_like(blend)
 
-    if prop_name == "Density":
-        for i in range(0, len(prop_pred)):
-            # initial liquid mass fractions
-            Y_li = blend[i] * fuel.Y_0 + (1 - blend[i]) * jetA.Y_0
+    for i in range(0, len(prop_pred)):
+        # Initial liquid mass fractions
+        Y_li = blend[i] * fuel.Y_0 + (1 - blend[i]) * jetA.Y_0
+        
+        # Correct for temperature 
+        mass = gcm.droplet_mass(fuel, drop_r, Y_li, T)
+        Y_li = fuel.mass2Y(mass)
+
+        if prop_name == "Density":
             # Mixture density (returns rho in kg/m^3)
             prop_pred[i] = fuel.mixture_density(Y_li, T)
             # Convert density to CGS (g/cm^3)
             prop_pred[i] *= 1.0e-03
 
-    if prop_name == "Viscosity":
-        for i in range(0, len(prop_pred)):
+        if prop_name == "Viscosity":
             # initial liquid mass fractions
             Y_li = blend[i] * fuel.Y_0 + (1 - blend[i]) * jetA.Y_0
-            # Mass of the droplet at current temp
-            mass = gcm.drop_mass(fuel, drop["r_0"], Y_li, T)
-            prop_pred[i] = fuel.mixture_kinematic_viscosity(mass, T)
+
+            # Correct for temperature 
+            mass = gcm.droplet_mass(fuel, drop_r, Y_li, T)
+            Y_li = fuel.mass2Y(mass)
+
+            prop_pred[i] = fuel.mixture_kinematic_viscosity(Y_li, T)
             # Convert viscosity to mm^2/s
             prop_pred[i] *= 1.0e06
 

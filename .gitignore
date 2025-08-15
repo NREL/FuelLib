@@ -3,5 +3,8 @@
 *.dat
 __pycache__*
 _build*
-sprayPropsGCM*
 generated*
+sprayPropsGCM*
+mixturePropsGCM*
+
+

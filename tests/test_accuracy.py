@@ -35,13 +35,6 @@ class CompTestCase(unittest.TestCase):
             "ThermalConductivity",
         ]
 
-        # droplet specs
-        drop = {}
-        drop["d_0"] = (
-            100 * 1e-6
-        )  # initial droplet diameter (m), note: size doesn't matter
-        drop["r_0"] = drop["d_0"] / 2.0  # initial droplet radius (m)
-
         # Compare to NIST predictions and previous model predictions
         for fuel_name in fuel_names:
 
@@ -59,7 +52,7 @@ class CompTestCase(unittest.TestCase):
                 sum_err_base += sum_err_base * max_error_diff
 
                 # Get predictions for current model
-                T, data, pred = fxns.getPredAndData(drop, fuel_name, prop)
+                T, data, pred = fxns.getPredAndData(fuel_name, prop)
                 err = np.abs(data - pred)
                 sum_err = np.sum(err)
 
