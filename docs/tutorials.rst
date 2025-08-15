@@ -12,7 +12,7 @@ properties can be exported for use in the spray module of the `PelePhysics <http
 for combustion simulations in the `PeleLMeX <https://github.com/AMReX-Combustion/PeleLMeX>`_ 
 flow solver\ :footcite:p:`henry_de_frahan_pele_2024` \ :footcite:p:`esclapez_pelelmex_2023`.
 
-The export script, ``Export4Pele.py``, generates an input file named ``SprayPropsGCM.inp`` containing 
+The export script, ``Export4Pele.py``, generates an input file named ``sprayPropsGCM.inp`` containing 
 the necessary properties for each compound in the fuel. The properties are formatted for use in Pele and includes:
 
 - Initial mass fraction
@@ -39,7 +39,7 @@ From the ``FuelLib`` directory, run the following command in the terminal, notin
     python Export4Pele.py --fuel_name heptane-decane
 
 
-This generates the following input file ``FuelLib/SprayPropsGCM/SprayPropsGCM.inp``: ::
+This generates the following input file ``FuelLib/sprayPropsGCM/sprayPropsGCM.inp``: ::
 
     particles.spray_fuel_num = 2
     particles.fuel_species = NC7H16 NC10H22
@@ -68,10 +68,10 @@ This generates the following input file ``FuelLib/SprayPropsGCM/SprayPropsGCM.in
     particles.NC10H22_cp = 1630.488028169014 3098.1056338028166 -1024.456338028169 # J/kg/K
     particles.NC10H22_latent = 368035.211268 # J/kg
 
-To include these parameters in your Pele simulation, copy the ``SprayPropsGCM.inp`` 
+To include these parameters in your Pele simulation, copy the ``sprayPropsGCM.inp`` 
 file to the specific case directory and include the following line in your Pele input file: ::
 
-    FILE = SprayPropsGCM.inp
+    FILE = sprayPropsGCM.inp
 
 
 Note: for liquid fuels from FuelLib with greater than 30 components, the script
@@ -100,7 +100,7 @@ There are four additional options that can be specified when running the export 
 - ``--units``: Specify the units for the properties. The default is "mks" but users can set the units to "cgs" for use in PeleC.
 - ``--dep_fuel_names``: Specify which gas-phase species the liquid fuel deposits. The default is the same as the fuel name, but users can specify a single gas-phase species or a list of gas-phase species.
 - ``--max_dep_fuels``: Specify the maximum number of dependent fuels. The default is 30 and is a bit arbitrary.
-- ``--export_dir``: Specify the directory to export the file. The default is "FuelLib/SprayPropsGCM".
+- ``--export_dir``: Specify the directory to export the file. The default is "FuelLib/sprayPropsGCM".
 
 To specify all liquid fuel species deposity to a single gas-phase species, run the following command: ::
 

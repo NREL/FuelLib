@@ -9,7 +9,7 @@ Script that exports critical properties and initial mass fraction data
 for use in Pele simulations.
 
 This script is designed to be run from the command line and will create
-a file named "SprayPropsGCM.inp" in the specified directory.
+a file named "sprayPropsGCM.inp" in the specified directory.
 The file contains properties for each compound in the fuel, formatted for Pele.
 
 Usage:
@@ -40,7 +40,7 @@ def vec_to_str(vec):
 
 
 def export_pele(
-    fuel, path="SprayPropsGCM", units="mks", dep_fuel_names=None, max_dep_fuels=30
+    fuel, path="sprayPropsGCM", units="mks", dep_fuel_names=None, max_dep_fuels=30
 ):
     """
     Export fuel properties to input file for Pele simulations.
@@ -68,7 +68,7 @@ def export_pele(
         os.makedirs(path)
 
     # Names of the input file
-    file_name = os.path.join(path, "SprayPropsGCM.inp")
+    file_name = os.path.join(path, "sprayPropsGCM.inp")
 
     # If dep_fuel_names is not provided, use fuel.compounds
     if dep_fuel_names is None:
@@ -200,7 +200,7 @@ def main():
     :param --max_dep_fuels: Maximum number of deposition fuels to consider. Default is 30.
     :type --max_dep_fuels: int, optional
 
-    :param --export_dir: Directory to export the properties. Default is "SprayPropsGCM".
+    :param --export_dir: Directory to export the properties. Default is "sprayPropsGCM".
     :type --export_dir: str, optional
 
     :raises FileNotFoundError: If required files for the specified fuel are not found.
@@ -246,8 +246,8 @@ def main():
     # Optional argument for export directory
     parser.add_argument(
         "--export_dir",
-        default="SprayPropsGCM",
-        help="Directory to export the properties (optional, default: SprayPropsGCM).",
+        default="sprayPropsGCM",
+        help="Directory to export the properties (optional, default: sprayPropsGCM).",
     )
 
     # Parse arguments
