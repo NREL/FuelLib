@@ -91,10 +91,10 @@ def export_pele(
     if units.lower() == "cgs":
         # Convert from MKS to CGS
         conv_MW = 1e3  # kg/mol to g/mol
-        conv_Cp = 1e7  # J/kg/K to erg/g/K
+        conv_Cp = 1e4  # J/kg/K to erg/g/K
         conv_Vm = 1e6  # m^3/mol to cm^3/mol
-        conv_Lv = 1e3  # J/kg to erg/g
-        conv_P = 1e1  # Pa to dyne/cm^2
+        conv_Lv = 1e4  # J/kg to erg/g
+        conv_P = 1e1   # Pa to dyne/cm^2
     else:
         conv_MW = 1.0
         conv_Cp = 1.0
