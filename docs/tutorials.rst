@@ -103,7 +103,7 @@ properties can be exported for use in the spray module of the `PelePhysics <http
 for combustion simulations in the `PeleLMeX <https://github.com/AMReX-Combustion/PeleLMeX>`_ 
 flow solver\ :footcite:p:`henry_de_frahan_pele_2024` \ :footcite:p:`esclapez_pelelmex_2023`.
 
-The export script, ``Export4Pele.py``, generates an input file named ``sprayPropsfl.inp`` containing 
+The export script, ``Export4Pele.py``, generates an input file named ``sprayPropsGCM_<fuel_name>.inp`` containing 
 the necessary properties for each compound in the fuel. The properties are formatted for use in Pele and includes:
 
 - Initial mass fraction
@@ -136,7 +136,7 @@ From the ``FuelLib`` directory, run the following command in the terminal, notin
     python Export4Pele.py --fuel_name heptane-decane
 
 
-This generates the following input file, ``FuelLib/sprayPropsGCM/sprayPropsfl.inp``, for use in a PeleLMeX simulation: ::
+This generates the following input file, ``FuelLib/sprayPropsGCM/sprayPropsGCM_heptane-decane.inp``, for use in a PeleLMeX simulation: ::
 
     particles.spray_fuel_num = 2
     particles.fuel_species = NC7H16 NC10H22
@@ -165,10 +165,10 @@ This generates the following input file, ``FuelLib/sprayPropsGCM/sprayPropsfl.in
     particles.NC10H22_cp = 1630.488028169014 3098.1056338028166 -1024.456338028169 # J/kg/K
     particles.NC10H22_latent = 368035.211268 # J/kg
 
-To include these parameters in your Pele simulation, copy the ``sprayPropsfl.inp`` 
+To include these parameters in your Pele simulation, copy the ``sprayPropsGCM.inp`` 
 file to the specific case directory and include the following line in your Pele input file: ::
 
-    FILE = sprayPropsfl.inp
+    FILE = sprayPropsGCM.inp
 
 
 Note: for liquid fuels from FuelLib with greater than 30 components, the script

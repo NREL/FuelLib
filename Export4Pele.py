@@ -9,7 +9,7 @@ Script that exports critical properties and initial mass fraction data
 for use in Pele simulations.
 
 This script is designed to be run from the command line and will create
-a file named "sprayPropsfl.inp" in the specified directory.
+a file named "sprayPropsGCM_<fuel_name>.inp" in the specified directory.
 The file contains properties for each compound in the fuel, formatted for Pele.
 
 Usage:
@@ -68,7 +68,7 @@ def export_pele(
         os.makedirs(path)
 
     # Names of the input file
-    file_name = os.path.join(path, "sprayPropsfl.inp")
+    file_name = os.path.join(path, f"sprayPropsGCM_{fuel.name}.inp")
 
     # If dep_fuel_names is not provided, use fuel.compounds
     if dep_fuel_names is None:
