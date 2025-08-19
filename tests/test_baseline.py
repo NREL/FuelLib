@@ -48,6 +48,7 @@ def get_unit_for_column(col_name):
             return prop_units[prop]
     return ""
 
+
 # Loop through each fuel and generate csv of baseline property predictions
 for fuel_name in fuel_names:
 

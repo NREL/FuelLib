@@ -8,7 +8,7 @@ conda create --name fuellib-env matplotlib pandas scipy black
 ~~~
 
 ## Running the code
-This repository includes multiple tutorials of ways to use FuelLib.  We recommend starting with `tutorials/mixtureProperties.py`, which calculates a given mixture's density, viscosity and vapor pressure from GC x GC data.  The results are plotted against data from NIST and [Edwards (2020)](https://apps.dtic.mil/sti/pdfs/AD1093317.pdf).
+This repository includes multiple tutorials of ways to use FuelLib.  We recommend starting with the basic tutorial, `tutorials/basic.py`, which is documented at [https://nrel.github.io/FuelLib/tutorials.html#introduction]. The script `tutorials/mixtureProperties.py` calculates a given mixture's density, viscosity and vapor pressure from GC x GC data.  The results are plotted against data from NIST and [Edwards (2020)](https://apps.dtic.mil/sti/pdfs/AD1093317.pdf). 
 
 # Contributing
 New contributions are always welcome.  If you have an idea for a new feature follow these steps:

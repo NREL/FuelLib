@@ -33,6 +33,7 @@ ticksize = 18
 line_thickness = 4
 marker_size = 75
 
+
 # Line specifications for plotting
 def linespecs(name):
     if (name == "decane") or (name == "posf10325"):
@@ -100,7 +101,7 @@ def getPredAndData(fuel_name, prop_name):
     pred = np.zeros_like(T_pred)
 
     for i in range(0, len(T_pred)):
-        Y_li = fuel.Y_0 
+        Y_li = fuel.Y_0
 
         if prop_name == "Density":
             # Mixture density (returns rho in kg/m^3)

@@ -15,6 +15,7 @@ FuelLib File Organization
     - ``compositionPlots.py``: example script that generates composition plots for a given fuel
     - ``hefaBlends.py``: example script that calculates properties of HEFA:Jet-A blends
     - ``mixtureProperties.py``: validation script that calculates properties of single component fuels and mixture properties of multicomponent fuels.
+- ``Export4Converge.py``: script that exports mixture properties over a range of user specified temperatures for use in Converge simulations.
 - ``Export4Pele.py``: script that exports critical properties and initial mass fraction data for use in Pele simulations.
 - **fuelData:** 
     - **gcData:** directory containing a collection of GCxGC compositional data by weight percentages

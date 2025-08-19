@@ -3,6 +3,7 @@ import numpy as np
 from scipy.optimize import curve_fit
 import os
 
+
 class groupContribution:
     """
     Class for handling group contribution calculations of thermodynamic and mixture properties.
@@ -251,7 +252,7 @@ class groupContribution:
         :rtype: np.ndarray
         """
         if np.sum(Yi) != 0:
-            Mbar = 1 / np.sum(Yi / self.MW) # mean molar weight of the mixture
+            Mbar = 1 / np.sum(Yi / self.MW)  # mean molar weight of the mixture
             Xi = Mbar * Yi / self.MW
         else:
             Xi = np.zeros_like(self.MW)
@@ -806,6 +807,7 @@ def K2C(T):
     :rtype: float or np.ndarray
     """
     return T - 273.15
+
 
 def mixing_rule(var_n, X, pseudo_prop="arithmetic"):
     """

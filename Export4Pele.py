@@ -94,7 +94,7 @@ def export_pele(
         conv_Cp = 1e4  # J/kg/K to erg/g/K
         conv_Vm = 1e6  # m^3/mol to cm^3/mol
         conv_Lv = 1e4  # J/kg to erg/g
-        conv_P = 1e1   # Pa to dyne/cm^2
+        conv_P = 1e1  # Pa to dyne/cm^2
     else:
         conv_MW = 1.0
         conv_Cp = 1.0
@@ -210,7 +210,6 @@ def main():
     parser = argparse.ArgumentParser(
         description="Export fuel properties for Pele simulations."
     )
-
 
     # Mandatory argument for fuel name
     parser.add_argument(

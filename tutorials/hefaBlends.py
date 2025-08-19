@@ -27,6 +27,7 @@ ticksize = 18
 line_thickness = 4
 marker_size = 75
 
+
 # Line specifications for plotting
 def linespecs(name):
     if "came" in name:
