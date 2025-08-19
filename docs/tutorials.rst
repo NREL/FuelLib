@@ -37,7 +37,7 @@ binary mixture of heptane and decane. The initial weight percentage composition 
 heptane and 26.25% decane, and the group decomposition data is provided in the
 `groupDecompositionData <https://github.com/NREL/FuelLib/tree/main/fuelData/groupDecompositionData>`_ directory.
 The following tutorial is included in the `FuelLib/tutorials <https://github.com/NREL/FuelLib/tree/main/tutorials>`_
-as `basic.py`. To begin, we will import the necessary modules and create a ``groupContribution`` object for the fuel "heptane-decane": 
+as ``basic.py``. To begin, we will import the necessary modules and create a ``groupContribution`` object for the two component fuel "heptane-decane": 
 
 .. code-block:: python
 
