@@ -143,7 +143,7 @@ provided :math:`T` in K unless noted otherwise.
 Kinematic viscosity
 ^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: GroupContributionMethod.groupContribution.viscosity_kinematic
+.. automethod:: FuelLib.groupContribution.viscosity_kinematic
    :noindex:
 
 The kinematic viscosity of the *i-th* compound of the fuel, 
@@ -166,7 +166,7 @@ Liquids\ :footcite:p:`viswanath_viscosity_2007`) provided :math:`T` in :math:`^{
 Latent heat of vaporization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: GroupContributionMethod.groupContribution.latent_heat_vaporization
+.. automethod:: FuelLib.groupContribution.latent_heat_vaporization
    :noindex:
 
 The latent heat of vaporization for each compound at standard pressure and 
@@ -185,7 +185,7 @@ temperature\ :footcite:p:`govindaraju_group_2016`:
 Liquid molar volume
 ^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: GroupContributionMethod.groupContribution.molar_liquid_vol
+.. automethod:: FuelLib.groupContribution.molar_liquid_vol
    :noindex:
 
 The liquid molar volume is calculated at a specific temperature :math:`T` using 
@@ -211,7 +211,7 @@ where
 Density
 ^^^^^^^
 
-.. automethod:: GroupContributionMethod.groupContribution.density
+.. automethod:: FuelLib.groupContribution.density
    :noindex:
 
 The density of the *i-th* compound is given by
@@ -223,7 +223,7 @@ The density of the *i-th* compound is given by
 Liquid specific heat capacity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: GroupContributionMethod.groupContribution.Cl
+.. automethod:: FuelLib.groupContribution.Cl
    :noindex:
 
 The liquid specific heat capacity for each compound at standard pressure temperature is calculated from the specific heat capacity as:
@@ -236,7 +236,7 @@ The liquid specific heat capacity for each compound at standard pressure tempera
 Saturated vapor pressure
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: GroupContributionMethod.groupContribution.psat
+.. automethod:: FuelLib.groupContribution.psat
    :noindex:
 
 The saturated vapor pressure for each compound is calculated as a function of 
@@ -275,7 +275,7 @@ with :math:`\tau_i = 1 - T_{r,i}`.
 Surface tension
 ^^^^^^^^^^^^^^^
 
-.. automethod:: GroupContributionMethod.groupContribution.surface_tension
+.. automethod:: FuelLib.groupContribution.surface_tension
    :noindex:
 
 Surface tension for each compound is approximated using the relation:
@@ -298,7 +298,7 @@ or by Curl and Pitzer\ :footcite:p:`poling_properties_2001` \ :footcite:p:`curl_
 Thermal conductivity
 ^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: GroupContributionMethod.groupContribution.thermal_conductivity
+.. automethod:: FuelLib.groupContribution.thermal_conductivity
    :noindex:
 
 Thermal conductivity for each compound is computed according to the method of 
@@ -385,7 +385,7 @@ are used throughout this section.
 Conventional mixing rules
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. autofunction:: GroupContributionMethod.mixing_rule
+.. autofunction:: FuelLib.mixing_rule
    :noindex:
 
 While many of the mixture properties in FuelLib have a unique mixing rule,
@@ -411,7 +411,7 @@ where :math:`Q_i` is the property of the *i-th* compound of the multicomponent m
 Mixture density
 ^^^^^^^^^^^^^^^
 
-.. automethod:: GroupContributionMethod.groupContribution.mixture_density
+.. automethod:: FuelLib.groupContribution.mixture_density
    :noindex:
 
 The mixture's density is calculated as:
@@ -424,7 +424,7 @@ The mixture's density is calculated as:
 Mixture kinematic viscosity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: GroupContributionMethod.groupContribution.mixture_kinematic_viscosity
+.. automethod:: FuelLib.groupContribution.mixture_kinematic_viscosity
    :noindex:
 
 The kinematic viscosity of the mixture is computed using the Kendall-Monroe\ :footcite:p:`kendall_viscosity_1917` 
@@ -449,7 +449,7 @@ The Arrhenius rule is:
 Mixture vapor pressure
 ^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: GroupContributionMethod.groupContribution.mixture_vapor_pressure
+.. automethod:: FuelLib.groupContribution.mixture_vapor_pressure
    :noindex:
 
 The vapor pressure of the mixture is calculated according to Raoult's law:
@@ -459,7 +459,7 @@ The vapor pressure of the mixture is calculated according to Raoult's law:
    p_{v} = \sum_{i = 1}^{N_c} X_i \, p_{\textit{sat},i}.
    \end{align*}
 
-.. automethod:: GroupContributionMethod.groupContribution.mixture_vapor_pressure_antoine_coeffs
+.. automethod:: FuelLib.groupContribution.mixture_vapor_pressure_antoine_coeffs
    :noindex:
 
 Users also have the option to return the coefficients from an Antoine fit based on 
@@ -479,7 +479,7 @@ for additional information.
 Mixture surface tension
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: GroupContributionMethod.groupContribution.mixture_surface_tension
+.. automethod:: FuelLib.groupContribution.mixture_surface_tension
    :noindex:
 
 The surface tension of the mixture is calculated using the :ref:`conventional-mixing-rules`
@@ -492,7 +492,7 @@ Hugill and van Welsenes\ :footcite:p:`hugill_surface_1986`:
 Mixture thermal conductivity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: GroupContributionMethod.groupContribution.mixture_thermal_conductivity
+.. automethod:: FuelLib.groupContribution.mixture_thermal_conductivity
    :noindex:
 
 The thermal conductivity of the mixture is calculated using the power law method of 

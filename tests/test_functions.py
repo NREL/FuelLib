@@ -6,15 +6,12 @@ import sys
 # Add the FuelLib directory to the Python path
 fuellib_dir = os.path.dirname(os.path.dirname(__file__))
 sys.path.append(fuellib_dir)
-import GroupContributionMethod as gcm
+import FuelLib as fl
 
 
 def getPredAndData(fuel_name, prop_name):
     # Get the fuel properties based on the GCM
-    fuel = gcm.groupContribution(fuel_name)
-
-    # Assume a droplet of fuel with radius 50 microns (r doesn't matter)
-    drop_r = 50 * 1e-6  # initial droplet diameter (m)
+    fuel = fl.groupContribution(fuel_name)
 
     data_file = f"{fuel_name}.csv"
     dataPath = os.path.join(fuel.fuelDataDir, "propertiesData")
@@ -28,12 +25,10 @@ def getPredAndData(fuel_name, prop_name):
     pred = np.zeros_like(T_data)
 
     # Vectors for temperature (convert from C to K)
-    T_pred = gcm.C2K(T_data)
+    T_pred = fl.C2K(T_data)
 
     for i in range(0, len(T_pred)):
-        # Correct droplet mass (GCxGC at standard temperature)
-        mass = gcm.droplet_mass(fuel, drop_r, fuel.Y_0, T_pred[i])
-        Y_li = fuel.mass2Y(mass)
+        Y_li = fuel.Y_0
 
         if prop_name == "Density":
             # Mixture density (returns rho in kg/m^3)

@@ -1,8 +1,9 @@
+from email.mime import base
 import pandas as pd
 import numpy as np
 import os
 import argparse
-import GroupContributionMethod as gcm
+import FuelLib as fl
 
 """
 Script that exports mixture properties over large temperature range for use in
@@ -84,6 +85,10 @@ def export_converge(
     nT = int((temp_max - temp_min) / temp_step) + 1
     T = np.linspace(temp_min, temp_max, nT)
 
+    # Round to nearest multiple of temp_step
+    def nearest_temp(x, base=temp_step):
+        return base * round(x/base)
+
     def nearest_floor(array, value):
         """
         Find the largest value in the array that is less than or equal to the given value.
@@ -104,9 +109,9 @@ def export_converge(
             raise ValueError(f"No temperature in the array is greater than or equal the freezing point {value}. Choose a higher temp_max")
 
     # Estimate freezing point and critical temp of mixture
-    T_freeze = gcm.mixing_rule(fuel.Tm, fuel.Y2X(fuel.Y_0))
-    T_crit = gcm.mixing_rule(fuel.Tc, fuel.Y2X(fuel.Y_0))
-    T_min_allowed = T_freeze
+    T_freeze = fl.mixing_rule(fuel.Tm, fuel.Y2X(fuel.Y_0))
+    T_crit = fl.mixing_rule(fuel.Tc, fuel.Y2X(fuel.Y_0))
+    T_min_allowed = nearest_temp(T_freeze)
     T_max_allowed = min(fuel.Tc)
 
     print(f"\nEstimated mixture freezing temp: {T_freeze:.2f} K")
@@ -141,7 +146,7 @@ def export_converge(
     thermal_conductivity = np.zeros_like(T)  # Thermal conductivity
 
     # Calculate GCM properties for a range of temperatures
-    print(f"\nCalculating properties over {len(T)} temperatures...")
+    print(f"\nCalculating properties over {len(T)} temperatures from {temp_min} K to {temp_max} K...")
     for k in range(len(T)):
         if T[k] <= T_min_allowed:
             Temp = T_min_allowed
@@ -151,7 +156,7 @@ def export_converge(
             Temp = T[k]
 
         # Correct droplet mass (GCxGC at standard temperature)
-        mass = gcm.droplet_mass(fuel, drop_r, fuel.Y_0, Temp)
+        mass = fl.droplet_mass(fuel, drop_r, fuel.Y_0, Temp)
         Y_li = fuel.mass2Y(mass)
         X_li = fuel.Y2X(Y_li)
 
@@ -163,8 +168,8 @@ def export_converge(
         thermal_conductivity[k] = fuel.mixture_thermal_conductivity(Y_li, Temp)
 
         # Generic mixing rules for latent heat and specific heat
-        Lv[k] = gcm.mixing_rule(fuel.latent_heat_vaporization(Temp), X_li) # J/kg
-        Cl[k] = gcm.mixing_rule(fuel.Cl(Temp), X_li) # J/kg/K
+        Lv[k] = fl.mixing_rule(fuel.latent_heat_vaporization(Temp), X_li) # J/kg
+        Cl[k] = fl.mixing_rule(fuel.Cl(Temp), X_li) # J/kg/K
 
     if units.lower() == "cgs":
         # Convert properties to CGS units
@@ -176,7 +181,7 @@ def export_converge(
                 "Surface Tension (dyne/cm)": surface_tension * conv_surfacetension,
                 "Heat of Vaporization (erg/g)": Lv * conv_Lv,
                 "Vapor Pressure (dyne/cm^2)": pv * conv_P,
-                "Density (g/cm-3)": rho * conv_rho,
+                "Density (g/cm^3)": rho * conv_rho,
                 "Specific Heat (erg/g/K)": Cl * conv_Cl,
                 "Thermal Conductivity (erg/cm/s/K)": thermal_conductivity * conv_thermcond
             }
@@ -191,7 +196,7 @@ def export_converge(
                 "Surface Tension (N/m)": surface_tension,
                 "Heat of Vaporization (J/kg)": Lv,
                 "Vapor Pressure (Pa)": pv,
-                "Density (kg/m-3)": rho,
+                "Density (kg/m^3)": rho,
                 "Specific Heat (J/kg/K)": Cl,
                 "Thermal Conductivity (W/m/K)": thermal_conductivity
             }
@@ -302,9 +307,9 @@ def main():
     # Check if necessary files exist in the fuelData directory
     print("\nChecking for required files...")
     decomp_dir = os.path.join(
-        gcm.groupContribution.fuelDataDir, "groupDecompositionData"
+        fl.groupContribution.fuelDataDir, "groupDecompositionData"
     )
-    gcxgc_dir = os.path.join(gcm.groupContribution.fuelDataDir, "gcData")
+    gcxgc_dir = os.path.join(fl.groupContribution.fuelDataDir, "gcData")
     gcxgc_file = os.path.join(gcxgc_dir, f"{fuel_name}_init.csv")
     decomp_file = os.path.join(decomp_dir, f"{fuel_name}.csv")
     if not os.path.exists(gcxgc_file):
@@ -318,7 +323,7 @@ def main():
     print("All required files found.")
 
     # Create the groupContribution object for the specified fuel
-    fuel = gcm.groupContribution(fuel_name)
+    fuel = fl.groupContribution(fuel_name)
 
     # Export properties for Pele
     export_converge(

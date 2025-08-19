@@ -8,11 +8,11 @@ import sys
 # Add the FuelLib directory to the Python path
 fuellib_dir = os.path.dirname(os.path.dirname(__file__))
 sys.path.append(fuellib_dir)
-import GroupContributionMethod as gcm
+import FuelLib as fl
 
 fuel_name = "posf10325"
 
-fuel = gcm.groupContribution(fuel_name)
+fuel = fl.groupContribution(fuel_name)
 
 # Classify compounds into families
 aromatic = [

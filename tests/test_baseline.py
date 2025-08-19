@@ -12,7 +12,7 @@ import sys
 # Add the FuelLib directory to the Python path
 fuellib_dir = os.path.dirname(os.path.dirname(__file__))
 sys.path.append(fuellib_dir)
-import GroupContributionMethod as gcm
+import FuelLib as fl
 
 # Directories for tests and baseline predictions
 test_dir = os.path.dirname(__file__)
@@ -47,10 +47,6 @@ def get_unit_for_column(col_name):
         if prop in col_name:
             return prop_units[prop]
     return ""
-
-
-# Assume a droplet of fuel with radius 50 microns (r doesn't matter)
-drop_r = 50 * 1e-6  # initial droplet diameter (m)
 
 # Loop through each fuel and generate csv of baseline property predictions
 for fuel_name in fuel_names:

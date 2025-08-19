@@ -11,6 +11,7 @@ FuelLib File Organization
 - **docs:** directory containing the documentation source files
 - **tutorials:** directory containing example scripts that demonstrate how to use FuelLib
 
+    - ``basic.py``: example script that demonstrates basic usage of FuelLib
     - ``compositionPlots.py``: example script that generates composition plots for a given fuel
     - ``hefaBlends.py``: example script that calculates properties of HEFA:Jet-A blends
     - ``mixtureProperties.py``: validation script that calculates properties of single component fuels and mixture properties of multicomponent fuels.
@@ -20,7 +21,7 @@ FuelLib File Organization
     - **groupDecompositionData:** directory containing a collection of functional group decompositions
     - **propertiesData:** directory containing measurement or predicted data for validation (see *fuelData/dataReferences.md*)
 - **gcmTableData:** directory that contains the pre-tabulated group contributions
-- ``GroupContributionMethod.py``: class for enabling GCM predictions
+- ``FuelLib.py``: class for enabling GCM predictions
 - **tests:**  directory containing CI unit tests for FuelLib. The CI test checks if the cumulative error of property predictions of a new proposed model are less than or equal to the current model.
     
     - **baselinePredictions:** directory that contains baseline predictions
@@ -36,5 +37,6 @@ Click on links below for the full auto-documentation.
 .. autosummary::
     :toctree: generated
 
-    GroupContributionMethod
+    FuelLib
     Export4Pele
+    Export4Converge

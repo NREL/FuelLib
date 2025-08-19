@@ -2,14 +2,14 @@ import pandas as pd
 import numpy as np
 import os
 import argparse
-import GroupContributionMethod as gcm
+import FuelLib as fl
 
 """
 Script that exports critical properties and initial mass fraction data
 for use in Pele simulations.
 
 This script is designed to be run from the command line and will create
-a file named "sprayPropsGCM.inp" in the specified directory.
+a file named "sprayPropsfl.inp" in the specified directory.
 The file contains properties for each compound in the fuel, formatted for Pele.
 
 Usage:
@@ -68,7 +68,7 @@ def export_pele(
         os.makedirs(path)
 
     # Names of the input file
-    file_name = os.path.join(path, "sprayPropsGCM.inp")
+    file_name = os.path.join(path, "sprayPropsfl.inp")
 
     # If dep_fuel_names is not provided, use fuel.compounds
     if dep_fuel_names is None:
@@ -267,9 +267,9 @@ def main():
     # Check if necessary files exist in the fuelData directory
     print("\nChecking for required files...")
     decomp_dir = os.path.join(
-        gcm.groupContribution.fuelDataDir, "groupDecompositionData"
+        fl.groupContribution.fuelDataDir, "groupDecompositionData"
     )
-    gcxgc_dir = os.path.join(gcm.groupContribution.fuelDataDir, "gcData")
+    gcxgc_dir = os.path.join(fl.groupContribution.fuelDataDir, "gcData")
     gcxgc_file = os.path.join(gcxgc_dir, f"{fuel_name}_init.csv")
     decomp_file = os.path.join(decomp_dir, f"{fuel_name}.csv")
     if not os.path.exists(gcxgc_file):
@@ -283,7 +283,7 @@ def main():
     print("All required files found.")
 
     # Create the groupContribution object for the specified fuel
-    fuel = gcm.groupContribution(fuel_name)
+    fuel = fl.groupContribution(fuel_name)
 
     # Export properties for Pele
     export_pele(

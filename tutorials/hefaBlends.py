@@ -7,7 +7,7 @@ import sys
 # Add the FuelLib directory to the Python path
 fuellib_dir = os.path.dirname(os.path.dirname(__file__))
 sys.path.append(fuellib_dir)
-import GroupContributionMethod as gcm
+import FuelLib as fl
 
 # -----------------------------------------------------------------------------
 # Calculate mixture properties from the group contribution properties
@@ -20,9 +20,6 @@ blends = np.linspace(0, 100, 100)  # Weight percentages of hefa in blend
 
 # Properties to plot
 prop_names = ["Density", "Viscosity"]
-
-# Assume a droplet of fuel with radius 50 microns (r doesn't matter)
-drop_r = 50 * 1e-6  # initial droplet diameter (m)
 
 # Plotting parameters
 fsize = 18
@@ -62,8 +59,8 @@ def getPredAndData(fuel_name, prop_name, blend):
     blend = np.array(blend) * 1e-2  # Convert to weight percent
 
     # Get the fuel properties based on the GCM
-    fuel = gcm.groupContribution(fuel_name, "hefa")
-    jetA = gcm.groupContribution(conv_fuel_name)
+    fuel = fl.groupContribution(fuel_name, "hefa")
+    jetA = fl.groupContribution(conv_fuel_name)
 
     data_file = "hefa-jet-a-blends.csv"
     dataPath = os.path.join(fuel.fuelDataDir, "propertiesData")
@@ -74,9 +71,9 @@ def getPredAndData(fuel_name, prop_name, blend):
 
     # Separate properties and associated temperatures from data
     if prop_name == "Density":
-        T = gcm.C2K(15)
+        T = fl.C2K(15)
     elif prop_name == "Viscosity":
-        T = gcm.C2K(-20)
+        T = fl.C2K(-20)
 
     # Vector for FuelLib predictions
     prop_pred = np.zeros_like(blend)
@@ -84,10 +81,6 @@ def getPredAndData(fuel_name, prop_name, blend):
     for i in range(0, len(prop_pred)):
         # Initial liquid mass fractions
         Y_li = blend[i] * fuel.Y_0 + (1 - blend[i]) * jetA.Y_0
-        
-        # Correct for temperature 
-        mass = gcm.droplet_mass(fuel, drop_r, Y_li, T)
-        Y_li = fuel.mass2Y(mass)
 
         if prop_name == "Density":
             # Mixture density (returns rho in kg/m^3)
@@ -98,10 +91,6 @@ def getPredAndData(fuel_name, prop_name, blend):
         if prop_name == "Viscosity":
             # initial liquid mass fractions
             Y_li = blend[i] * fuel.Y_0 + (1 - blend[i]) * jetA.Y_0
-
-            # Correct for temperature 
-            mass = gcm.droplet_mass(fuel, drop_r, Y_li, T)
-            Y_li = fuel.mass2Y(mass)
 
             prop_pred[i] = fuel.mixture_kinematic_viscosity(Y_li, T)
             # Convert viscosity to mm^2/s
@@ -153,7 +142,7 @@ for i in range(len(prop_names)):
     # Add labels and adjust ticks
     ax[i].set_xlabel("HEFA Concentration [wt %]", fontsize=fsize)
     ax[i].set_xticks([0, 20, 40, 60, 80, 100])
-    ax[i].set_ylabel(ylab(prop_names[i], gcm.K2C(T)), fontsize=fsize)
+    ax[i].set_ylabel(ylab(prop_names[i], fl.K2C(T)), fontsize=fsize)
     ax[i].tick_params(labelsize=ticksize)
 
 handles, labels = ax[0].get_legend_handles_labels()
