@@ -1,13 +1,20 @@
 # FuelLib
 FuelLib (SWR-25-26) utilizes the tables and functions of the Group Contribution Method (GCM) as proposed by [Constantinou and Gani (1994)](https://doi.org/10.1002/aic.690401011) and [Constantinou, Gani and O'Connel (1995)](https://doi.org/10.1016/0378-3812(94)02593-P), with additional physical properties discussed in [Govindaraju & Ihme (2016)](https://doi.org/10.1016/j.ijheatmasstransfer.2016.06.079).  The code is based on Pavan B. Govindaraju's [Matlab implementation](https://github.com/gpavanb-old/GroupContribution) of the GCM, and has been expanded to include additional thermodynamic properties and mixture properties.  The fuel library contains gas chromatography (GC x GC) data for a variety of fuels ranging from simple single component fuels to complex jet fuels.  The GC x GC data for POSF jet fuels comes from [Edwards (2020)](https://apps.dtic.mil/sti/pdfs/AD1093317.pdf).  
 
+## Citing this Work
+If you use FuelLib in your research, please cite the following software record:
+
+~~~
+Montgomery, David, Appukuttan, Sreejith, Yellapantula, Shashank, Perry, Bruce, and Binswanger, Adam. FuelLib (Fuel Library) [SWR-25-26]. Computer Software. https://github.com/NREL/FuelLib. USDOE Office of Energy Efficiency and Renewable Energy (EERE), Office of Sustainable Transportation. Vehicle Technologies Office (VTO). 27 Feb. 2025. Web. doi:10.11578/dc.20250317.1.
+~~~
+
 ## Python Environment
 The following conda environment is required to run this code:
 ~~~
 conda create --name fuellib-env matplotlib pandas scipy black 
 ~~~
 
-## Running the code
+## Running the Code
 This repository includes multiple tutorials of ways to use FuelLib.  We recommend starting with the basic tutorial, `tutorials/basic.py`, which is documented at [https://nrel.github.io/FuelLib/tutorials.html#introduction]. The script `tutorials/mixtureProperties.py` calculates a given mixture's density, viscosity and vapor pressure from GC x GC data.  The results are plotted against data from NIST and [Edwards (2020)](https://apps.dtic.mil/sti/pdfs/AD1093317.pdf). 
 
 # Contributing
@@ -33,3 +40,4 @@ cd FuelLib/docs/
 sphinx-build -M html . _build/
 ~~~
 You should now be able to view the html by opening `FuelLib/docs/_build/html/index.html` in a web browser. 
+
