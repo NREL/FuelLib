@@ -128,7 +128,7 @@ def export_pele(
             "Lv_stp": fuel.Lv_stp * conv_Lv,
         }
     )
-    # Get the proerty names
+    # Get the property names
     prop_names = ["MW", "Tc", "Pc", "Vc", "Tb", "omega", "Vm_stp", "Cp_stp", "Lv_stp"]
 
     formatted_names = {

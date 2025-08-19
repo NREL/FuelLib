@@ -53,7 +53,7 @@ as ``basic.py``. To begin, we will import the necessary modules and create a ``g
     # Create a groupContribution object for the fuel "heptane-decane"
     fuel = fl.groupContribution("heptane-decane")
 
-Upon intitialization, the ``groupContribution`` object will read the initial weight 
+Upon initialization, the ``groupContribution`` object will read the initial weight 
 percentage composition and group decomposition data from the specified files. The object stores
 vectors of the calculated fundamental properties at standard conditions for each component of the fuel as described in :ref:`eq-GCM-properties`. 
 For example, we can display the fuel name, the components in the fuel, the initial composition, and the critical temperature for each component: 
@@ -174,7 +174,7 @@ file to the specific case directory and include the following line in your Pele 
 Note: for liquid fuels from FuelLib with greater than 30 components, the script
 will assume that all liquid fuel species deposit to the same gas-phase species, 
 namely the name of the fuel. This is designed for conventional jet fuels such as POSF10325, where there are 
-67 liquid fuel species correpsonding to the GCxGC data, but only a single 
+67 liquid fuel species corresponding to the GCxGC data, but only a single 
 gas-phase mechanism species, "POSF10325". For example: ::
 
     python Export4Pele.py --fuel_name posf10325
@@ -252,7 +252,7 @@ mixture property predictions for a given fuel over a specified temperature range
 - Thermal conductivity
 
 .. warning::
-    Mixture properties for critical temperature, latent heat, and specifc heat are provided by :ref:`conventional-mixing-rules` and need additional validation.
+    Mixture properties for critical temperature, latent heat, and specific heat are provided by :ref:`conventional-mixing-rules` and need additional validation.
 
 This example walks through the process and the available options for exporting GCM-based mixture properties for 
 "posf10325", which is conventional Jet-A, using the ``Export4Converge.py`` script.
