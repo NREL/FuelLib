@@ -71,7 +71,6 @@ def export_pele(fuel, path, units, dep_fuel_names, max_dep_fuels):
 
     if not os.path.exists(path):
         os.makedirs(path)
-    print(f"path = {path}")
 
     # Names of the input file
     file_name = os.path.join(path, f"sprayPropsGCM_{fuel.name}.inp")
