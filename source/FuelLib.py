@@ -40,7 +40,9 @@ class fuel:
         if fuelDataDir != FUELDATA_DIR:
             self.fuelDataDir = fuelDataDir
             self.fuelDataGcDir = os.path.join(self.fuelDataDir, "gcData")
-            self.fuelDataDecompDir = os.path.join(self.fuelDataDir, "groupDecompositionData")
+            self.fuelDataDecompDir = os.path.join(
+                self.fuelDataDir, "groupDecompositionData"
+            )
         else:
             self.fuelDataDir = FUELDATA_DIR
             self.fuelDataGcDir = FUELDATA_GC_DIR
