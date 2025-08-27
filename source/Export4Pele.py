@@ -46,7 +46,13 @@ def vec_to_str(vec):
         return " ".join(f"{v}" for v in vec.values)
 
 
-def export_pele(fuel, path=os.path.join(FUELLIB_DIR, "exportData"), units="mks", dep_fuel_names=None, max_dep_fuels=30):
+def export_pele(
+    fuel,
+    path=os.path.join(FUELLIB_DIR, "exportData"),
+    units="mks",
+    dep_fuel_names=None,
+    max_dep_fuels=30,
+):
     """
     Export fuel properties to input file for Pele simulations.
 

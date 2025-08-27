@@ -31,7 +31,14 @@ Options:
 """
 
 
-def export_converge(fuel, path=os.path.join(FUELLIB_DIR, "exportData"), units="mks", temp_min=0, temp_max=1000, temp_step=10):
+def export_converge(
+    fuel,
+    path=os.path.join(FUELLIB_DIR, "exportData"),
+    units="mks",
+    temp_min=0,
+    temp_max=1000,
+    temp_step=10,
+):
     """
     Export mixture fuel properties to .csv for Converge simulations.
 
@@ -345,7 +352,14 @@ def main():
     fuel = fl.fuel(fuel_name)
 
     # Export properties for Pele
-    export_converge(fuel, path=export_dir, units=units, temp_min=temp_min, temp_max=temp_max, temp_step=temp_step)
+    export_converge(
+        fuel,
+        path=export_dir,
+        units=units,
+        temp_min=temp_min,
+        temp_max=temp_max,
+        temp_step=temp_step,
+    )
 
     print("\nExport completed successfully!")
 
