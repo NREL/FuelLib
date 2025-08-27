@@ -1,17 +1,20 @@
+import os
+import sys
 import numpy as np
 import pandas as pd
-import os
 import test_functions as fxns
 
 """
 Script for calculating baseline FuelLib mixture property predictions for CI testing
 Use this to update threshold values in CI test as model improves
 """
-import sys
+
 
 # Add the FuelLib directory to the Python path
-fuellib_dir = os.path.dirname(os.path.dirname(__file__))
-sys.path.append(fuellib_dir)
+FUELLIB_DIR = os.path.dirname(os.path.dirname(__file__))
+if FUELLIB_DIR not in sys.path:
+    sys.path.append(FUELLIB_DIR)
+from paths import *
 import FuelLib as fl
 
 # Directories for tests and baseline predictions

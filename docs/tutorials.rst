@@ -15,9 +15,9 @@ Create and activate a Conda environment, install the required dependencies: ::
     conda create --name fuellib-env matplotlib pandas scipy
     conda activate fuellib-env
 
-Change to the FuelLib directory: ::
+Change to the FuelLib/tutorials directory: ::
 
-    cd FuelLib
+    cd FuelLib/tutorials
 
 Required Input files
 ^^^^^^^^^^^^^^^^^^^^^
@@ -43,17 +43,17 @@ as ``basic.py``. To begin, we will import the necessary modules and create a ``g
 
     import os
     import sys
-    import numpy as np
 
     # Add the FuelLib directory to the Python path
-    fuellib_dir = os.path.dirname(os.path.dirname(__file__))
-    sys.path.append(fuellib_dir)
+    FUELLIB_DIR = os.path.dirname(os.path.dirname(__file__))
+    sys.path.append(FUELLIB_DIR)
+    import paths
     import FuelLib as fl
 
-    # Create a groupContribution object for the fuel "heptane-decane"
-    fuel = fl.groupContribution("heptane-decane")
+    # Create a fuel object for the fuel "heptane-decane"
+    fuel = fl.fuel("heptane-decane")
 
-Upon initialization, the ``groupContribution`` object will read the initial weight 
+Upon initialization, the ``fuel`` object will read the initial weight 
 percentage composition and group decomposition data from the specified files. The object stores
 vectors of the calculated fundamental properties at standard conditions for each component of the fuel as described in :ref:`eq-GCM-properties`. 
 For example, we can display the fuel name, the components in the fuel, the initial composition, and the critical temperature for each component: 
@@ -68,10 +68,10 @@ For example, we can display the fuel name, the components in the fuel, the initi
 
 .. code-block:: none
 
-    Fuel name: heptane-decane
-    Fuel components: ['NC7H16', 'NC10H22']
-    Initial composition: [0.7375 0.2625]
-    Critical temperature: [549.85598051 623.69051582] K
+    >> Fuel name: heptane-decane
+    >> Fuel components: ['NC7H16', 'NC10H22']
+    >> Initial composition: [0.7375 0.2625]
+    >> Critical temperature: [549.85598051 623.69051582] K
 
 Next, we can calculate any of the component- or mixture-level properties using the 
 ``groupContribution`` object. For example, we can calculate the saturated vapor pressure
@@ -88,8 +88,8 @@ for each component and the mixture at a given temperature:
 
 .. code-block:: none
 
-    Saturated vapor pressure at 320 K: [13735.84605413   673.28876023] Pa
-    Mixture saturated vapor pressure at 320 K: 11117.84926875165 Pa
+    >> Saturated vapor pressure at 320 K: [13735.84605413   673.28876023] Pa
+    >> Mixture saturated vapor pressure at 320 K: 11117.84926875165 Pa
 
 The following links provide more information on the :ref:`eq-GCM-correlations` and
 the :ref:`eq-mixture-properties` that can be calculated using the ``groupContribution`` object.
@@ -133,10 +133,19 @@ Default Options
     
 From the ``FuelLib`` directory, run the following command in the terminal, noting that ``--fuel_name`` is the only required input: ::
     
+    cd FuelLib/source
     python Export4Pele.py --fuel_name heptane-decane
 
 
-This generates the following input file, ``FuelLib/sprayPropsGCM/sprayPropsGCM_heptane-decane.inp``, for use in a PeleLMeX simulation: ::
+This generates the following input file, ``FuelLib/exportData/sprayPropsGCM_heptane-decane.inp``, for use in a PeleLMeX simulation: ::
+
+    # -----------------------------------------------------------------------------
+    # sprayPropsGCM_heptane-decane.inp
+    # Generated on <YYY-MM-DD> <HH-MM-SS>
+    # FuelLib remote URL: https://github.com/NREL/FuelLib.git
+    # Git commit: <commit-hash>
+    # Units: MKS
+    # -----------------------------------------------------------------------------
 
     particles.spray_fuel_num = 2
     particles.fuel_species = NC7H16 NC10H22
@@ -165,7 +174,7 @@ This generates the following input file, ``FuelLib/sprayPropsGCM/sprayPropsGCM_h
     particles.NC10H22_cp = 1630.488028169014 3098.1056338028166 -1024.456338028169 # J/kg/K
     particles.NC10H22_latent = 368035.211268 # J/kg
 
-To include these parameters in your Pele simulation, copy the ``sprayPropsGCM.inp`` 
+To include these parameters in your Pele simulation, copy the ``sprayPropsGCM_heptane-decane.inp`` 
 file to the specific case directory and include the following line in your Pele input file: ::
 
     FILE = sprayPropsGCM.inp
@@ -177,6 +186,7 @@ namely the name of the fuel. This is designed for conventional jet fuels such as
 67 liquid fuel species corresponding to the GCxGC data, but only a single 
 gas-phase mechanism species, "POSF10325". For example: ::
 
+    cd FuelLib/source
     python Export4Pele.py --fuel_name posf10325
 
 will result in the following: ::
@@ -197,10 +207,11 @@ There are four additional options that can be specified when running the export 
 - ``--units``: Specify the units for the properties. The default is "mks" but users can set the units to "cgs" for use in PeleC.
 - ``--dep_fuel_names``: Specify which gas-phase species the liquid fuel deposits. The default is the same as the fuel name, but users can specify a single gas-phase species or a list of gas-phase species.
 - ``--max_dep_fuels``: Specify the maximum number of dependent fuels. The default is 30 and is a bit arbitrary.
-- ``--export_dir``: Specify the directory to export the file. The default is "FuelLib/sprayPropsGCM".
+- ``--export_dir``: Specify the directory to export the file. The default is "FuelLib/exportData".
 
 To specify all liquid fuel species deposity to a single gas-phase species, run the following command: ::
 
+    cd FuelLib/source
     python Export4Pele.py --fuel_name heptane-decane --dep_fuel_names SINGLE_GAS
 
 This will result in the following: ::
@@ -233,6 +244,7 @@ If there are more than 30 components and the user wants each component to deposi
 to a gas-phase species of the same name, the user can increase ``--max_dep_fuels`` 
 to a value greater than 30, however this would be required a massive mechanism for Pele and is not advised ::
 
+    cd FuelLib/source
     python Export4Pele.py --fuel_name posf10325 --max_dep_fuels 67
 
 
@@ -262,10 +274,11 @@ Default Options
     
 From the ``FuelLib`` directory, run the following command in the terminal, noting that ``--fuel_name`` is the only required input: ::
     
+    cd FuelLib/source
     python Export4Converge.py --fuel_name posf10325
 
 
-This generates the file ``FuelLib/mixturePropsGCM/mixturePropsGCM_posf10325.csv`` with mixture 
+This generates the file ``FuelLib/exportData/mixturePropsGCM_posf10325.csv`` with mixture 
 property predictions from 0 K to 1000 K for use in a Converge simulation.
 
 Additional Options
@@ -277,7 +290,7 @@ There are four additional options that can be specified when running the export 
 - ``--temp_min``: Specify the minimum temperature. The default is 0 K.
 - ``--temp_max``: Specify the maximum temperature. The default is 1000 K.
 - ``--temp_step``: Specify the temperature step size. The default is :math:`\Delta T = 10` K.
-- ``--export_dir``: Specify the directory to export the file. The default is "FuelLib/mixturePropsGCM".
+- ``--export_dir``: Specify the directory to export the file. The default is "FuelLib/exportData".
   
 .. note::
     The mixture property predictions may not be valid from the specified ``temp_min`` to ``temp_max``, 

@@ -1,18 +1,19 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
 import os
-import re
 import sys
+import numpy as np
+import pandas as pd
+import re
+import matplotlib.pyplot as plt
 
 # Add the FuelLib directory to the Python path
-fuellib_dir = os.path.dirname(os.path.dirname(__file__))
-sys.path.append(fuellib_dir)
+FUELLIB_DIR = os.path.dirname(os.path.dirname(__file__))
+sys.path.append(FUELLIB_DIR)
+import paths
 import FuelLib as fl
 
 fuel_name = "posf10325"
 
-fuel = fl.groupContribution(fuel_name)
+fuel = fl.fuel(fuel_name)
 
 # Classify compounds into families
 aromatic = [

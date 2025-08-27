@@ -42,7 +42,7 @@ If you use FuelLib in your research, please cite the following software record:
    :includehidden:
    :caption: Contents:
 
-   groupcontribution
+   fuelprops
    sourcecode
    tutorials
 

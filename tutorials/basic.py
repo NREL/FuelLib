@@ -1,14 +1,14 @@
 import os
 import sys
-import numpy as np
 
 # Add the FuelLib directory to the Python path
-fuellib_dir = os.path.dirname(os.path.dirname(__file__))
-sys.path.append(fuellib_dir)
+FUELLIB_DIR = os.path.dirname(os.path.dirname(__file__))
+sys.path.append(FUELLIB_DIR)
+import paths
 import FuelLib as fl
 
-# Create a groupContribution object for the fuel "heptane-decane"
-fuel = fl.groupContribution("heptane-decane")
+# Create a fuel object for the fuel "heptane-decane"
+fuel = fl.fuel("heptane-decane")
 
 # Display fuel name, components, initial composition, and critical temperature
 print(f"Fuel name: {fuel.name}")

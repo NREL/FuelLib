@@ -1,8 +1,16 @@
 import os
+import sys
 import numpy as np
 import pandas as pd
 import test_functions as fxns
 import unittest
+
+# Add the FuelLib directory to the Python path
+FUELLIB_DIR = os.path.dirname(os.path.dirname(__file__))
+if FUELLIB_DIR not in sys.path:
+    sys.path.append(FUELLIB_DIR)
+from paths import *
+import FuelLib as fl
 
 
 class CompTestCase(unittest.TestCase):
@@ -10,8 +18,6 @@ class CompTestCase(unittest.TestCase):
 
     def test_accuracy(self):
         """Does the PR impact the accuracy of single component fuel predictions?"""
-        test_dir = os.path.dirname(__file__)
-        baseline_dir = os.path.join(test_dir, "baselinePredictions")
 
         # Set the percentage for variation in max error
         max_error_diff = 1e-6
@@ -38,7 +44,7 @@ class CompTestCase(unittest.TestCase):
         # Compare to NIST predictions and previous model predictions
         for fuel_name in fuel_names:
 
-            baseline_file = os.path.join(baseline_dir, f"{fuel_name}.csv")
+            baseline_file = os.path.join(TESTS_BASELINE_DIR, f"{fuel_name}.csv")
             df_base = pd.read_csv(baseline_file, skiprows=[1])
 
             for prop in prop_names:

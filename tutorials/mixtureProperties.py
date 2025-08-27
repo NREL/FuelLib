@@ -1,12 +1,13 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
 import os
 import sys
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
 # Add the FuelLib directory to the Python path
-fuellib_dir = os.path.dirname(os.path.dirname(__file__))
-sys.path.append(fuellib_dir)
+FUELLIB_DIR = os.path.dirname(os.path.dirname(__file__))
+sys.path.append(FUELLIB_DIR)
+from paths import *
 import FuelLib as fl
 
 # -----------------------------------------------------------------------------
@@ -84,11 +85,10 @@ ylab = {
 
 def getPredAndData(fuel_name, prop_name):
     # Get the fuel properties based on the GCM
-    fuel = fl.groupContribution(fuel_name)
+    fuel = fl.fuel(fuel_name)
 
     data_file = f"{fuel_name}.csv"
-    dataPath = os.path.join(fuel.fuelDataDir, "propertiesData")
-    data = pd.read_csv(os.path.join(dataPath, data_file), skiprows=[1])
+    data = pd.read_csv(os.path.join(FUELDATA_PROPS_DIR, data_file), skiprows=[1])
 
     # Separate properties and associated temperatures from data
     T_data = data.Temperature[data[prop_name].notna()]
