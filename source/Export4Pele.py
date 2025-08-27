@@ -50,8 +50,8 @@ def export_pele(fuel, path, units, dep_fuel_names, max_dep_fuels):
     """
     Export fuel properties to input file for Pele simulations.
 
-    :param fuel: An instance of the groupContribution class.
-    :type fuel: groupContribution object
+    :param fuel: An instance of the fuel class.
+    :type fuel: fuel object
 
     :param path: Directory to save the input file.
     :type path: str
