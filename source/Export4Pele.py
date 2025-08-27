@@ -46,7 +46,7 @@ def vec_to_str(vec):
         return " ".join(f"{v}" for v in vec.values)
 
 
-def export_pele(fuel, path, units, dep_fuel_names, max_dep_fuels):
+def export_pele(fuel, path=os.path.join(FUELLIB_DIR, "exportData"), units="mks", dep_fuel_names=None, max_dep_fuels=30):
     """
     Export fuel properties to input file for Pele simulations.
 
@@ -54,16 +54,16 @@ def export_pele(fuel, path, units, dep_fuel_names, max_dep_fuels):
     :type fuel: fuel object
 
     :param path: Directory to save the input file.
-    :type path: str
+    :type path: str, optional (default: FuelLib/exportData)
 
     :param units: Units for the properties ("mks" for SI, "cgs" for CGS).
-    :type units: str
+    :type units: str, optional (default: "mks")
 
     :param dep_fuel_names: List or single fuel that each compound deposits to.
-    :type dep_fuel_names: str
+    :type dep_fuel_names: list of str, optional (default: None)
 
     :param max_dep_fuels: Maximum number of deposition fuels to consider.
-    :type max_dep_fuels: int
+    :type max_dep_fuels: int, optional (default: 30)
 
     :return: None
     :rtype: None
@@ -325,10 +325,10 @@ def main():
     # Export properties for Pele
     export_pele(
         fuel,
-        export_dir,
-        units,
-        dep_fuel_names,
-        max_dep_fuels,
+        path=export_dir,
+        units=units,
+        dep_fuel_names=dep_fuel_names,
+        max_dep_fuels=max_dep_fuels,
     )
 
     print("\nExport completed successfully!")
