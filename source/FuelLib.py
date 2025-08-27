@@ -19,8 +19,8 @@ class fuel:
     :type name: str
     :param decompName: Name of the groupDecomposition file if different from name. Defaults to None.
     :type decompName: str, optional
-    :param W: Determines whether to use first-order only approximation (W = 0). Defaults to 1.
-    :type W: int
+    :param fuelDataDir: Directory where the fuel data is stored. Defaults to FuelLib/fuelData.
+    :type fuelDataDir: str, optional
     """
 
     # Number of first and second order groups from Constantinou and Gani
@@ -30,19 +30,25 @@ class fuel:
     # Boltzmann's constant J/K
     k_B = 1.380649e-23
 
-    def __init__(self, name, decompName=None):
+    def __init__(self, name, decompName=None, fuelDataDir=FUELDATA_DIR):
         # Initializes the composition and calculates the GCM properties for the
         # specified mixture.
 
         self.name = name
         if decompName is None:
             decompName = name
-        groupDecompFile = os.path.join(FUELDATA_DECOMP_DIR, f"{decompName}.csv")
-        gcxgcFile = os.path.join(FUELDATA_GC_DIR, f"{name}_init.csv")
-        gcmTableFile = os.path.join(GCMTABLE_DIR, "gcmTable.csv")
+        # Check if fuelDataDir is different from default    
+        if fuelDataDir != FUELDATA_DIR:
+            FUELDATA_DIR = fuelDataDir
+            FUELDATA_GC_DIR = os.path.join(FUELDATA_DIR, "gcData")
+            FUELDATA_DECOMP_DIR = os.path.join(FUELDATA_DIR, "groupDecompositionData")
+
+        self.groupDecompFile = os.path.join(FUELDATA_DECOMP_DIR, f"{decompName}.csv")
+        self.gcxgcFile = os.path.join(FUELDATA_GC_DIR, f"{name}_init.csv")
+        self.gcmTableFile = os.path.join(GCMTABLE_DIR, "gcmTable.csv")
 
         # Read functional group data for mixture (num_compounds,num_groups)
-        df_Nij = pd.read_csv(groupDecompFile)
+        df_Nij = pd.read_csv(self.groupDecompFile)
         self.Nij = df_Nij.iloc[:, 1:].to_numpy()
         self.num_compounds = self.Nij.shape[0]
         self.num_groups = self.Nij.shape[1]
@@ -71,7 +77,7 @@ class fuel:
                 self.fam[i] = 3
 
         # Read initial liquid composition of mixture and normalize to get mass frac
-        df_gcxgc = pd.read_csv(gcxgcFile)
+        df_gcxgc = pd.read_csv(self.gcxgcFile)
         self.compounds = df_gcxgc.iloc[:, 0].to_list()
         self.Y_0 = df_gcxgc.iloc[:, 1].to_numpy().flatten().astype(float)
         self.Y_0 /= np.sum(self.Y_0)
@@ -80,18 +86,18 @@ class fuel:
         if self.num_groups < self.N_g1:
             raise ValueError(
                 f"Insufficient mixture description:\n"
-                f"The number of columns in {groupDecompFile} is less than "
+                f"The number of columns in {self.groupDecompFile} is less than "
                 f"the required number of first-order groups (N_g1 = {self.N_g1})."
             )
         if self.Y_0.shape[0] != self.num_compounds:
             raise ValueError(
                 f"Insufficient mixture description:\n"
-                f"The number of compounds in {groupDecompFile} does not "
-                f"equal the number of compounds in {gcxgcFile}."
+                f"The number of compounds in {self.groupDecompFile} does not "
+                f"equal the number of compounds in {self.gcxgcFile}."
             )
 
         # Read and store GCM table properties
-        df_table = pd.read_csv(gcmTableFile)
+        df_table = pd.read_csv(self.gcmTableFile)
         df_table = df_table.drop(columns=["Units"])
 
         def get_row(property_name):

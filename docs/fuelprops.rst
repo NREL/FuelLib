@@ -63,28 +63,26 @@ by Constantinou and Gani\ :footcite:p:`constantinou_new_1994,constantinou_estima
 Similarly, let :math:`\mathbf{M}` be an :math:`N_c \times N_{g_2}` matrix that specifies 
 the number of second-order groups in each compound, where :math:`N_{g_2}` is the total 
 number of second-order groups. The total number of groups :math:`N_g = N_{g_1} + N_{g_2} = 121`. 
-Define a parameter :math:`W` such that :math:`W = 0` performs a first-order group only 
-calculation, while :math:`W = 1` includes second-order groups. The GCM properties for 
-the *i-th* compound in the mixture are calculated as 
+The GCM properties for the *i-th* compound in the mixture are calculated as 
 follows\ :footcite:p:`constantinou_new_1994` \ :footcite:p:`constantinou_estimation_1995` \ :footcite:p:`poling_properties_2001`:
 
 .. math::
 
    \begin{align*}
     M_{w,i} &= \bigg[\sum_{k = 1}^{N_{g_1}}\mathbf{N}_{ik}m_{w1k} \bigg] \times 10^{-3}, \\
-    T_{c,i} &= 181.28 \ln  \bigg[ \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} t_{c1k} + W \sum_{j=1}^{N_{g_2}}         \mathbf{M}_{ij} t_{c2j} \bigg],\\
-    p_{c,i} &= \Bigg( \bigg[  \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} p_{c1k} + W \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij}     p_{c2j} + 0.10022\bigg]^{-2}  + 1.3705\Bigg)\times 10^{5}, \label{eq:gcm-pc}\\
-    V_{c,i} &= \Bigg( \bigg[ \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} v_{c1k} + W \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij}      v_{c2j} \bigg] -0.00435 \Bigg)\times 10^{-3}, \\
-    T_{b,i} &= 204.359 \ln  \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} t_{b1k} + W \sum_{j=1}^{N_{g_2}}      \mathbf{M}_{ij} t_{b2j}\bigg],\\
-    T_{m,i} &= 102.425 \ln  \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} t_{m1k} + W \sum_{j=1}^{N_{g_2}}      \mathbf{M}_{ij} t_{m2j}\bigg],\\
-    \Delta H_{f,i} &= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} h_{f1k} + W \sum_{j=1}^{N_{g_2}}     \mathbf{M}_{ij} h_{f2j} \bigg] + 10.835\Bigg) \times 10^3,\\
-    \Delta G_{f,i} &= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} g_{f1k} + W \sum_{j=1}^{N_{g_2}}     \mathbf{M}_{ij} g_{f2j} \bigg] -14.828 \Bigg) \times 10^3,\\
-    \Delta H_{v,\textit{stp},i} &= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} h_{v1k} + W                      \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} h_{v2j} \bigg] + 6.829\Bigg) \times 10^3, \\
-    \omega_i &= 0.4085 \ln  \bigg( \Big[  \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} \omega_{1k} + W                  \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} \omega_{2j} + 1.1507\Big]^{1/0.5050} \bigg), \label{eq:gcm-omega}\\
-    V_{m,\textit{stp},i} &= \Bigg( \bigg[ \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} v_{m1k} + W \sum_{j=1}^{N_{g_2}}          \mathbf{M}_{ij} v_{m2j} \bigg] + 0.01211 \Bigg)\times 10^{-3}, \\
-    C_{p,i} & =\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pA1_k} + W \sum_{j=1}^{N_{g_2}}                \mathbf{M}_{ij} C_{pA2_j} -19.7779\bigg]  \nonumber \\
-        & +\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pB1_k} + W \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pB2_j} + 22.5981\bigg] \theta \nonumber\\
-        & +\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pC1_k} + W \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pC2_j} - 10.7983\bigg] \theta^2 \\
+    T_{c,i} &= 181.28 \ln  \bigg[ \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} t_{c1k} + \sum_{j=1}^{N_{g_2}}         \mathbf{M}_{ij} t_{c2j} \bigg],\\
+    p_{c,i} &= \Bigg( \bigg[  \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} p_{c1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij}     p_{c2j} + 0.10022\bigg]^{-2}  + 1.3705\Bigg)\times 10^{5}, \label{eq:gcm-pc}\\
+    V_{c,i} &= \Bigg( \bigg[ \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} v_{c1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij}      v_{c2j} \bigg] -0.00435 \Bigg)\times 10^{-3}, \\
+    T_{b,i} &= 204.359 \ln  \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} t_{b1k} + \sum_{j=1}^{N_{g_2}}  \mathbf{M}_{ij} t_{b2j}\bigg],\\
+    T_{m,i} &= 102.425 \ln  \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} t_{m1k} + \sum_{j=1}^{N_{g_2}}  \mathbf{M}_{ij} t_{m2j}\bigg],\\
+    \Delta H_{f,i} &= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} h_{f1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} h_{f2j} \bigg] + 10.835\Bigg) \times 10^3,\\
+    \Delta G_{f,i} &= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} g_{f1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} g_{f2j} \bigg] -14.828 \Bigg) \times 10^3,\\
+    \Delta H_{v,\textit{stp},i} &= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} h_{v1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} h_{v2j} \bigg] + 6.829\Bigg) \times 10^3, \\
+    \omega_i &= 0.4085 \ln  \bigg( \Big[  \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} \omega_{1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} \omega_{2j} + 1.1507\Big]^{1/0.5050} \bigg), \label{eq:gcm-omega}\\
+    V_{m,\textit{stp},i} &= \Bigg( \bigg[ \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} v_{m1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} v_{m2j} \bigg] + 0.01211 \Bigg)\times 10^{-3}, \\
+    C_{p,i} & =\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pA1_k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pA2_j} -19.7779\bigg]  \nonumber \\
+        & +\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pB1_k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pB2_j} + 22.5981\bigg] \theta \nonumber\\
+        & +\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pC1_k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pC2_j} - 10.7983\bigg] \theta^2 \\
     \theta &= \frac{T - 298.15}{700}
     \end{align*}
 
