@@ -37,14 +37,17 @@ class fuel:
         self.name = name
         if decompName is None:
             decompName = name
-        # Check if fuelDataDir is different from default    
         if fuelDataDir != FUELDATA_DIR:
-            FUELDATA_DIR = fuelDataDir
-            FUELDATA_GC_DIR = os.path.join(FUELDATA_DIR, "gcData")
-            FUELDATA_DECOMP_DIR = os.path.join(FUELDATA_DIR, "groupDecompositionData")
+            self.fuelDataDir = fuelDataDir
+            self.fuelDataGcDir = os.path.join(self.fuelDataDir, "gcData")
+            self.fuelDataDecompDir = os.path.join(self.fuelDataDir, "groupDecompositionData")
+        else:
+            self.fuelDataDir = FUELDATA_DIR
+            self.fuelDataGcDir = FUELDATA_GC_DIR
+            self.fuelDataDecompDir = FUELDATA_DECOMP_DIR
 
-        self.groupDecompFile = os.path.join(FUELDATA_DECOMP_DIR, f"{decompName}.csv")
-        self.gcxgcFile = os.path.join(FUELDATA_GC_DIR, f"{name}_init.csv")
+        self.groupDecompFile = os.path.join(self.fuelDataDecompDir, f"{decompName}.csv")
+        self.gcxgcFile = os.path.join(self.fuelDataGcDir, f"{name}_init.csv")
         self.gcmTableFile = os.path.join(GCMTABLE_DIR, "gcmTable.csv")
 
         # Read functional group data for mixture (num_compounds,num_groups)
