@@ -35,8 +35,8 @@ def export_converge(fuel, path, units, temp_min, temp_max, temp_step):
     """
     Export mixture fuel properties to .csv for Converge simulations.
 
-    :param fuel: An instance of the groupContribution class.
-    :type fuel: groupContribution object
+    :param fuel: An instance of the fuel class.
+    :type fuel: fuel object
 
     :param path: Directory to save the input file.
     :type path: str
