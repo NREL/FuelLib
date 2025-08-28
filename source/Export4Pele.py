@@ -125,6 +125,7 @@ def export_pele(
     df = pd.DataFrame(
         {
             "Compound": fuel.compounds,
+            "Family": fuel.fam,
             "Y_0": fuel.Y_0,
             "MW": fuel.MW * conv_MW,
             "Tc": fuel.Tc,
@@ -140,9 +141,10 @@ def export_pele(
         }
     )
     # Get the property names
-    prop_names = ["MW", "Tc", "Pc", "Vc", "Tb", "omega", "Vm_stp", "Cp_stp", "Cp_B", "Cp_C", "Lv_stp"]
+    prop_names = ["Family", "MW", "Tc", "Pc", "Vc", "Tb", "omega", "Vm_stp", "Cp_stp", "Cp_B", "Cp_C", "Lv_stp"]
 
     formatted_names = {
+        "Family": ("family", ["", ""]),
         "MW": ("molar_weight", ["kg/mol", "g/mol"]),
         "Tc": ("crit_temp", ["K", "K"]),
         "Pc": ("crit_press", ["Pa", "dyne/cm^2"]),
@@ -214,9 +216,22 @@ def export_pele(
                     else:
                         unit_txt = unit_txt[0]
                     # Write the property to the file
-                    f.write(
-                        f"particles.{comp_name}_{prop_name} = {value:.6f} # {unit_txt}\n"
-                    )
+                    if prop == "Family":
+                        if value == 0:
+                            unit_txt = "saturated hydrocarbons"
+                        elif value == 1:
+                            unit_txt = "aromatics"
+                        elif value == 2:
+                            unit_txt = "cycloparaffins"
+                        else:
+                            unit_txt = "olefins"
+                        f.write(
+                            f"particles.{comp_name}_{prop_name} = {value} # {unit_txt}\n"
+                        )
+                    else:
+                        f.write(
+                            f"particles.{comp_name}_{prop_name} = {value:.6f} # {unit_txt}\n"
+                        )
 
 
 def main():
