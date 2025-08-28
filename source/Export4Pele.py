@@ -114,7 +114,7 @@ def export_pele(
         conv_P = 1.0
 
     # Terms for liquid specific heat capacity in (J/kg/K) or (erg/g/K)
-    # Cp(T) = Cp_stp + Cp_B * theta + Cp_C * theta^2
+    # Cp(T) = Cp_A + Cp_B * theta + Cp_C * theta^2
     # where theta = (T - 298.15) / 700
     Cp_stp = fuel.Cp_stp / fuel.MW
     Cp_B = fuel.Cp_B / fuel.MW
@@ -140,7 +140,7 @@ def export_pele(
         }
     )
     # Get the property names
-    prop_names = ["MW", "Tc", "Pc", "Vc", "Tb", "omega", "Vm_stp", "Cp_stp", "Lv_stp"]
+    prop_names = ["MW", "Tc", "Pc", "Vc", "Tb", "omega", "Vm_stp", "Cp_stp", "Cp_B", "Cp_C", "Lv_stp"]
 
     formatted_names = {
         "MW": ("molar_weight", ["kg/mol", "g/mol"]),
@@ -150,7 +150,9 @@ def export_pele(
         "Tb": ("boil_temp", ["K", "K"]),
         "omega": ("acentric_factor", ["-", "-"]),
         "Vm_stp": ("molar_vol", ["m^3/mol", "cm^3/mol"]),
-        "Cp_stp": ("cp", ["J/kg/K", "erg/g/K"]),
+        "Cp_stp": ("cp_a", ["J/kg/K", "erg/g/K"]),
+        "Cp_B": ("cp_b", ["J/kg/K", "erg/g/K"]),
+        "Cp_C": ("cp_c", ["J/kg/K", "erg/g/K"]),
         "Lv_stp": ("latent", ["J/kg", "erg/g"]),
     }
 
@@ -205,31 +207,16 @@ def export_pele(
             f.write(f"\n# Properties for {comp_name} in {units.upper()}\n")
             for prop in prop_names:
                 if prop in formatted_names:
-                    if prop == "Cp_stp":
-                        value = np.array(
-                            [
-                                df.loc[df["Compound"] == comp_name, prop].values[0],
-                                df.loc[df["Compound"] == comp_name, "Cp_B"].values[0],
-                                df.loc[df["Compound"] == comp_name, "Cp_C"].values[0],
-                            ]
-                        )
-                    else:
-                        value = df.loc[df["Compound"] == comp_name, prop].values[0]
+                    value = df.loc[df["Compound"] == comp_name, prop].values[0]
                     prop_name, unit_txt = formatted_names[prop]
                     if units.lower() == "cgs":
                         unit_txt = unit_txt[1]
                     else:
                         unit_txt = unit_txt[0]
                     # Write the property to the file
-                    if prop == "Cp_stp":
-                        value = value.tolist()
-                        f.write(
-                            f"particles.{comp_name}_{prop_name} = {vec_to_str(value)} # {unit_txt}\n"
-                        )
-                    else:
-                        f.write(
-                            f"particles.{comp_name}_{prop_name} = {value:.6f} # {unit_txt}\n"
-                        )
+                    f.write(
+                        f"particles.{comp_name}_{prop_name} = {value:.6f} # {unit_txt}\n"
+                    )
 
 
 def main():
