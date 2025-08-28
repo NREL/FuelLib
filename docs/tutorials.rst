@@ -153,6 +153,7 @@ This generates the following input file, ``FuelLib/exportData/sprayPropsGCM_hept
     particles.dep_fuel_names = NC7H16 NC10H22
 
     # Properties for NC7H16 in MKS
+    particles.NC7H16_family = 0 # saturated hydrocarbons
     particles.NC7H16_molar_weight = 0.100000 # kg/mol
     particles.NC7H16_crit_temp = 549.855981 # K
     particles.NC7H16_crit_press = 2821129.514417 # Pa
@@ -166,6 +167,7 @@ This generates the following input file, ``FuelLib/exportData/sprayPropsGCM_hept
     particles.NC7H16_latent = 383110.000000 # J/kg
 
     # Properties for NC10H22 in MKS
+    particles.NC10H22_family = 0 # saturated hydrocarbons
     particles.NC10H22_molar_weight = 0.142000 # kg/mol
     particles.NC10H22_crit_temp = 623.690516 # K
     particles.NC10H22_crit_press = 2115522.932445 # Pa
