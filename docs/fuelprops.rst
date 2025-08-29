@@ -496,7 +496,7 @@ The thermal conductivity of the mixture is calculated using the power law method
 Vredeveld as described in Poling\ :footcite:p:`poling_properties_2001`:
 
 .. math::
-   \lambda = \bigg(\sum_{i=1}^{N_c} X_i \lambda_i^{-2} \bigg)^{-1/2}.
+   \lambda = \bigg(\sum_{i=1}^{N_c} Y_i \lambda_i^{-2} \bigg)^{-1/2}.
 
 Validation
 ----------
