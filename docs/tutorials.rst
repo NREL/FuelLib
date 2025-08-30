@@ -140,17 +140,17 @@ From the ``FuelLib`` directory, run the following command in the terminal, notin
 This generates the following input file, ``FuelLib/exportData/sprayPropsGCM_heptane-decane.inp``, for use in a PeleLMeX simulation: ::
 
     # -----------------------------------------------------------------------------
-    # sprayPropsGCM_heptane-decane.inp
-    # Generated on <YYY-MM-DD> <HH-MM-SS>
+    # Liquid fuel properties for GCM in Pele
+    # Fuel: heptane-decane
+    # Generated: <YYY-MM-DD> <HH-MM-SS>
     # FuelLib remote URL: https://github.com/NREL/FuelLib.git
     # Git commit: <commit-hash>
     # Units: MKS
     # -----------------------------------------------------------------------------
 
-    particles.spray_fuel_num = 2
     particles.fuel_species = NC7H16 NC10H22
     particles.Y_0 = 0.7375 0.2625
-    particles.dep_fuel_names = NC7H16 NC10H22
+    particles.dep_fuel_species = NC7H16 NC10H22
 
     # Properties for NC7H16 in MKS
     particles.NC7H16_family = 0 # saturated hydrocarbons

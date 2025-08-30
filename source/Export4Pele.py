@@ -141,7 +141,20 @@ def export_pele(
         }
     )
     # Get the property names
-    prop_names = ["Family", "MW", "Tc", "Pc", "Vc", "Tb", "omega", "Vm_stp", "Cp_stp", "Cp_B", "Cp_C", "Lv_stp"]
+    prop_names = [
+        "Family",
+        "MW",
+        "Tc",
+        "Pc",
+        "Vc",
+        "Tb",
+        "omega",
+        "Vm_stp",
+        "Cp_stp",
+        "Cp_B",
+        "Cp_C",
+        "Lv_stp",
+    ]
 
     formatted_names = {
         "Family": ("family", ["", ""]),
@@ -193,17 +206,17 @@ def export_pele(
     with open(file_name, "a") as f:
         f.write(
             f"# -----------------------------------------------------------------------------\n"
-            f"# sprayPropsGCM_{fuel.name}.inp\n"
-            f"# Generated on {dt_string}\n"
+            f"# Liquid fuel properties for GCM in Pele\n"
+            f"# Fuel: {fuel.name}\n"
+            f"# Generated: {dt_string}\n"
             f"# FuelLib remote URL: {git_remote}\n"
             f"# Git commit: {git_commit}\n"
             f"# Units: {units.upper()}\n"
             f"# -----------------------------------------------------------------------------\n\n"
         )
-        f.write(f"particles.spray_fuel_num = {len(fuel.compounds)}\n")
         f.write(f"particles.fuel_species = {vec_to_str(df['Compound'].tolist())}\n")
         f.write(f"particles.Y_0 = {vec_to_str(df['Y_0'].tolist())}\n")
-        f.write(f"particles.dep_fuel_names = {vec_to_str(dep_fuel_names)}\n")
+        f.write(f"particles.dep_fuel_species = {vec_to_str(dep_fuel_names)}\n")
 
         for comp_name in fuel.compounds:
             f.write(f"\n# Properties for {comp_name} in {units.upper()}\n")
