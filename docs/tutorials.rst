@@ -106,7 +106,7 @@ flow solver\ :footcite:p:`henry_de_frahan_pele_2024` \ :footcite:p:`esclapez_pel
 The export script, ``Export4Pele.py``, generates an input file named ``sprayPropsGCM_<fuel_name>.inp`` containing 
 the necessary properties for each compound in the fuel. The properties are formatted for use in Pele and includes:
 
-- Initial mass fraction
+- Hydrocarbon family
 - Molecular weight
 - Critical temperature
 - Critical pressure
@@ -184,7 +184,7 @@ This generates the following input file, ``FuelLib/exportData/sprayPropsGCM_hept
 To include these parameters in your Pele simulation, copy the ``sprayPropsGCM_heptane-decane.inp`` 
 file to the specific case directory and include the following line in your Pele input file: ::
 
-    FILE = sprayPropsGCM.inp
+    FILE = sprayPropsGCM_heptane-decane.inp
 
 
 Note: for liquid fuels from FuelLib with greater than 30 components, the script
