@@ -208,6 +208,7 @@ def export_pele(
             f"# -----------------------------------------------------------------------------\n"
             f"# Liquid fuel properties for GCM in Pele\n"
             f"# Fuel: {fuel.name}\n"
+            f"# Number of compounds: {len(fuel.compounds)}\n"
             f"# Generated: {dt_string}\n"
             f"# FuelLib remote URL: {git_remote}\n"
             f"# Git commit: {git_commit}\n"

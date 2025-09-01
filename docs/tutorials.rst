@@ -142,6 +142,7 @@ This generates the following input file, ``FuelLib/exportData/sprayPropsGCM_hept
     # -----------------------------------------------------------------------------
     # Liquid fuel properties for GCM in Pele
     # Fuel: heptane-decane
+    # Number of compounds: 2
     # Generated: <YYY-MM-DD> <HH-MM-SS>
     # FuelLib remote URL: https://github.com/NREL/FuelLib.git
     # Git commit: <commit-hash>
