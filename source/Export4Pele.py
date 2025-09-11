@@ -107,7 +107,7 @@ def export_pele(
         conv_Lv = 1.0
         conv_P = 1.0
 
-    if export_mix == 0:
+    if not export_mix:
         print(
             f"\nCalculating GCM properties for individual compounds in {fuel.name}..."
         )
