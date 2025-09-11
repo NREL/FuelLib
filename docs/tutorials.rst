@@ -261,7 +261,7 @@ Lastly, to export the fuel as a single mixture species, run the following comman
     cd FuelLib/source
     python Export4Pele.py --fuel_name posf10264 --export_mix True --export_mix_name POSF10264
 
-This generates the following input file, ``FuelLib/exportData/sprayPropsGCM_posf10264.inp``: ::
+This generates the following input file, ``FuelLib/exportData/sprayPropsGCM_mixture_posf10264.inp``: ::
 
     # -----------------------------------------------------------------------------
     # Liquid fuel properties for GCM in Pele

@@ -90,7 +90,10 @@ def export_pele(
         os.makedirs(path)
 
     # Name of the input file
-    file_name = os.path.join(path, f"sprayPropsGCM_{fuel.name}.inp")
+    if not export_mix:
+        file_name = os.path.join(path, f"sprayPropsGCM_{fuel.name}.inp")
+    else:
+        file_name = os.path.join(path, f"sprayPropsGCM_mixture_{fuel.name}.inp")
 
     # Unit conversion factors:
     if units.lower() == "cgs":
