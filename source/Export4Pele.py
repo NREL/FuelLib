@@ -108,7 +108,9 @@ def export_pele(
         conv_P = 1.0
 
     if export_mix == 0:
-        print(f"\nCalculating GCM properties for individual compounds in {fuel.name}...")
+        print(
+            f"\nCalculating GCM properties for individual compounds in {fuel.name}..."
+        )
         # If dep_fuel_names is not provided, use fuel.compounds
         if dep_fuel_names is None:
             if len(fuel.compounds) <= max_dep_fuels:
@@ -125,7 +127,7 @@ def export_pele(
             raise ValueError(
                 "Length of dep_fuel_names must be one or match the number of compounds in the fuel."
             )
-        
+
         # Terms for liquid specific heat capacity in (J/kg/K) or (erg/g/K)
         # Cp(T) = Cp_A + Cp_B * theta + Cp_C * theta^2
         # where theta = (T - 298.15) / 700
@@ -157,7 +159,7 @@ def export_pele(
         print("\nCalculating mixture GCM properties at standard conditions...")
         if export_mix_name is None:
             export_mix_name = fuel.name
-        if 'posf' in export_mix_name.lower():
+        if "posf" in export_mix_name.lower():
             export_mix_name = export_mix_name.upper()
         if dep_fuel_names is None:
             dep_fuel_names = [export_mix_name]
@@ -176,7 +178,7 @@ def export_pele(
         df = pd.DataFrame(
             {
                 "Compound": [export_mix_name],
-                "Family": [st.mode(fuel.fam).mode],  
+                "Family": [st.mode(fuel.fam).mode],
                 "Y_0": [1.0],
                 "MW": [fuel.mean_molecular_weight(fuel.Y_0) * conv_MW],
                 "Tc": [fl.mixing_rule(fuel.Tc, X)],
@@ -192,7 +194,6 @@ def export_pele(
             }
         )
 
-        
     # Get the property names
     prop_names = [
         "Family",
@@ -226,6 +227,7 @@ def export_pele(
 
     # Get date and time for the header
     from datetime import datetime
+
     now = datetime.now()
     dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -374,7 +376,7 @@ def main():
     # Optional argument for exporting mixture properties
     parser.add_argument(
         "--export_mix",
-        type=lambda x: str(x).lower() in ['true', '1'],
+        type=lambda x: str(x).lower() in ["true", "1"],
         default=False,
         help="Option to export mixture properties of the fuel (True or False, default: False).",
     )

@@ -204,7 +204,7 @@ class fuel:
             Mbar = 0.0
 
         return Mbar
-    
+
     def mass2Y(self, mass):
         """
         Calculate the mass fractions from the mass of each component.
