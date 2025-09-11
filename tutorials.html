@@ -1,0 +1,512 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorials &mdash; FuelLib 2025 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=cb975c41"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Export4Converge" href="generated/Export4Converge.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FuelLib
+              <img src="_static/FuelLibLogo_Blue.pdf" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="fuelprops.html">Fuel Property Prediction Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#table-of-gcm-properties">Table of GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-gcm-properties">Equations for GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-individual-compound-correlations">Equations for individual compound correlations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#kinematic-viscosity">Kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#latent-heat-of-vaporization">Latent heat of vaporization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#liquid-molar-volume">Liquid molar volume</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#density">Density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#liquid-specific-heat-capacity">Liquid specific heat capacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#saturated-vapor-pressure">Saturated vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#surface-tension">Surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#thermal-conductivity">Thermal conductivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-mixture-properties-from-gcm">Equations for mixture properties from GCM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#conventional-mixing-rules">Conventional mixing rules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-density">Mixture density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-kinematic-viscosity">Mixture kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-vapor-pressure">Mixture vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-surface-tension">Mixture surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-thermal-conductivity">Mixture thermal conductivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#validation">Validation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#single-component-fuels">Single Component Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#multi-component-fuels">Multi-Component Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#fuel-blends">Fuel Blends</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sourcecode.html">Source Code</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sourcecode.html#fuellib-file-organization">FuelLib File Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sourcecode.html#source-code-auto-documentation">Source Code Auto-Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/FuelLib.html">FuelLib</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/Export4Pele.html">Export4Pele</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/Export4Converge.html">Export4Converge</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#required-input-files">Required Input files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#exporting-gcm-properties-for-pele">Exporting GCM Properties for Pele</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#additional-options">Additional Options</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#exporting-gcm-based-mixture-properties-for-converge">Exporting GCM-Based Mixture Properties for Converge</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">Additional Options</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FuelLib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Tutorials</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tutorials.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tutorials">
+<h1>Tutorials<a class="headerlink" href="#tutorials" title="Link to this heading"></a></h1>
+<p>This section provides tutorials on how to use the FuelLib library.</p>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<p>Clone the FuelLib repository from GitHub:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">NREL</span><span class="o">/</span><span class="n">FuelLib</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+<p>Create and activate a Conda environment, install the required dependencies:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">--</span><span class="n">name</span> <span class="n">fuellib</span><span class="o">-</span><span class="n">env</span> <span class="n">matplotlib</span> <span class="n">pandas</span> <span class="n">scipy</span>
+<span class="n">conda</span> <span class="n">activate</span> <span class="n">fuellib</span><span class="o">-</span><span class="n">env</span>
+</pre></div>
+</div>
+<p>Change to the FuelLib/tutorials directory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">FuelLib</span><span class="o">/</span><span class="n">tutorials</span>
+</pre></div>
+</div>
+<section id="required-input-files">
+<h3>Required Input files<a class="headerlink" href="#required-input-files" title="Link to this heading"></a></h3>
+<p>FuelLib requires two input files for any given fuel, <code class="docutils literal notranslate"><span class="pre">&lt;fuel_name&gt;</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">FuelLib/fuelData/gcData/&lt;fuel_name&gt;_init.csv</span></code>: an initial weight percentage composition of the fuel components</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FuelLib/fuelData/groupDecompositionData/&lt;fuel_name&gt;.csv</span></code>: the fundamental group decomposition for each component of the fuel</p></li>
+</ul>
+<p>These files must have the same number of rows and the same order of components. Many examples can be found in the <a class="reference external" href="https://github.com/NREL/FuelLib/tree/main/fuelData">fuelData</a> directory.</p>
+</section>
+<section id="basic-usage">
+<h3>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading"></a></h3>
+<p>To demonstrate the usage of FuelLib, we will use the fuel “heptane-decane”, which is a
+binary mixture of heptane and decane. The initial weight percentage composition is 73.75%
+heptane and 26.25% decane, and the group decomposition data is provided in the
+<a class="reference external" href="https://github.com/NREL/FuelLib/tree/main/fuelData/groupDecompositionData">groupDecompositionData</a> directory.
+The following tutorial is included in the <a class="reference external" href="https://github.com/NREL/FuelLib/tree/main/tutorials">FuelLib/tutorials</a>
+as <code class="docutils literal notranslate"><span class="pre">basic.py</span></code>. To begin, we will import the necessary modules and create a <code class="docutils literal notranslate"><span class="pre">groupContribution</span></code> object for the two component fuel “heptane-decane”:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="c1"># Add the FuelLib directory to the Python path</span>
+<span class="n">FUELLIB_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FUELLIB_DIR</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">paths</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">FuelLib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fl</span>
+
+<span class="c1"># Create a fuel object for the fuel &quot;heptane-decane&quot;</span>
+<span class="n">fuel</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">fuel</span><span class="p">(</span><span class="s2">&quot;heptane-decane&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Upon initialization, the <code class="docutils literal notranslate"><span class="pre">fuel</span></code> object will read the initial weight
+percentage composition and group decomposition data from the specified files. The object stores
+vectors of the calculated fundamental properties at standard conditions for each component of the fuel as described in <a class="reference internal" href="fuelprops.html#eq-gcm-properties"><span class="std std-ref">Equations for GCM properties</span></a>.
+For example, we can display the fuel name, the components in the fuel, the initial composition, and the critical temperature for each component:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Display fuel name, components, initial composition, and critical temperature</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fuel name: </span><span class="si">{</span><span class="n">fuel</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fuel components: </span><span class="si">{</span><span class="n">fuel</span><span class="o">.</span><span class="n">compounds</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initial composition: </span><span class="si">{</span><span class="n">fuel</span><span class="o">.</span><span class="n">Y_0</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Critical temperature: </span><span class="si">{</span><span class="n">fuel</span><span class="o">.</span><span class="n">Tc</span><span class="si">}</span><span class="s2"> K&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt;&gt; Fuel name: heptane-decane
+&gt;&gt; Fuel components: [&#39;NC7H16&#39;, &#39;NC10H22&#39;]
+&gt;&gt; Initial composition: [0.7375 0.2625]
+&gt;&gt; Critical temperature: [549.85598051 623.69051582] K
+</pre></div>
+</div>
+<p>Next, we can calculate any of the component- or mixture-level properties using the
+<code class="docutils literal notranslate"><span class="pre">groupContribution</span></code> object. For example, we can calculate the saturated vapor pressure
+for each component and the mixture at a given temperature:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculate the saturated vapor pressure at 320 K</span>
+<span class="n">T</span> <span class="o">=</span> <span class="mi">320</span> <span class="c1"># K</span>
+<span class="n">p_sat_i</span> <span class="o">=</span> <span class="n">fuel</span><span class="o">.</span><span class="n">psat</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+<span class="n">p_sat_mix</span> <span class="o">=</span> <span class="n">fuel</span><span class="o">.</span><span class="n">mixture_vapor_pressure</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saturated vapor pressure at </span><span class="si">{</span><span class="n">T</span><span class="si">}</span><span class="s2"> K: </span><span class="si">{</span><span class="n">p_sat_i</span><span class="si">}</span><span class="s2"> Pa&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mixture saturated vapor pressure at </span><span class="si">{</span><span class="n">T</span><span class="si">}</span><span class="s2"> K: </span><span class="si">{</span><span class="n">p_sat_mix</span><span class="si">}</span><span class="s2"> Pa&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt;&gt; Saturated vapor pressure at 320 K: [13735.84605413   673.28876023] Pa
+&gt;&gt; Mixture saturated vapor pressure at 320 K: 11117.84926875165 Pa
+</pre></div>
+</div>
+<p>The following links provide more information on the <a class="reference internal" href="fuelprops.html#eq-gcm-correlations"><span class="std std-ref">Equations for individual compound correlations</span></a> and
+the <a class="reference internal" href="fuelprops.html#eq-mixture-properties"><span class="std std-ref">Equations for mixture properties from GCM</span></a> that can be calculated using the <code class="docutils literal notranslate"><span class="pre">groupContribution</span></code> object.</p>
+</section>
+</section>
+<section id="exporting-gcm-properties-for-pele">
+<h2>Exporting GCM Properties for Pele<a class="headerlink" href="#exporting-gcm-properties-for-pele" title="Link to this heading"></a></h2>
+<p>The development of FuelLib was motivated by the need for more accurate liquid fuel
+property prediction in computational fluid dynamics (CFD) simulations. The fundamental GCM
+properties can be exported for use in the spray module of the <a class="reference external" href="https://github.com/AMReX-Combustion/PelePhysics">PelePhysics</a> library<a class="footnote-reference brackets" href="#footcite-owen-pelemp-2024" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>
+for combustion simulations in the <a class="reference external" href="https://github.com/AMReX-Combustion/PeleLMeX">PeleLMeX</a>
+flow solver<a class="footnote-reference brackets" href="#footcite-henry-de-frahan-pele-2024" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#footcite-esclapez-pelelmex-2023" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>.</p>
+<p>The export script, <code class="docutils literal notranslate"><span class="pre">Export4Pele.py</span></code>, generates an input file named <code class="docutils literal notranslate"><span class="pre">sprayPropsGCM_&lt;fuel_name&gt;.inp</span></code> containing
+the necessary properties for each compound in the fuel. The properties are formatted for use in Pele and includes:</p>
+<ul class="simple">
+<li><p>Hydrocarbon family</p></li>
+<li><p>Molecular weight</p></li>
+<li><p>Critical temperature</p></li>
+<li><p>Critical pressure</p></li>
+<li><p>Critical volume</p></li>
+<li><p>Boiling point</p></li>
+<li><p>Accentric factor</p></li>
+<li><p>Molar volume</p></li>
+<li><p>Specific heat</p></li>
+<li><p>Latent heat of vaporization</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The incorporation of the GCM in Pele is still under development and additional testing is required.</p>
+</div>
+<p>This example walks through the process and the available options for exporting GCM properties of a fuel named
+“heptane-decane”, which is a binary mixture of heptane and decane, using the <code class="docutils literal notranslate"><span class="pre">Export4Pele.py</span></code> script.</p>
+<section id="default-options">
+<h3>Default Options<a class="headerlink" href="#default-options" title="Link to this heading"></a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The units for PeleLMeX are MKS while the units for PeleC are CGS. This is the same for
+the spray inputs. Therefore, when running a spray simulation coupled with PeleC, the units for the
+liquid fuel properties must be in CGS. The default units for the <code class="docutils literal notranslate"><span class="pre">Export4Pele.py</span></code> script is MKS,
+but users can specify CGS by using the <code class="docutils literal notranslate"><span class="pre">--units</span> <span class="pre">cgs</span></code> option.</p>
+</div>
+<p>From the <code class="docutils literal notranslate"><span class="pre">FuelLib</span></code> directory, run the following command in the terminal, noting that <code class="docutils literal notranslate"><span class="pre">--fuel_name</span></code> is the only required input:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">FuelLib</span><span class="o">/</span><span class="n">source</span>
+<span class="n">python</span> <span class="n">Export4Pele</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">fuel_name</span> <span class="n">heptane</span><span class="o">-</span><span class="n">decane</span>
+</pre></div>
+</div>
+<p>This generates the following input file, <code class="docutils literal notranslate"><span class="pre">FuelLib/exportData/sprayPropsGCM_heptane-decane.inp</span></code>, for use in a PeleLMeX simulation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># -----------------------------------------------------------------------------</span>
+<span class="c1"># Liquid fuel properties for GCM in Pele</span>
+<span class="c1"># Fuel: heptane-decane</span>
+<span class="c1"># Number of compounds: 2</span>
+<span class="c1"># Generated: &lt;YYY-MM-DD&gt; &lt;HH-MM-SS&gt;</span>
+<span class="c1"># FuelLib remote URL: https://github.com/NREL/FuelLib.git</span>
+<span class="c1"># Git commit: &lt;commit-hash&gt;</span>
+<span class="c1"># Units: MKS</span>
+<span class="c1"># -----------------------------------------------------------------------------</span>
+
+<span class="n">particles</span><span class="o">.</span><span class="n">fuel_species</span> <span class="o">=</span> <span class="n">NC7H16</span> <span class="n">NC10H22</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">Y_0</span> <span class="o">=</span> <span class="mf">0.7375</span> <span class="mf">0.2625</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">dep_fuel_species</span> <span class="o">=</span> <span class="n">NC7H16</span> <span class="n">NC10H22</span>
+
+<span class="c1"># Properties for NC7H16 in MKS</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC7H16_family</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># saturated hydrocarbons</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC7H16_molar_weight</span> <span class="o">=</span> <span class="mf">0.100000</span> <span class="c1"># kg/mol</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC7H16_crit_temp</span> <span class="o">=</span> <span class="mf">549.855981</span> <span class="c1"># K</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC7H16_crit_press</span> <span class="o">=</span> <span class="mf">2821129.514417</span> <span class="c1"># Pa</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC7H16_crit_vol</span> <span class="o">=</span> <span class="mf">0.000425</span> <span class="c1"># m^3/mol</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC7H16_boil_temp</span> <span class="o">=</span> <span class="mf">379.073212</span> <span class="c1"># K</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC7H16_acentric_factor</span> <span class="o">=</span> <span class="mf">0.336945</span> <span class="c1"># -</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC7H16_molar_vol</span> <span class="o">=</span> <span class="mf">0.000146</span> <span class="c1"># m^3/mol</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC7H16_cp_a</span> <span class="o">=</span> <span class="mf">1636.255000</span> <span class="c1"># J/kg/K</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC7H16_cp_b</span> <span class="o">=</span> <span class="mf">3046.511000</span> <span class="c1"># J/kg/K</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC7H16_cp_c</span> <span class="o">=</span> <span class="o">-</span><span class="mf">983.629000</span> <span class="c1"># J/kg/K</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC7H16_latent</span> <span class="o">=</span> <span class="mf">383110.000000</span> <span class="c1"># J/kg</span>
+
+<span class="c1"># Properties for NC10H22 in MKS</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC10H22_family</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># saturated hydrocarbons</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC10H22_molar_weight</span> <span class="o">=</span> <span class="mf">0.142000</span> <span class="c1"># kg/mol</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC10H22_crit_temp</span> <span class="o">=</span> <span class="mf">623.690516</span> <span class="c1"># K</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC10H22_crit_press</span> <span class="o">=</span> <span class="mf">2115522.932445</span> <span class="c1"># Pa</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC10H22_crit_vol</span> <span class="o">=</span> <span class="mf">0.000592</span> <span class="c1"># m^3/mol</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC10H22_boil_temp</span> <span class="o">=</span> <span class="mf">452.596977</span> <span class="c1"># K</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC10H22_acentric_factor</span> <span class="o">=</span> <span class="mf">0.468050</span> <span class="c1"># -</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC10H22_molar_vol</span> <span class="o">=</span> <span class="mf">0.000196</span> <span class="c1"># m^3/mol</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC10H22_cp_a</span> <span class="o">=</span> <span class="mf">1630.488028</span> <span class="c1"># J/kg/K</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC10H22_cp_b</span> <span class="o">=</span> <span class="mf">3098.105634</span> <span class="c1"># J/kg/K</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC10H22_cp_c</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1024.456338</span> <span class="c1"># J/kg/K</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">NC10H22_latent</span> <span class="o">=</span> <span class="mf">368035.211268</span> <span class="c1"># J/kg</span>
+</pre></div>
+</div>
+<p>To include these parameters in your Pele simulation, copy the <code class="docutils literal notranslate"><span class="pre">sprayPropsGCM_heptane-decane.inp</span></code>
+file to the specific case directory and include the following line in your Pele input file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">FILE</span> <span class="o">=</span> <span class="n">sprayPropsGCM_heptane</span><span class="o">-</span><span class="n">decane</span><span class="o">.</span><span class="n">inp</span>
+</pre></div>
+</div>
+<p>Note: for liquid fuels from FuelLib with greater than 30 components, the script
+will assume that all liquid fuel species deposit to the same gas-phase species,
+namely the name of the fuel. This is designed for conventional jet fuels such as POSF10325, where there are
+67 liquid fuel species corresponding to the GCxGC data, but only a single
+gas-phase mechanism species, “POSF10325”. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">FuelLib</span><span class="o">/</span><span class="n">source</span>
+<span class="n">python</span> <span class="n">Export4Pele</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">fuel_name</span> <span class="n">posf10325</span>
+</pre></div>
+</div>
+<p>will result in the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">particles</span><span class="o">.</span><span class="n">spray_fuel_num</span> <span class="o">=</span> <span class="mi">67</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">fuel_species</span> <span class="o">=</span> <span class="n">Toluene</span> <span class="n">C2</span><span class="o">-</span><span class="n">Benzene</span> <span class="n">C3</span><span class="o">-</span><span class="n">Benzene</span> <span class="o">...</span> <span class="n">C12</span><span class="o">-</span><span class="n">Tricycloparaffin</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">Y_0</span> <span class="o">=</span> <span class="mf">0.001610</span> <span class="mf">0.011172</span> <span class="mf">0.0304982</span> <span class="o">...</span> <span class="mf">0.00110719</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">dep_fuel_names</span> <span class="o">=</span> <span class="n">POSF10325</span> <span class="n">POSF10325</span> <span class="o">...</span> <span class="n">POSF10325</span>
+
+<span class="c1"># Properties for Toluene in MKS</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+</section>
+<section id="additional-options">
+<h3>Additional Options<a class="headerlink" href="#additional-options" title="Link to this heading"></a></h3>
+<p>There are four additional options that can be specified when running the export script:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--units</span></code>: Specify the units for the properties. The default is “mks” but users can set the units to “cgs” for use in PeleC.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dep_fuel_names</span></code>: Specify which gas-phase species the liquid fuel deposits. The default is the same as the fuel name, but users can specify a single gas-phase species or a list of gas-phase species.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--max_dep_fuels</span></code>: Specify the maximum number of dependent fuels. The default is 30 and is a bit arbitrary.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--export_dir</span></code>: Specify the directory to export the file. The default is “FuelLib/exportData”.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--export_mix</span></code>: Export the fuel as a single mixture species. The default is 0 or False.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--export_mix_name</span></code>: Specify the name of the mixture species if <code class="docutils literal notranslate"><span class="pre">--export_mix</span></code> is set to True. The default is the same as the fuel name.</p></li>
+</ul>
+<p>To specify all liquid fuel species deposity to a single gas-phase species, run the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">FuelLib</span><span class="o">/</span><span class="n">source</span>
+<span class="n">python</span> <span class="n">Export4Pele</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">fuel_name</span> <span class="n">heptane</span><span class="o">-</span><span class="n">decane</span> <span class="o">--</span><span class="n">dep_fuel_names</span> <span class="n">SINGLE_GAS</span>
+</pre></div>
+</div>
+<p>This will result in the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">particles</span><span class="o">.</span><span class="n">spray_fuel_num</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">fuel_species</span> <span class="o">=</span> <span class="n">NC7H16</span> <span class="n">NC10H22</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">Y_0</span> <span class="o">=</span> <span class="mf">0.7375</span> <span class="mf">0.2625</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">dep_fuel_names</span> <span class="o">=</span> <span class="n">SINGLE_GAS</span> <span class="n">SINGLE_GAS</span>
+
+<span class="c1"># Properties for NC7H16 in MKS</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>Alternatively, to specify a list of gas-phase species, run the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">Export4Pele</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">fuel_name</span> <span class="n">heptane</span><span class="o">-</span><span class="n">decane</span> <span class="o">--</span><span class="n">dep_fuel_names</span> <span class="n">GAS_1</span> <span class="n">GAS_2</span>
+</pre></div>
+</div>
+<p>which produces:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">particles</span><span class="o">.</span><span class="n">spray_fuel_num</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">fuel_species</span> <span class="o">=</span> <span class="n">NC7H16</span> <span class="n">NC10H22</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">Y_0</span> <span class="o">=</span> <span class="mf">0.7375</span> <span class="mf">0.2625</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">dep_fuel_names</span> <span class="o">=</span> <span class="n">GAS_1</span> <span class="n">GAS_2</span>
+
+<span class="c1"># Properties for NC7H16 in MKS</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>In the case that the liquid fuel has more than 30 components, the script will
+automatically set the deposition mapping to <code class="docutils literal notranslate"><span class="pre">fuel.name</span></code> for all components.
+If there are more than 30 components and the user wants each component to deposit
+to a gas-phase species of the same name, the user can increase <code class="docutils literal notranslate"><span class="pre">--max_dep_fuels</span></code>
+to a value greater than 30, however this would be required a massive mechanism for Pele and is not advised</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">FuelLib</span><span class="o">/</span><span class="n">source</span>
+<span class="n">python</span> <span class="n">Export4Pele</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">fuel_name</span> <span class="n">posf10325</span> <span class="o">--</span><span class="n">max_dep_fuels</span> <span class="mi">67</span>
+</pre></div>
+</div>
+<p>Lastly, to export the fuel as a single mixture species, run the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">FuelLib</span><span class="o">/</span><span class="n">source</span>
+<span class="n">python</span> <span class="n">Export4Pele</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">fuel_name</span> <span class="n">posf10264</span> <span class="o">--</span><span class="n">export_mix</span> <span class="kc">True</span> <span class="o">--</span><span class="n">export_mix_name</span> <span class="n">POSF10264</span>
+</pre></div>
+</div>
+<p>This generates the following input file, <code class="docutils literal notranslate"><span class="pre">FuelLib/exportData/sprayPropsGCM_mixture_posf10264.inp</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># -----------------------------------------------------------------------------</span>
+<span class="c1"># Liquid fuel properties for GCM in Pele</span>
+<span class="c1"># Fuel: posf10264</span>
+<span class="c1"># Number of compounds: 1</span>
+<span class="c1"># Generated: &lt;YYY-MM-DD&gt; &lt;HH-MM-SS&gt;</span>
+<span class="c1"># FuelLib remote URL: https://github.com/NREL/FuelLib.git</span>
+<span class="c1"># Git commit: &lt;commit-hash&gt;</span>
+<span class="c1"># Units: MKS</span>
+<span class="c1"># -----------------------------------------------------------------------------</span>
+
+<span class="n">particles</span><span class="o">.</span><span class="n">fuel_species</span> <span class="o">=</span> <span class="n">POSF10264</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">Y_0</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">dep_fuel_species</span> <span class="o">=</span> <span class="n">POSF10264</span>
+
+<span class="c1"># Properties for POSF10264 in MKS</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">POSF10264_family</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># saturated hydrocarbons</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">POSF10264_molar_weight</span> <span class="o">=</span> <span class="mf">0.151492</span> <span class="c1"># kg/mol</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">POSF10264_crit_temp</span> <span class="o">=</span> <span class="mf">648.113736</span> <span class="c1"># K</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">POSF10264_crit_press</span> <span class="o">=</span> <span class="mf">2274590.148249</span> <span class="c1"># Pa</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">POSF10264_crit_vol</span> <span class="o">=</span> <span class="mf">0.000606</span> <span class="c1"># m^3/mol</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">POSF10264_boil_temp</span> <span class="o">=</span> <span class="mf">463.911237</span> <span class="c1"># K</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">POSF10264_acentric_factor</span> <span class="o">=</span> <span class="mf">0.414891</span> <span class="c1"># -</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">POSF10264_molar_vol</span> <span class="o">=</span> <span class="mf">0.000197</span> <span class="c1"># m^3/mol</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">POSF10264_cp_a</span> <span class="o">=</span> <span class="mf">1530.751598</span> <span class="c1"># J/kg/K</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">POSF10264_cp_b</span> <span class="o">=</span> <span class="mf">3164.281021</span> <span class="c1"># J/kg/K</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">POSF10264_cp_c</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1111.365546</span> <span class="c1"># J/kg/K</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">POSF10264_latent</span> <span class="o">=</span> <span class="mf">361721.561620</span> <span class="c1"># J/kg</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="exporting-gcm-based-mixture-properties-for-converge">
+<h2>Exporting GCM-Based Mixture Properties for Converge<a class="headerlink" href="#exporting-gcm-based-mixture-properties-for-converge" title="Link to this heading"></a></h2>
+<p>The export script, <code class="docutils literal notranslate"><span class="pre">Export4Converge.py</span></code>, generates a csv file named <code class="docutils literal notranslate"><span class="pre">mixturePropsGCM_&lt;fuel_name&gt;.csv</span></code> containing
+mixture property predictions for a given fuel over a specified temperature range. The properties include:</p>
+<ul class="simple">
+<li><p>Critical temperature</p></li>
+<li><p>Dynamic viscosity</p></li>
+<li><p>Surface tension</p></li>
+<li><p>Latent heat of vaporization</p></li>
+<li><p>Vapor pressure</p></li>
+<li><p>Density</p></li>
+<li><p>Specific heat</p></li>
+<li><p>Thermal conductivity</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Mixture properties for critical temperature, latent heat, and specific heat are provided by <a class="reference internal" href="fuelprops.html#conventional-mixing-rules"><span class="std std-ref">Conventional mixing rules</span></a> and need additional validation.</p>
+</div>
+<p>This example walks through the process and the available options for exporting GCM-based mixture properties for
+“posf10325”, which is conventional Jet-A, using the <code class="docutils literal notranslate"><span class="pre">Export4Converge.py</span></code> script.</p>
+<section id="id4">
+<h3>Default Options<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<p>From the <code class="docutils literal notranslate"><span class="pre">FuelLib</span></code> directory, run the following command in the terminal, noting that <code class="docutils literal notranslate"><span class="pre">--fuel_name</span></code> is the only required input:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">FuelLib</span><span class="o">/</span><span class="n">source</span>
+<span class="n">python</span> <span class="n">Export4Converge</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">fuel_name</span> <span class="n">posf10325</span>
+</pre></div>
+</div>
+<p>This generates the file <code class="docutils literal notranslate"><span class="pre">FuelLib/exportData/mixturePropsGCM_posf10325.csv</span></code> with mixture
+property predictions from 0 K to 1000 K for use in a Converge simulation.</p>
+</section>
+<section id="id5">
+<h3>Additional Options<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<p>There are four additional options that can be specified when running the export script:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--units</span></code>: Specify the units for the mixture properties. The default is “mks” but users can set the units to “cgs”.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--temp_min</span></code>: Specify the minimum temperature. The default is 0 K.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--temp_max</span></code>: Specify the maximum temperature. The default is 1000 K.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--temp_step</span></code>: Specify the temperature step size. The default is <span class="math notranslate nohighlight">\(\Delta T = 10\)</span> K.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--export_dir</span></code>: Specify the directory to export the file. The default is “FuelLib/exportData”.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The mixture property predictions may not be valid from the specified <code class="docutils literal notranslate"><span class="pre">temp_min</span></code> to <code class="docutils literal notranslate"><span class="pre">temp_max</span></code>,
+as the mixture properties are based on the GCM properties and correlations of the individual
+components. Constant values are set for temperatures below the freezing point of the mixture or above
+the minimum critical temperature of all compounds in the fuel. These temperature values will be noted in the
+terminal output and should be considered when using the mixture properties in a simulation.</p>
+</div>
+<div class="docutils container" id="id6">
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="footcite-owen-pelemp-2024" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Landon D. Owen, Wenjun Ge, Martin Rieth, Marco Arienti, Lucas Esclapez, Bruno S. Soriano, Michael E. Mueller, Marcus Day, Ramanan Sankaran, and Jacqueline H. Chen. PeleMP: The Multiphysics Solver for the Combustion Pele Adaptive Mesh Refinement Code Suite. <em>Journal of Fluids Engineering</em>, 146(4):041103, April 2024. URL: <a class="reference external" href="https://asmedigitalcollection.asme.org/fluidsengineering/article/146/4/041103/1194173/PeleMP-The-Multiphysics-Solver-for-the-Combustion">https://asmedigitalcollection.asme.org/fluidsengineering/article/146/4/041103/1194173/PeleMP-The-Multiphysics-Solver-for-the-Combustion</a> (visited on 2024-10-29), <a class="reference external" href="https://doi.org/10.1115/1.4064494">doi:10.1115/1.4064494</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-henry-de-frahan-pele-2024" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>Marc T. Henry de Frahan, Lucas Esclapez, Jon Rood, Nicolas T. Wimer, Paul Mullowney, Bruce A. Perry, Landon Owen, Hariswaran Sitaraman, Shashank Yellapantula, Malik Hassanaly, Mohammad J. Rahimi, Michael J. Martin, Olga A. Doronina, Sreejith Nadakkal Appukuttan, Martin Rieth, Ge Wenjun, Ramanan Sankaran, Ann S. Almgren, Weiqun Zhang, John B. Bell, Ray Grout, Marc S. Day, and Jacqueline H. Chen. The Pele Simulation Suite for Reacting Flows at Exascale. In <em>Proceedings of the 2024 SIAM Conference on Parallel Processing for Scientific Computing (PP)</em>, 13–25. Philadelphia, PA, January 2024. Society for Industrial and Applied Mathematics. URL: <a class="reference external" href="https://epubs.siam.org/doi/book/10.1137/1.9781611977967">https://epubs.siam.org/doi/book/10.1137/1.9781611977967</a> (visited on 2024-06-26), <a class="reference external" href="https://doi.org/10.1137/1.9781611977967.2">doi:10.1137/1.9781611977967.2</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-esclapez-pelelmex-2023" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">3</a><span class="fn-bracket">]</span></span>
+<p>Lucas Esclapez, Marc Day, John Bell, Anne Felden, Candace Gilet, Ray Grout, Marc Henry De Frahan, Emmanuel Motheau, Andrew Nonaka, Landon Owen, Bruce Perry, Jon Rood, Nicolas Wimer, and Weiqun Zhang. PeleLMeX: an AMR Low Mach Number Reactive FlowSimulation Code without level sub-cycling. <em>Journal of Open Source Software</em>, 8(90):5450, October 2023. URL: <a class="reference external" href="https://joss.theoj.org/papers/10.21105/joss.05450">https://joss.theoj.org/papers/10.21105/joss.05450</a> (visited on 2024-06-26), <a class="reference external" href="https://doi.org/10.21105/joss.05450">doi:10.21105/joss.05450</a>.</p>
+</aside>
+</aside>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="generated/Export4Converge.html" class="btn btn-neutral float-left" title="Export4Converge" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025 Alliance for Sustainable Energy, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
