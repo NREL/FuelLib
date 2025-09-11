@@ -215,6 +215,8 @@ There are four additional options that can be specified when running the export 
 - ``--dep_fuel_names``: Specify which gas-phase species the liquid fuel deposits. The default is the same as the fuel name, but users can specify a single gas-phase species or a list of gas-phase species.
 - ``--max_dep_fuels``: Specify the maximum number of dependent fuels. The default is 30 and is a bit arbitrary.
 - ``--export_dir``: Specify the directory to export the file. The default is "FuelLib/exportData".
+- ``--export_mix``: Export the fuel as a single mixture species. The default is 0 or False.
+- ``--export_mix_name``: Specify the name of the mixture species if ``--export_mix`` is set to True. The default is the same as the fuel name.
 
 To specify all liquid fuel species deposity to a single gas-phase species, run the following command: ::
 
@@ -254,6 +256,40 @@ to a value greater than 30, however this would be required a massive mechanism f
     cd FuelLib/source
     python Export4Pele.py --fuel_name posf10325 --max_dep_fuels 67
 
+Lastly, to export the fuel as a single mixture species, run the following command: ::
+
+    cd FuelLib/source
+    python Export4Pele.py --fuel_name posf10264 --export_mix True --export_mix_name POSF10264
+
+This generates the following input file, ``FuelLib/exportData/sprayPropsGCM_posf10264.inp``: ::
+
+    # -----------------------------------------------------------------------------
+    # Liquid fuel properties for GCM in Pele
+    # Fuel: posf10264
+    # Number of compounds: 1
+    # Generated: <YYY-MM-DD> <HH-MM-SS>
+    # FuelLib remote URL: https://github.com/NREL/FuelLib.git
+    # Git commit: <commit-hash>
+    # Units: MKS
+    # -----------------------------------------------------------------------------
+
+    particles.fuel_species = POSF10264
+    particles.Y_0 = 1.0
+    particles.dep_fuel_species = POSF10264
+
+    # Properties for POSF10264 in MKS
+    particles.POSF10264_family = 0 # saturated hydrocarbons
+    particles.POSF10264_molar_weight = 0.151492 # kg/mol
+    particles.POSF10264_crit_temp = 648.113736 # K
+    particles.POSF10264_crit_press = 2274590.148249 # Pa
+    particles.POSF10264_crit_vol = 0.000606 # m^3/mol
+    particles.POSF10264_boil_temp = 463.911237 # K
+    particles.POSF10264_acentric_factor = 0.414891 # -
+    particles.POSF10264_molar_vol = 0.000197 # m^3/mol
+    particles.POSF10264_cp_a = 1530.751598 # J/kg/K
+    particles.POSF10264_cp_b = 3164.281021 # J/kg/K
+    particles.POSF10264_cp_c = -1111.365546 # J/kg/K
+    particles.POSF10264_latent = 361721.561620 # J/kg
 
 Exporting GCM-Based Mixture Properties for Converge
 ---------------------------------------------------

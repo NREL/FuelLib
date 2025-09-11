@@ -168,9 +168,9 @@ def export_pele(
         # Cp(T) = Cp_A + Cp_B * theta + Cp_C * theta^2
         # where theta = (T - 298.15) / 700
         X = fuel.Y2X(fuel.Y_0)
-        Cp_stp = fl.mixing_rule(X, fuel.Cp_stp / fuel.MW)
-        Cp_B = fl.mixing_rule(X, fuel.Cp_B / fuel.MW)
-        Cp_C = fl.mixing_rule(X, fuel.Cp_C / fuel.MW)
+        Cp_stp = fl.mixing_rule(fuel.Cp_stp / fuel.MW, X)
+        Cp_B = fl.mixing_rule(fuel.Cp_B / fuel.MW, X)
+        Cp_C = fl.mixing_rule(fuel.Cp_C / fuel.MW, X)
 
         # Dataframe of all properties with unit conversions to be exported
         df = pd.DataFrame(
@@ -179,16 +179,16 @@ def export_pele(
                 "Family": [st.mode(fuel.fam).mode],  
                 "Y_0": [1.0],
                 "MW": [fuel.mean_molecular_weight(fuel.Y_0) * conv_MW],
-                "Tc": [fl.mixing_rule(X, fuel.Tc)],
-                "Pc": [fl.mixing_rule(X, fuel.Pc) * conv_P],
-                "Vc": [fl.mixing_rule(X, fuel.Vc) * conv_Vm],
-                "Tb": [fl.mixing_rule(X, fuel.Tb)],
-                "omega": [fl.mixing_rule(X, fuel.omega)],
-                "Vm_stp": [fl.mixing_rule(X, fuel.Vm_stp) * conv_Vm],
+                "Tc": [fl.mixing_rule(fuel.Tc, X)],
+                "Pc": [fl.mixing_rule(fuel.Pc, X) * conv_P],
+                "Vc": [fl.mixing_rule(fuel.Vc, X) * conv_Vm],
+                "Tb": [fl.mixing_rule(fuel.Tb, X)],
+                "omega": [fl.mixing_rule(fuel.omega, X)],
+                "Vm_stp": [fl.mixing_rule(fuel.Vm_stp, X) * conv_Vm],
                 "Cp_stp": [Cp_stp * conv_Cp],
                 "Cp_B": [Cp_B * conv_Cp],
                 "Cp_C": [Cp_C * conv_Cp],
-                "Lv_stp": [fl.mixing_rule(X, fuel.Lv_stp) * conv_Lv],
+                "Lv_stp": [fl.mixing_rule(fuel.Lv_stp, X) * conv_Lv],
             }
         )
 
