@@ -3,6 +3,7 @@ import sys
 import numpy as np
 import pandas as pd
 import argparse
+from scipy import stats as st
 import FuelLib as fl
 
 # Add the FuelLib directory to the Python path
@@ -23,10 +24,12 @@ Usage:
     python Export4Pele.py --fuel_name <fuel_name>
 
 Options:
-        --units <units>
-        --dep_fuel_names <dep_fuel_names>
-        --max_dep_fuels <max_dep_fuels>
-        --export_dir <export_dir>
+        --units <mks or cgs>
+        --dep_fuel_names <list of fuels to deposit to>
+        --max_dep_fuels <max number of dep fuels>
+        --export_dir <directory where file is exported>
+        --export_mix <0 or 1 to export mixture properties of fuel>
+        --export_mix_name <name the mixture if different than fuel_name>
 """
 
 
@@ -52,6 +55,8 @@ def export_pele(
     units="mks",
     dep_fuel_names=None,
     max_dep_fuels=30,
+    export_mix=False,
+    export_mix_name=None,
 ):
     """
     Export fuel properties to input file for Pele simulations.
@@ -71,6 +76,12 @@ def export_pele(
     :param max_dep_fuels: Maximum number of deposition fuels to consider.
     :type max_dep_fuels: int, optional (default: 30)
 
+    :param export_mix: Option to export mixture properties of the fuel (True or False).
+    :type export_mix: bool, optional (default: False)
+
+    :param export_mix_name: Name the mixture if different than fuel_name.
+    :type export_mix_name: str, optional (default: None)
+
     :return: None
     :rtype: None
     """
@@ -78,25 +89,8 @@ def export_pele(
     if not os.path.exists(path):
         os.makedirs(path)
 
-    # Names of the input file
+    # Name of the input file
     file_name = os.path.join(path, f"sprayPropsGCM_{fuel.name}.inp")
-
-    # If dep_fuel_names is not provided, use fuel.compounds
-    if dep_fuel_names is None:
-        if len(fuel.compounds) <= max_dep_fuels:
-            # If no deposition fuel names are provided, use the compounds as deposition fuels
-            dep_fuel_names = fuel.compounds
-        else:
-            # If more than max_dep_fuels, deposit all compoudns to fuel.name.upper()
-            # This assumes a POSF fuel with a single deposition fuel
-            dep_fuel_names = [fuel.name.upper()] * len(fuel.compounds)
-    elif len(dep_fuel_names) == 1:
-        # If a single deposition fuel name is provided, use it for all compounds
-        dep_fuel_names = [dep_fuel_names[0]] * len(fuel.compounds)
-    elif len(dep_fuel_names) != len(fuel.compounds):
-        raise ValueError(
-            "Length of dep_fuel_names must be one or match the number of compounds in the fuel."
-        )
 
     # Unit conversion factors:
     if units.lower() == "cgs":
@@ -113,33 +107,92 @@ def export_pele(
         conv_Lv = 1.0
         conv_P = 1.0
 
-    # Terms for liquid specific heat capacity in (J/kg/K) or (erg/g/K)
-    # Cp(T) = Cp_A + Cp_B * theta + Cp_C * theta^2
-    # where theta = (T - 298.15) / 700
-    Cp_stp = fuel.Cp_stp / fuel.MW
-    Cp_B = fuel.Cp_B / fuel.MW
-    Cp_C = fuel.Cp_C / fuel.MW
+    if export_mix == 0:
+        print(f"\nCalculating GCM properties for individual compounds in {fuel.name}...")
+        # If dep_fuel_names is not provided, use fuel.compounds
+        if dep_fuel_names is None:
+            if len(fuel.compounds) <= max_dep_fuels:
+                # If no deposition fuel names are provided, use the compounds as deposition fuels
+                dep_fuel_names = fuel.compounds
+            else:
+                # If more than max_dep_fuels, deposit all compoudns to fuel.name.upper()
+                # This assumes a POSF fuel with a single deposition fuel
+                dep_fuel_names = [fuel.name.upper()] * len(fuel.compounds)
+        elif len(dep_fuel_names) == 1:
+            # If a single deposition fuel name is provided, use it for all compounds
+            dep_fuel_names = [dep_fuel_names[0]] * len(fuel.compounds)
+        elif len(dep_fuel_names) != len(fuel.compounds):
+            raise ValueError(
+                "Length of dep_fuel_names must be one or match the number of compounds in the fuel."
+            )
+        
+        # Terms for liquid specific heat capacity in (J/kg/K) or (erg/g/K)
+        # Cp(T) = Cp_A + Cp_B * theta + Cp_C * theta^2
+        # where theta = (T - 298.15) / 700
+        Cp_stp = fuel.Cp_stp / fuel.MW
+        Cp_B = fuel.Cp_B / fuel.MW
+        Cp_C = fuel.Cp_C / fuel.MW
 
-    # Dataframe of all properties with unit conversions to be exported
-    print("\nCalculating GCM properties at standard conditions...")
-    df = pd.DataFrame(
-        {
-            "Compound": fuel.compounds,
-            "Family": fuel.fam,
-            "Y_0": fuel.Y_0,
-            "MW": fuel.MW * conv_MW,
-            "Tc": fuel.Tc,
-            "Pc": fuel.Pc * conv_P,
-            "Vc": fuel.Vc * conv_Vm,
-            "Tb": fuel.Tb,
-            "omega": fuel.omega,
-            "Vm_stp": fuel.Vm_stp * conv_Vm,
-            "Cp_stp": Cp_stp * conv_Cp,
-            "Cp_B": Cp_B * conv_Cp,
-            "Cp_C": Cp_C * conv_Cp,
-            "Lv_stp": fuel.Lv_stp * conv_Lv,
-        }
-    )
+        # Dataframe of all properties with unit conversions to be exported
+        df = pd.DataFrame(
+            {
+                "Compound": fuel.compounds,
+                "Family": fuel.fam,
+                "Y_0": fuel.Y_0,
+                "MW": fuel.MW * conv_MW,
+                "Tc": fuel.Tc,
+                "Pc": fuel.Pc * conv_P,
+                "Vc": fuel.Vc * conv_Vm,
+                "Tb": fuel.Tb,
+                "omega": fuel.omega,
+                "Vm_stp": fuel.Vm_stp * conv_Vm,
+                "Cp_stp": Cp_stp * conv_Cp,
+                "Cp_B": Cp_B * conv_Cp,
+                "Cp_C": Cp_C * conv_Cp,
+                "Lv_stp": fuel.Lv_stp * conv_Lv,
+            }
+        )
+
+    else:
+        print("\nCalculating mixture GCM properties at standard conditions...")
+        if export_mix_name is None:
+            export_mix_name = fuel.name
+        if 'posf' in export_mix_name.lower():
+            export_mix_name = export_mix_name.upper()
+        if dep_fuel_names is None:
+            dep_fuel_names = [export_mix_name]
+
+        fuel.compounds = [export_mix_name]
+
+        # Terms for liquid specific heat capacity in (J/kg/K) or (erg/g/K)
+        # Cp(T) = Cp_A + Cp_B * theta + Cp_C * theta^2
+        # where theta = (T - 298.15) / 700
+        X = fuel.Y2X(fuel.Y_0)
+        Cp_stp = fl.mixing_rule(X, fuel.Cp_stp / fuel.MW)
+        Cp_B = fl.mixing_rule(X, fuel.Cp_B / fuel.MW)
+        Cp_C = fl.mixing_rule(X, fuel.Cp_C / fuel.MW)
+
+        # Dataframe of all properties with unit conversions to be exported
+        df = pd.DataFrame(
+            {
+                "Compound": [export_mix_name],
+                "Family": [st.mode(fuel.fam).mode],  
+                "Y_0": [1.0],
+                "MW": [fuel.mean_molecular_weight(fuel.Y_0) * conv_MW],
+                "Tc": [fl.mixing_rule(X, fuel.Tc)],
+                "Pc": [fl.mixing_rule(X, fuel.Pc) * conv_P],
+                "Vc": [fl.mixing_rule(X, fuel.Vc) * conv_Vm],
+                "Tb": [fl.mixing_rule(X, fuel.Tb)],
+                "omega": [fl.mixing_rule(X, fuel.omega)],
+                "Vm_stp": [fl.mixing_rule(X, fuel.Vm_stp) * conv_Vm],
+                "Cp_stp": [Cp_stp * conv_Cp],
+                "Cp_B": [Cp_B * conv_Cp],
+                "Cp_C": [Cp_C * conv_Cp],
+                "Lv_stp": [fl.mixing_rule(X, fuel.Lv_stp) * conv_Lv],
+            }
+        )
+
+        
     # Get the property names
     prop_names = [
         "Family",
@@ -173,7 +226,6 @@ def export_pele(
 
     # Get date and time for the header
     from datetime import datetime
-
     now = datetime.now()
     dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -200,7 +252,7 @@ def export_pele(
         git_remote = "N/A"
 
     # Write the properties to the input file
-    print(f"Writing properties to {file_name}...")
+    print(f"Writing properties to {file_name}.")
     if os.path.exists(file_name):
         os.remove(file_name)
     with open(file_name, "a") as f:
@@ -267,6 +319,12 @@ def main():
     :param --export_dir: Directory to export the properties. Default is "FuelLib/exportData".
     :type --export_dir: str, optional
 
+    :param --export_mix: Option to export mixture properties of the fuel (True or False). Default is False.
+    :type --export_mix: bool, optional
+
+    :param --export_mix_name: Name the mixture if different than fuel_name. Default is fuel_name.
+    :type --export_mix_name: str, optional
+
     :raises FileNotFoundError: If required files for the specified fuel are not found.
     """
 
@@ -313,19 +371,38 @@ def main():
         help="Directory to export the properties (optional, default: FuelLib/exportData).",
     )
 
+    # Optional argument for exporting mixture properties
+    parser.add_argument(
+        "--export_mix",
+        type=lambda x: str(x).lower() in ['true', '1'],
+        default=False,
+        help="Option to export mixture properties of the fuel (True or False, default: False).",
+    )
+
+    # Optional argument for mixture name if different than fuel_name
+    parser.add_argument(
+        "--export_mix_name",
+        default=None,
+        help="Name the mixture if different than fuel_name (optional, default: fuel_name).",
+    )
+
     # Parse arguments
     args = parser.parse_args()
+    print("export_mix =", args.export_mix)
     fuel_name = args.fuel_name
     units = args.units.lower()
     dep_fuel_names = args.dep_fuel_names
     max_dep_fuels = args.max_dep_fuels
     export_dir = args.export_dir
+    export_mix = args.export_mix
+    export_mix_name = args.export_mix_name
 
     # Print the parsed arguments
     print(f"Preparing to export properties:")
     print(f"    Fuel name: {fuel_name}")
     print(f"    Units: {units}")
     print(f"    Export directory: {export_dir}")
+    print(f"    Export mixture properties: {export_mix}")
 
     # Check if necessary files exist in the fuelData directory
     print("\nChecking for required files...")
@@ -351,6 +428,8 @@ def main():
         units=units,
         dep_fuel_names=dep_fuel_names,
         max_dep_fuels=max_dep_fuels,
+        export_mix=export_mix,
+        export_mix_name=export_mix_name,
     )
 
     print("\nExport completed successfully!")

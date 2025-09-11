@@ -189,6 +189,22 @@ class fuel:
     # -------------------------------------------------------------------------
     # Member functions
     # -------------------------------------------------------------------------
+    def mean_molecular_weight(self, Yi):
+        """
+        Calculate the mean molecular weight of the mixture.
+
+        :param Yi: Mass fractions of each compound.
+        :type Yi: np.ndarray
+        :return: Mean molecular weight of the mixture in kg/mol.
+        :rtype: float
+        """
+        if np.sum(Yi) != 0:
+            Mbar = 1 / np.sum(Yi / self.MW)  # mean molar weight of the mixture
+        else:
+            Mbar = 0.0
+
+        return Mbar
+    
     def mass2Y(self, mass):
         """
         Calculate the mass fractions from the mass of each component.
@@ -258,8 +274,8 @@ class fuel:
         :return: Mole fractions of the compounds (shape: num_compounds,).
         :rtype: np.ndarray
         """
+        Mbar = self.mean_molecular_weight(Yi)
         if np.sum(Yi) != 0:
-            Mbar = 1 / np.sum(Yi / self.MW)  # mean molar weight of the mixture
             Xi = Mbar * Yi / self.MW
         else:
             Xi = np.zeros_like(self.MW)
