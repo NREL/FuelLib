@@ -209,7 +209,7 @@ will result in the following: ::
 Additional Options
 ^^^^^^^^^^^^^^^^^^
 
-There are four additional options that can be specified when running the export script:
+There are many additional options that can be specified when running the export script:
 
 - ``--units``: Specify the units for the properties. The default is "mks" but users can set the units to "cgs" for use in PeleC.
 - ``--dep_fuel_names``: Specify which gas-phase species the liquid fuel deposits. The default is the same as the fuel name, but users can specify a single gas-phase species or a list of gas-phase species.
@@ -248,15 +248,15 @@ which produces: ::
     ...
 
 In the case that the liquid fuel has more than 30 components, the script will 
-automatically set the deposition mapping to ``fuel.name`` for all components. 
+automatically set the deposition mapping to ``fuel_name`` for all components. 
 If there are more than 30 components and the user wants each component to deposit 
 to a gas-phase species of the same name, the user can increase ``--max_dep_fuels`` 
-to a value greater than 30, however this would be required a massive mechanism for Pele and is not advised ::
+to a value greater than 30, however this will be require a large gas-phase mechanism for Pele: ::
 
     cd FuelLib/source
     python Export4Pele.py --fuel_name posf10325 --max_dep_fuels 67
 
-Lastly, to export the fuel as a single mixture species, run the following command: ::
+Lastly, to export mixture properties of the fuel as a single component, run the following command: ::
 
     cd FuelLib/source
     python Export4Pele.py --fuel_name posf10264 --export_mix True --export_mix_name POSF10264
