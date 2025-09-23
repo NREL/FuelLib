@@ -1,14 +1,14 @@
-﻿Compound,Weight %
-C07-Isoparaffin (lower put as same),0.02
-C08-Isoparaffin,0.61
-C09-Isoparaffin,0.17
-C10-Isoparaffin,0.22
-C11-Isoparaffin,0.52
-C12-Isoparaffin,78.28
-C13-Isoparaffin,1.23
-C14-Isoparaffin,0.53
-C16-Isoparaffin,16.25
-C20-Isoparaffin,1.69
-C24-Isoparaffin,0.12
-C12-Alkene,0.08
-C16-Alkene,0.24
+﻿Compound,Reference Compound,Weight %
+C07-Isoparaffin,2-methyl hexane,0.02
+C08-Isoparaffin,2-methyl heptane,0.61
+C09-Isoparaffin,2-methyl octane,0.17
+C10-Isoparaffin,2-methyl nonane,0.22
+C11-Isoparaffin,2-methyl decane,0.52
+C12-Isoparaffin,2-methyl undecane,78.28
+C13-Isoparaffin,2-methyl dodecane,1.23
+C14-Isoparaffin,2-methyl tridecane,0.53
+C16-Isoparaffin,2-methyl pentadecane,16.25
+C20-Isoparaffin,2-methyl nonadecane,1.69
+C24-Isoparaffin,2-methyltricosane,0.12
+C12-Alkene,1-dodecane,0.08
+C16-Alkene,1-hexadecane,0.24
