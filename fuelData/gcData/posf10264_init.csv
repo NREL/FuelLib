@@ -1,68 +1,68 @@
-﻿Compound,Weight %
-Toluene,0.25
-C2-Benzene,2
-C3-Benzene,4.2
-C4-Benzene,2.27
-C5-Benzene,1.15
-C6-Benzene,0.56
-C7-Benzene,0.24
-C8-Benzene,0.12
-C9-Benzene,0.05
-Diaromatic-C10,0.1
-Diaromatic-C11,0.32
-Diaromatic-C12,0.4
-Diaromatic-C13,0.18
-Cycloaromatic-C09,0.02
-Cycloaromatic-C10,0.18
-Cycloaromatic-C11,0.36
-Cycloaromatic-C12,0.37
-Cycloaromatic-C13,0.16
-Cycloaromatic-C14,0.04
-C07-Isoparaffin,0.23
-C08-Isoparaffin,0.95
-C09-Isoparaffin,2.88
-C10-Isoparaffin,8.53
-C11-Isoparaffin,9.18
-C12-Isoparaffin,6.05
-C13-Isoparaffin,4.41
-C14-Isoparaffin,4.22
-C15-Isoparaffin,2.31
-C16-Isoparaffin,0.73
-C17-Isoparaffin,0.18
-C18-Isoparaffin,0.02
-C19-Isoparaffin,0
-C20-Isoparaffin,0
-n-C07,0.2
-n-C08,1.14
-n-C09,3.05
-n-C10,6.77
-n-C11,5.29
-n-C12,4.14
-n-C13,2.99
-n-C14,2.07
-n-C15,0.88
-n-C16,0.24
-n-C17,0.06
-n-C18,0
-C07-Monocycloparaffin,0.49
-C08-Monocycloparaffin,0.98
-C09-Monocycloparaffin,2.86
-C10-Monocycloparaffin,3.83
-C11-Monocycloparaffin,2.92
-C12-Monocycloparaffin,1.99
-C13-Monocycloparaffin,2.06
-C14-Monocycloparaffin,1.16
-C15-Monocycloparaffin,0.59
-C16-Monocycloparaffin,0.12
-C17-Monocycloparaffin,0.02
-C08-Dicycloparaffin,0.03
-C09-Dicycloparaffin,0.24
-C10-Dicycloparaffin,0.26
-C11-Dicycloparaffin,0.72
-C12-Dicycloparaffin,0.66
-C13-Dicycloparaffin,0.54
-C14-Dicycloparaffin,0.42
-C15-Dicycloparaffin,0.07
-C10-Tricycloparaffin,0.02
-C11-Tricycloparaffin,0.05
-C12-Tricycloparaffin,0.06
+﻿Compound,Reference Compound,Weight %
+Toluene,toluene,0.25
+C2-Benzene,ethyl benzene ,2
+C3-Benzene,propyl benzene,4.2
+C4-Benzene,butyl benzene,2.27
+C5-Benzene,pentyl benzene,1.15
+C6-Benzene,hexyl benzene,0.56
+C7-Benzene,heptyl benzene,0.24
+C8-Benzene,octyl benzene,0.12
+C9-Benzene,nonyl benzene,0.05
+Diaromatic-C10,naphthalene,0.1
+Diaromatic-C11,1-methyl naphthalene,0.32
+Diaromatic-C12,1-ethyl naphthalene,0.4
+Diaromatic-C13,1-propyl naphthalene,0.18
+Cycloaromatic-C09,indane,0.02
+Cycloaromatic-C10,tetralin,0.18
+Cycloaromatic-C11,2-methyl tetralin,0.36
+Cycloaromatic-C12,2-ethly tetralin,0.37
+Cycloaromatic-C13,2-propyl tetralin,0.16
+Cycloaromatic-C14,2-butyl tetralin,0.04
+C07-Isoparaffin,2-methyl hexane,0.23
+C08-Isoparaffin,2-methyl heptane,0.95
+C09-Isoparaffin,2-methyl octane,2.88
+C10-Isoparaffin,2-methyl nonane,8.53
+C11-Isoparaffin,2-methyl decane,9.18
+C12-Isoparaffin,2-methyl undecane,6.05
+C13-Isoparaffin,2-methyl dodecane,4.41
+C14-Isoparaffin,2-methyl tridecane,4.22
+C15-Isoparaffin,2-methyl tetradecane,2.31
+C16-Isoparaffin,2-methyl pentadecane,0.73
+C17-Isoparaffin,2-methyl hexadecane,0.18
+C18-Isoparaffin,2-methyl heptadecane,0.02
+C19-Isoparaffin,2-methyl octadecane,0
+C20-Isoparaffin,2-methyl nonadecane,0
+n-C07,n-heptane,0.2
+n-C08,n-octane,1.14
+n-C09,n-nonane,3.05
+n-C10,n-decane,6.77
+n-C11,n-undecane,5.29
+n-C12,n-dodecane,4.14
+n-C13,n-tridecane,2.99
+n-C14,n-tetradecane,2.07
+n-C15,n-pentadecane,0.88
+n-C16,n-hexadecane (cetane),0.24
+n-C17,n-heptadecane,0.06
+n-C18,n-octadecane,0
+C07-Monocycloparaffin,methyl cyclohexane,0.49
+C08-Monocycloparaffin,ethyl cyclohexane,0.98
+C09-Monocycloparaffin,propyl cyclohexane,2.86
+C10-Monocycloparaffin,butyl cyclohexane,3.83
+C11-Monocycloparaffin,pentyl cyclohexane,2.92
+C12-Monocycloparaffin,hexyl cyclohexane,1.99
+C13-Monocycloparaffin,heptyl cyclohexane,2.06
+C14-Monocycloparaffin,octyl cyclohexane,1.16
+C15-Monocycloparaffin,nonyl cyclohexane,0.59
+C16-Monocycloparaffin,decyl cyclohexane,0.12
+C17-Monocycloparaffin,undecyl cyclohexane,0.02
+C08-Dicycloparaffin,Octahydropentalene,0.03
+C09-Dicycloparaffin,Hydrindane,0.24
+C10-Dicycloparaffin,Decalin,0.26
+C11-Dicycloparaffin,2-methyldecalin,0.72
+C12-Dicycloparaffin,2-ethyldecalin,0.66
+C13-Dicycloparaffin,2-propyldecalin,0.54
+C14-Dicycloparaffin,2-butyldecalin,0.42
+C15-Dicycloparaffin,2-pentyldacalin,0.07
+C10-Tricycloparaffin,,0.02
+C11-Tricycloparaffin,,0.05
+C12-Tricycloparaffin,,0.06

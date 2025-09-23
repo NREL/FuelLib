@@ -83,8 +83,8 @@ class fuel:
 
         # Read initial liquid composition of mixture and normalize to get mass frac
         df_gcxgc = pd.read_csv(self.gcxgcFile)
-        self.compounds = df_gcxgc.iloc[:, 0].to_list()
-        self.Y_0 = df_gcxgc.iloc[:, 1].to_numpy().flatten().astype(float)
+        self.compounds = df_gcxgc["Compound"].to_list()
+        self.Y_0 = df_gcxgc["Weight %"].to_numpy().flatten().astype(float)
         self.Y_0 /= np.sum(self.Y_0)
 
         # Make sure mixture data is consistent:
