@@ -63,6 +63,6 @@ C12-Dicycloparaffin,2-ethyldecalin,3.4
 C13-Dicycloparaffin,2-propyldecalin,1.5
 C14-Dicycloparaffin,2-butyldecalin,4.94
 C15-Dicycloparaffin,2-pentyldacalin,0.64
-C10-Tricycloparaffin,,0
-C11-Tricycloparaffin,,0.08
-C12-Tricycloparaffin,,0
+C10-Tricycloparaffin,C1CC2C(C1)C1CCCC21,0
+C11-Tricycloparaffin,C1CC2CC3CCCC3C2C1,0.08
+C12-Tricycloparaffin,C1CC2CC3CCCC3CC2C1,0

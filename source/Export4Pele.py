@@ -95,6 +95,14 @@ def export_pele(
     else:
         file_name = os.path.join(path, f"sprayPropsGCM_mixture_{fuel.name}.inp")
 
+    # Check there are no spaces in fuel.compounds
+    for compound in fuel.compounds:
+        if " " in compound:
+            raise ValueError(
+                f"Pele cannot accept compounds with spaces. "
+                f"Compound '{compound}' contains spaces. Use a '-' instead."
+            )
+
     # Unit conversion factors:
     if units.lower() == "cgs":
         # Convert from MKS to CGS
@@ -312,6 +320,9 @@ def main():
     :param --fuel_name: Name of the fuel (mandatory).
     :type --fuel_name: str
 
+    :param --fuel_data_dir: Directory where fuel data files are located. Default is FuelLib/fuelData.
+    :type --fuel_data_dir: str, optional
+
     :param --units: Units for critical properties. Options are "mks" (default) or "cgs".
     :type --units: str, optional
 
@@ -343,6 +354,13 @@ def main():
         "--fuel_name",
         required=True,
         help="Name of the fuel (mandatory).",
+    )
+
+    # Optional argument for fuel data directory
+    parser.add_argument(
+        "--fuel_data_dir",
+        default=FUELDATA_DIR,
+        help="Directory where fuel data files are located (optional, default: FuelLib/fuelData).",
     )
 
     # Optional argument for units
@@ -395,6 +413,7 @@ def main():
     args = parser.parse_args()
     print("export_mix =", args.export_mix)
     fuel_name = args.fuel_name
+    fuel_data_dir = args.fuel_data_dir
     units = args.units.lower()
     dep_fuel_names = args.dep_fuel_names
     max_dep_fuels = args.max_dep_fuels
@@ -406,25 +425,24 @@ def main():
     print(f"Preparing to export properties:")
     print(f"    Fuel name: {fuel_name}")
     print(f"    Units: {units}")
-    print(f"    Export directory: {export_dir}")
     print(f"    Export mixture properties: {export_mix}")
+    print(f"    Export directory: {export_dir}")
+    print(f"    Fuel data directory: {fuel_data_dir}")
 
     # Check if necessary files exist in the fuelData directory
     print("\nChecking for required files...")
-    gcxgc_file = os.path.join(FUELDATA_GC_DIR, f"{fuel_name}_init.csv")
-    decomp_file = os.path.join(FUELDATA_DECOMP_DIR, f"{fuel_name}.csv")
+    gcxgc_file = os.path.join(fuel_data_dir, f"gcData/{fuel_name}_init.csv")
+    decomp_file = os.path.join(fuel_data_dir, f"groupDecompositionData/{fuel_name}.csv")
     if not os.path.exists(gcxgc_file):
-        raise FileNotFoundError(
-            f"GCXGC file for {fuel_name} not found in {FUELDATA_GC_DIR}. gxcgc_file = {gcxgc_file}"
-        )
+        err = f"GCXGC file for {fuel_name} not found in {fuel_data_dir}/gcData. gxcgc_file = {gcxgc_file}"
+        raise FileNotFoundError(err)
     if not os.path.exists(decomp_file):
-        raise FileNotFoundError(
-            f"Decomposition file for {fuel_name} not found in {FUELDATA_DECOMP_DIR}."
-        )
+        err = f"Decomposition file for {fuel_name} not found in {fuel_data_dir}/groupDecompositionData. decomp_file = {decomp_file}"
+        raise FileNotFoundError(err)
     print("All required files found.")
 
     # Create the groupContribution object for the specified fuel
-    fuel = fl.fuel(fuel_name)
+    fuel = fl.fuel(fuel_name, fuelDataDir=fuel_data_dir)
 
     # Export properties for Pele
     export_pele(

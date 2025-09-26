@@ -247,6 +247,9 @@ def main():
     :param --fuel_name: Name of the fuel (mandatory).
     :type --fuel_name: str
 
+    :param --fuel_data_dir: Directory where fuel data files are located. Default is FuelLib/fuelData.
+    :type --fuel_data_dir: str, optional
+
     :param --units: Units for critical properties. Options are "mks" (default) or "cgs".
     :type --units: str, optional
 
@@ -275,6 +278,13 @@ def main():
         "--fuel_name",
         required=True,
         help="Name of the fuel (mandatory).",
+    )
+
+    # Optional argument for fuel data directory
+    parser.add_argument(
+        "--fuel_data_dir",
+        default=FUELDATA_DIR,
+        help="Directory where fuel data files are located (optional, default: FuelLib/fuelData).",
     )
 
     # Optional argument for units
@@ -319,6 +329,7 @@ def main():
     # Parse arguments
     args = parser.parse_args()
     fuel_name = args.fuel_name
+    fuel_data_dir = args.fuel_data_dir
     units = args.units.lower()
     temp_min = args.temp_min
     temp_max = args.temp_max
@@ -333,23 +344,22 @@ def main():
     print(f"    Maximum temperature: {temp_max} K")
     print(f"    Temperature step size: {temp_step} K")
     print(f"    Export directory: {export_dir}")
+    print(f"    Fuel data directory: {fuel_data_dir}")
 
     # Check if necessary files exist in the fuelData directory
     print("\nChecking for required files...")
-    gcxgc_file = os.path.join(FUELDATA_GC_DIR, f"{fuel_name}_init.csv")
-    decomp_file = os.path.join(FUELDATA_DECOMP_DIR, f"{fuel_name}.csv")
+    gcxgc_file = os.path.join(fuel_data_dir, f"gcData/{fuel_name}_init.csv")
+    decomp_file = os.path.join(fuel_data_dir, f"groupDecompositionData/{fuel_name}.csv")
     if not os.path.exists(gcxgc_file):
-        raise FileNotFoundError(
-            f"GCXGC file for {fuel_name} not found in {FUELDATA_GC_DIR}. gxcgc_file = {gcxgc_file}"
-        )
+        err = f"GCXGC file for {fuel_name} not found in {fuel_data_dir}/gcData. gcxgc_file = {gcxgc_file}"
+        raise FileNotFoundError(err)
     if not os.path.exists(decomp_file):
-        raise FileNotFoundError(
-            f"Decomposition file for {fuel_name} not found in {FUELDATA_DECOMP_DIR}."
-        )
+        err = f"Decomposition file for {fuel_name} not found in {fuel_data_dir}/groupDecompositionData. decomp_file = {decomp_file}"
+        raise FileNotFoundError(err)
     print("All required files found.")
 
     # Create the groupContribution object for the specified fuel
-    fuel = fl.fuel(fuel_name)
+    fuel = fl.fuel(fuel_name, fuelDataDir=fuel_data_dir)
 
     # Export properties for Pele
     export_converge(
