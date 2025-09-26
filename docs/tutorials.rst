@@ -217,6 +217,7 @@ There are many additional options that can be specified when running the export 
 - ``--export_dir``: Specify the directory to export the file. The default is "FuelLib/exportData".
 - ``--export_mix``: Export the fuel as a single mixture species. The default is 0 or False.
 - ``--export_mix_name``: Specify the name of the mixture species if ``--export_mix`` is set to True. The default is the same as the fuel name.
+- ``--fuel_data_dir``: Specify the directory containing the fuel data files. The default is "FuelLib/fuelData".
 
 To specify all liquid fuel species deposity to a single gas-phase species, run the following command: ::
 
@@ -327,14 +328,15 @@ property predictions from 0 K to 1000 K for use in a Converge simulation.
 Additional Options
 ^^^^^^^^^^^^^^^^^^
 
-There are four additional options that can be specified when running the export script:
+There are several additional options that can be specified when running the export script:
 
 - ``--units``: Specify the units for the mixture properties. The default is "mks" but users can set the units to "cgs".
 - ``--temp_min``: Specify the minimum temperature. The default is 0 K.
 - ``--temp_max``: Specify the maximum temperature. The default is 1000 K.
 - ``--temp_step``: Specify the temperature step size. The default is :math:`\Delta T = 10` K.
 - ``--export_dir``: Specify the directory to export the file. The default is "FuelLib/exportData".
-  
+- ``--fuel_data_dir``: Specify the directory containing the fuel data files. The default is "FuelLib/fuelData".
+
 .. note::
     The mixture property predictions may not be valid from the specified ``temp_min`` to ``temp_max``, 
     as the mixture properties are based on the GCM properties and correlations of the individual 
