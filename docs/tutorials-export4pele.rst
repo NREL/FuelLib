@@ -215,7 +215,7 @@ This generates the following input file, ``FuelLib/exportData/sprayPropsMP_hepta
     # -----------------------------------------------------------------------------
     # Liquid fuel properties for MP in Pele
     # Fuel: posf10264
-    # Number of compounds: 1
+    # Number of compounds: 2
     # Generated: <YYY-MM-DD> <HH-MM-SS>
     # FuelLib remote URL: https://github.com/NREL/FuelLib.git
     # Git commit: <commit-hash>
