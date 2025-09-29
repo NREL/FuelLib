@@ -135,7 +135,6 @@ To specify all liquid fuel species deposity to a single gas-phase species, run t
 
 This will result in the following: ::
 
-    particles.spray_fuel_num = 2
     particles.fuel_species = NC7H16 NC10H22
     particles.Y_0 = 0.7375 0.2625
     particles.dep_fuel_names = SINGLE_GAS SINGLE_GAS
@@ -152,7 +151,6 @@ Alternatively, users can specify a list of gas-phase species, run the following 
 
 which produces: ::
 
-    particles.spray_fuel_num = 2
     particles.fuel_species = NC7H16 NC10H22
     particles.Y_0 = 0.7375 0.2625
     particles.dep_fuel_names = GAS_1 GAS_2
