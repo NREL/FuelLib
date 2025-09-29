@@ -268,6 +268,22 @@ The Ambrose-Walton\ :footcite:p:`ambrose_vapour_1989` correlation sets:
 
 with :math:`\tau_i = 1 - T_{r,i}`.
 
+.. automethod:: FuelLib.fuel.psat_antoine_coeffs
+   :noindex:
+
+Users also have the option to return the coefficients from an Antoine fit based on 
+the mixture vapor pressure calculated from Raoult's law above.  Antoine's equation is:
+
+.. math:: 
+   \begin{align*}
+   \log_{10}\Big(\frac{p_{v,i}}{D_i}\Big) = A_i - \frac{B_i}{C_i + T},
+   \end{align*}
+
+where :math:`D_i` is a conversion factor for converting :math:`p_{v,i}` to units of bar (:math:`D_i = 10^5`) or dyne/cm :sup:`2` (:math:`D_i = 10^{-1}`) from Pa.
+This feature was added to provide `Pele <https://amrex-combustion.github.io>`_ users an option for estimating these coefficients for use in CFD
+simulations with spray. See the `PelePhysics documentation <https://amrex-combustion.github.io/PelePhysics/Spray.html>`_
+for additional information. 
+
 
 Surface tension
 ^^^^^^^^^^^^^^^
@@ -464,10 +480,10 @@ the mixture vapor pressure calculated from Raoult's law above.  Antoine's equati
 
 .. math:: 
    \begin{align*}
-   \log_{10}(D \cdot p_{v}) = A - \frac{B}{C + T},
+   \log_{10}\Big(\frac{p_{v}}{D}\Big) = A - \frac{B}{C + T},
    \end{align*}
 
-where :math:`D` is a conversion factor for converting :math:`p_v` to units of bar or dyne/cm :sup:`2` from Pa.
+where :math:`D` is a conversion factor for converting :math:`p_v` to units of bar (:math:`D = 10^5`) or dyne/cm :sup:`2` (:math:`D = 10^{-1}`) from Pa.
 This feature was added to provide `Pele <https://amrex-combustion.github.io>`_ users an option for estimating these coefficients for use in CFD
 simulations with spray. See the `PelePhysics documentation <https://amrex-combustion.github.io/PelePhysics/Spray.html>`_
 for additional information. 

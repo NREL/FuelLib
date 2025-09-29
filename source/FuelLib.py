@@ -420,6 +420,63 @@ class fuel:
         psat = self.Pc * rhs
         return psat
 
+    def psat_antoine_coeffs(self, Tvals=None, units="mks", correlation="Lee-Kesler"):
+        """
+        Estimate Antoine coefficients for vapor pressure of an individual compound.
+
+        :param Tvals: Temperature range or nodes for Antoine fit in Kelvin (default [273.15, Tb_i]).
+        :type Tvals: np.ndarray, optional
+        :param units: Units for pressure in fit ("mks", "cgs", "bar", "atm")
+        :type units: str, optional
+        :param correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
+        :type correlation: str, optional
+        :return: Coefficients A, B, C, D
+        :rtype: 4 np.ndarrays
+        """
+
+        # Define or get temperature nodes for fit
+        if Tvals is None:
+            print("Tvals not specified, using [273.15, Tb_i] for each compound.")
+            # Initialize as zeros for now, calculated for each compound later
+            T = np.zeros(20)
+        elif len(Tvals) == 2:
+            T = np.linspace(Tvals[0], Tvals[1], 20)
+        elif len(Tvals) > 2:
+            T = Tvals
+        else:
+            raise ValueError("Tvals must be None, length 2, or length > 2.")
+
+        # Antoine equation log10(p) = A - B/(C + T)
+        def antoine_eq(T, A, B, C):
+            return A - B / (T + C)
+
+        # Determine conversion factor for pressure in MKS, CGS, bar, or atm
+        D = 1  # default is Pa
+        if units.lower() == "bar":
+            D = 1e5
+        elif units.lower() == "atm":
+            D = 1.01325e5
+        elif units.lower() == "cgs":
+            D = 1 / 10  # dyne/cm^2
+
+        # Fit Antoine coefficients for each compound
+        A = np.zeros(self.num_compounds)
+        B = np.zeros(self.num_compounds)
+        C = np.zeros(self.num_compounds)
+        for i in range(self.num_compounds):
+            # Update T if not specified
+            if Tvals is None:
+                T = np.linspace(273.15, self.Tb[i], 20)
+            Pvals = np.zeros_like(T)
+            for k in range(len(T)):
+                Pvals[k] = 1 / D * self.psat(T[k], correlation=correlation)[i]
+
+            logP = np.log10(Pvals)
+            popt, _ = curve_fit(antoine_eq, T, logP, p0=[1, 1e3, -1])
+            A[i], B[i], C[i] = popt
+        D = D + np.zeros(self.num_compounds)  # make D an array
+        return A, B, C, D
+
     def molar_liquid_vol(self, T):
         """
         Compute molar liquid volume with temperature correction.
@@ -718,17 +775,17 @@ class fuel:
         return p_v
 
     def mixture_vapor_pressure_antoine_coeffs(
-        self, Yi, Tvals, units="mks", correlation="Lee-Kesler"
+        self, Yi, Tvals=None, units="mks", correlation="Lee-Kesler"
     ):
         """
         Estimate Antoine coefficients for vapor pressure of the mixture.
 
         :param Yi: Mass fractions of each compound in the mixture.
         :type Yi: np.ndarray
-        :param Tvals: Temperature range or nodes for Antoine fit in Kelvin.
-        :type Tvals: np.ndarray
+        :param Tvals: Temperature range or nodes for Antoine fit in Kelvin (default [273.15, min(Tb)]).
+        :type Tvals: np.ndarray, optional
         :param units: Units for pressure in fit ("mks", "cgs", "bar", "atm")
-        :type correlation: str, optional
+        :type units: str, optional
         :param correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
         :type correlation: str, optional
         :return: Coefficients A, B, C, D
@@ -736,12 +793,18 @@ class fuel:
         """
 
         # Define or get temperature nodes for fit
-        if len(Tvals) == 2:
+        if Tvals is None:
+            print("Tvals not specified, using [273.15, min(Tb_mix)] for mixture.")
+            # Initialize as zeros for now, calculated for each compound later
+            X = self.Y2X(Yi)
+            Tb = mixing_rule(self.Tb, X)
+            T = np.linspace(273.15, np.min(Tb), 20)
+        elif len(Tvals) == 2:
             T = np.linspace(Tvals[0], Tvals[1], 20)
         elif len(Tvals) > 2:
             T = Tvals
         else:
-            raise ValueError("Invalid temperature range for Antoine fit")
+            raise ValueError("Tvals must be None, length 2, or length > 2.")
 
         # Antoine equation log10(p) = A - B/(C + T)
         def antoine_eq(T, A, B, C):
@@ -754,11 +817,11 @@ class fuel:
         elif units.lower() == "atm":
             D = 1.01325e5
         elif units.lower() == "cgs":
-            D = 10  # dyne/cm^2
+            D = 1 / 10  # dyne/cm^2
 
         Pvals = np.zeros_like(T)
         for k in range(len(T)):
-            Pvals[k] = self.mixture_vapor_pressure(Yi, T[k]) * D
+            Pvals[k] = self.mixture_vapor_pressure(Yi, T[k]) / D
 
         logP = np.log10(Pvals)
         popt, _ = curve_fit(antoine_eq, T, logP, p0=[1, 1e3, -1])  # initial guess
