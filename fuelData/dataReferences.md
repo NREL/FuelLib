@@ -12,7 +12,7 @@ The GCxGC data for the POSF fuels comes from the [National Jet Fuels Combustion 
 * gcData/posf11498_init.csv
 
 ## HEFA:Jet-A Blends
-GCxGC data for HEFA fuels produced from diﬀerent feedstocks (camelina, tallow, and mixed fat) courtesy of [Vozka et al.](https://doi.org/10.1016/j.fuel.2018.08.110). Note that these can be blended with Jet-A to reproduce the density and viscosity measurement data from that paper:
+GCxGC data for HEFA fuels produced from diﬀerent feedstocks (camelina, tallow, and mixed fat) courtesy of [Vozka et al. (2018)](https://doi.org/10.1021/acs.energyfuels.8b02787). Note that these can be blended with Jet-A to reproduce the density and viscosity measurement data from that paper:
 * gcData/hefa-came.csv
 * gcData/hefa-tall.csv
 * gcData/hefa-mfat.csv
@@ -29,7 +29,7 @@ The decompositions of each compound into its functional groups for the POSF fuel
 * groupDecompositionData/posf11498.csv
 
 ## HEFA:Jet-A Blends
-The group decompositions of the HEFA and Jet-A from [Vozka et al.](https://doi.org/10.1016/j.fuel.2018.08.110) have been derived from the `posf10325` decomposition:
+The group decompositions of the HEFA and Jet-A from [Vozka et al. (2018)](https://doi.org/10.1021/acs.energyfuels.8b02787) have been derived from the `posf10325` decomposition:
 * groupDecompositionData/hefa.csv
 * groupDecompositionData/jet-a.csv
 
@@ -48,5 +48,5 @@ The properties data for POSF fuels is from the AFRL [Edwards (2017)](https://doi
 * propertiesData/posf11498.csv
 
 ## HEFA:Jet-A Blends
-The properties data for the HEFA:Jet-A blends are from [Vozka et al.](https://doi.org/10.1016/j.fuel.2018.08.110) 
+The properties data for the HEFA:Jet-A blends are from [Vozka et al. (2018)](https://doi.org/10.1021/acs.energyfuels.8b02787) 
 * propertiesData/hefa-jet-a-blends.csv
