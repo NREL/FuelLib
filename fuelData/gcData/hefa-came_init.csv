@@ -18,7 +18,7 @@ Cycloaromatic-C11,2-methyl tetralin,METHYLTETRA-2,0
 Cycloaromatic-C12,2-ethly tetralin,ETHYLTETRA-2,0
 Cycloaromatic-C13,2-propyl tetralin,PROPYLTETRA-2,0
 Cycloaromatic-C14,2-butyl tetralin,BUTYLTETRA-2,0
-C07-Isoparaffin (lower put as same),2-methyl hexane,C7H16-2,0
+C07-Isoparaffin,2-methyl hexane,C7H16-2,0
 C08-Isoparaffin,2-methyl heptane,C8H18-2,1.51
 C09-Isoparaffin,2-methyl octane,C9H20-2,11.09
 C10-Isoparaffin,2-methyl nonane,C10H22-2,11.1
@@ -63,6 +63,6 @@ C12-Dicycloparaffin,2-ethyldecalin,ETHYLDECALIN-2,0
 C13-Dicycloparaffin,2-propyldecalin,PROPYLDECALIN-2,0
 C14-Dicycloparaffin,2-butyldecalin,BUTYLDECALIN-2,0
 C15-Dicycloparaffin,2-pentyldacalin,PENTYLDECALIN-2,0
-C10-Tricycloparaffin,,TRICYCLO-C10,0
-C11-Tricycloparaffin,,TRICYCLO-C11,0
-C12-Tricycloparaffin,,TRICYCLO-C12,0
+C10-Tricycloparaffin,C1CC2C(C1)C1CCCC21,TRICYCLO-C10,0
+C11-Tricycloparaffin,C1CC2CC3CCCC3C2C1,TRICYCLO-C11,0
+C12-Tricycloparaffin,C1CC2CC3CCCC3CC2C1,TRICYCLO-C12,0

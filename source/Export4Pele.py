@@ -26,8 +26,9 @@ Usage:
 
 Options:
         --units <mks or cgs>
+        --fuel_decomp_name <name of decomposition file, if not provided defaults to fuel_name>
+        --fuel_data_dir <directory where fuel data files are located>
         --dep_fuel_names <list of fuels to deposit to>
-        --use_pp_keys <True or False to use PelePhysics key for each compound>
         --export_dir <directory where file is exported>
         --export_mix <0 or 1 to export mixture properties of fuel>
         --export_mix_name <name the mixture if different than fuel_name>
@@ -58,7 +59,6 @@ def export_pele(
     path=os.path.join(FUELLIB_DIR, "exportData"),
     units="mks",
     dep_fuel_names=None,
-    use_pp_keys=True,
     export_mix=False,
     export_mix_name=None,
     liq_prop_model="gcm",
@@ -78,9 +78,6 @@ def export_pele(
 
     :param dep_fuel_names: List or single fuel that each compound deposits to.
     :type dep_fuel_names: list of str, optional (default: None)
-
-    :param use_pp_keys: Use the PelePhysics key for each compound (True or False). Default is False.
-    :type use_pp_keys: bool, optional
 
     :param export_mix: Option to export mixture properties of the fuel (True or False).
     :type export_mix: bool, optional (default: False)
@@ -113,27 +110,8 @@ def export_pele(
         else:
             file_name = os.path.join(path, f"sprayPropsMP_mixture_{fuel.name}.inp")
 
-    # Check if PelePhysics keys are available
-    if use_pp_keys:
-        if fuel.pelephysics_keys is not None:
-            print(
-                "\nPelePhysics keys found in GCxGC data, please ensure consistency with PelePhysics mechanism."
-            )
-            compound_names = fuel.pelephysics_keys
-        else:
-            print(
-                "\nWarning: PelePhysics keys not found in GCxGC data. Using compound names instead."
-            )
-            compound_names = fuel.compounds
-    else:
-        if fuel.pelephysics_keys is not None:
-            print(
-                "\nWarning: PelePhysics keys found in GCxGC data, but not used. Using compound names instead."
-            )
-        compound_names = fuel.compounds
-
-    # Check there are no spaces in compound_names
-    for compound in compound_names:
+    # Check there are no spaces in fuel.compounds
+    for compound in fuel.compounds:
         if " " in compound:
             raise ValueError(
                 f"Pele cannot accept compounds with spaces. "
@@ -159,13 +137,13 @@ def export_pele(
         print(
             f"\nCalculating GCM properties for individual compounds in {fuel.name}..."
         )
-        # If dep_fuel_names is not provided, use compound_names
+        # If dep_fuel_names is not provided, use fuel.compounds
         if dep_fuel_names is None:
-            dep_fuel_names = compound_names
+            dep_fuel_names = fuel.compounds
         elif len(dep_fuel_names) == 1:
             # If a single deposition fuel name is provided, use it for all compounds
-            dep_fuel_names = [dep_fuel_names[0]] * len(compound_names)
-        elif len(dep_fuel_names) != len(compound_names):
+            dep_fuel_names = [dep_fuel_names[0]] * len(fuel.compounds)
+        elif len(dep_fuel_names) != len(fuel.compounds):
             raise ValueError(
                 "Length of dep_fuel_names must be one or match the number of compounds in the fuel."
             )
@@ -180,7 +158,7 @@ def export_pele(
         # Dataframe of all properties with unit conversions to be exported
         df = pd.DataFrame(
             {
-                "Compound": compound_names,
+                "Compound": fuel.compounds,
                 "Family": fuel.fam,
                 "Y_0": fuel.Y_0,
                 "MW": fuel.MW * conv_MW,
@@ -206,7 +184,7 @@ def export_pele(
         if dep_fuel_names is None:
             dep_fuel_names = [export_mix_name]
 
-        compound_names = [export_mix_name]
+        fuel.compounds = [export_mix_name]
 
         # Terms for liquid specific heat capacity in (J/kg/K) or (erg/g/K)
         # Cp(T) = Cp_A + Cp_B * theta + Cp_C * theta^2
@@ -346,7 +324,7 @@ def export_pele(
             f"# -----------------------------------------------------------------------------\n"
             f"# Liquid fuel properties for {liq_prop_model.upper()} in Pele\n"
             f"# Fuel: {fuel.name}\n"
-            f"# Number of compounds: {len(compound_names)}\n"
+            f"# Number of compounds: {len(fuel.compounds)}\n"
             f"# Generated: {dt_string}\n"
             f"# FuelLib remote URL: {git_remote}\n"
             f"# Git commit: {git_commit}\n"
@@ -359,7 +337,7 @@ def export_pele(
         if liq_prop_model.lower() == "mp":
             f.write(f"particles.fuel_ref_temp = {ref_T} # K\n")
 
-        for comp_name in compound_names:
+        for comp_name in fuel.compounds:
             f.write(f"\n# Properties for {comp_name} in {units.upper()}\n")
             for prop in prop_names:
                 if prop in formatted_names:
@@ -405,6 +383,9 @@ def main():
     :param --fuel_name: Name of the fuel (mandatory).
     :type --fuel_name: str
 
+    :param --fuel_decomp_name: Name of the decomposition file (optional). If not provided, defaults to fuel_name.
+    :type --fuel_decomp_name: str, optional
+
     :param --fuel_data_dir: Directory where fuel data files are located. Default is FuelLib/fuelData.
     :type --fuel_data_dir: str, optional
 
@@ -413,9 +394,6 @@ def main():
 
     :param --dep_fuel_names: Space-separated list with len(fuel.compounds) or single fuel that all compounds deposit. Default is fuel.compounds.
     :type --dep_fuel_names: str, optional
-
-    :param --use_pp_keys: Use the PelePhysics key for each compound (True or False). Default is True.
-    :type --use_pp_keys: bool, optional
 
     :param --export_dir: Directory to export the properties. Default is "FuelLib/exportData".
     :type --export_dir: str, optional
@@ -447,6 +425,13 @@ def main():
         help="Name of the fuel (mandatory).",
     )
 
+    # Optional argument for decomposition file name
+    parser.add_argument(
+        "--fuel_decomp_name",
+        default=None,
+        help="Name of the decomposition file (optional). If not provided, defaults to fuel_name.",
+    )
+
     # Optional argument for fuel data directory
     parser.add_argument(
         "--fuel_data_dir",
@@ -468,14 +453,6 @@ def main():
         nargs="+",  # Accepts one or more values
         default=None,
         help="Space-separated list or single fuel that each compound deposits to (optional, default: fuel.compounds).",
-    )
-
-    # Optional argument for using PelePhysics key
-    parser.add_argument(
-        "--use_pp_keys",
-        type=lambda x: str(x).lower() in ["true", "1"],
-        default=True,
-        help="Use the PelePhysics key for each compound (True or False, default: True).",
     )
 
     # Optional argument for export directory
@@ -518,10 +495,10 @@ def main():
     # Parse arguments
     args = parser.parse_args()
     fuel_name = args.fuel_name
+    fuel_decomp_name = args.fuel_decomp_name
     fuel_data_dir = args.fuel_data_dir
     units = args.units.lower()
     dep_fuel_names = args.dep_fuel_names
-    use_pp_keys = args.use_pp_keys
     export_dir = args.export_dir
     export_mix = args.export_mix
     export_mix_name = args.export_mix_name
@@ -531,6 +508,8 @@ def main():
     # Print the parsed arguments
     print(f"Preparing to export properties:")
     print(f"    Fuel name: {fuel_name}")
+    if fuel_decomp_name is not None:
+        print(f"    Decomposition name: {fuel_decomp_name}")
     print(f"    Units: {units}")
     print(f"    Liquid property model: {liq_prop_model}")
     if liq_prop_model.lower() == "mp":
@@ -542,7 +521,14 @@ def main():
     # Check if necessary files exist in the fuelData directory
     print("\nChecking for required files...")
     gcxgc_file = os.path.join(fuel_data_dir, f"gcData/{fuel_name}_init.csv")
-    decomp_file = os.path.join(fuel_data_dir, f"groupDecompositionData/{fuel_name}.csv")
+    if fuel_decomp_name is None:
+        decomp_file = os.path.join(
+            fuel_data_dir, f"groupDecompositionData/{fuel_name}.csv"
+        )
+    else:
+        decomp_file = os.path.join(
+            fuel_data_dir, f"groupDecompositionData/{fuel_decomp_name}.csv"
+        )
     if not os.path.exists(gcxgc_file):
         err = f"GCXGC file for {fuel_name} not found in {fuel_data_dir}/gcData. gxcgc_file = {gcxgc_file}"
         raise FileNotFoundError(err)
@@ -552,7 +538,7 @@ def main():
     print("All required files found.")
 
     # Create the groupContribution object for the specified fuel
-    fuel = fl.fuel(fuel_name, fuelDataDir=fuel_data_dir)
+    fuel = fl.fuel(fuel_name, decompName=fuel_decomp_name, fuelDataDir=fuel_data_dir)
 
     # Export properties for Pele
     export_pele(
@@ -560,7 +546,6 @@ def main():
         path=export_dir,
         units=units,
         dep_fuel_names=dep_fuel_names,
-        use_pp_keys=use_pp_keys,
         export_mix=export_mix,
         export_mix_name=export_mix_name,
         liq_prop_model=liq_prop_model,

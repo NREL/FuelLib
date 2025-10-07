@@ -117,6 +117,7 @@ Additional Options
 
 There are many additional options that can be specified when running the export script:
 
+- ``--fuel_decomp_name``: Name of the decomposition file (optional). If not provided, defaults to ``fuel_name``.
 - ``--fuel_data_dir``: Specify the directory containing the fuel data files. The default is ``"FuelLib/fuelData"``.
 - ``--units``: Specify the units for the properties. The default is "mks" but users can set the units to "cgs" for use in PeleC.
 - ``--dep_fuel_names``: Specify which gas-phase species the liquid fuel deposits. The default is the same as the fuel name, but users can specify a single gas-phase species or a list of gas-phase species.
