@@ -175,7 +175,7 @@ def export_pele(
         # Terms for liquid specific heat capacity in (J/kg/K) or (erg/g/K)
         # Cp(T) = Cp_A + Cp_B * theta + Cp_C * theta^2
         # where theta = (T - 298.15) / 700
-        Cp_stp = fuel.Cp_stp / fuel.MW
+        Cp_A = fuel.Cp_stp / fuel.MW
         Cp_B = fuel.Cp_B / fuel.MW
         Cp_C = fuel.Cp_C / fuel.MW
 
@@ -192,9 +192,10 @@ def export_pele(
                 "Tb": fuel.Tb,
                 "omega": fuel.omega,
                 "Vm_stp": fuel.Vm_stp * conv_Vm,
-                "Cp_stp": Cp_stp * conv_Cp,
+                "Cp_A": Cp_A * conv_Cp,
                 "Cp_B": Cp_B * conv_Cp,
                 "Cp_C": Cp_C * conv_Cp,
+                "Cp_stp": Cp_A * conv_Cp,  # For PeleMP model
                 "Lv_stp": fuel.Lv_stp * conv_Lv,
             }
         )
@@ -214,7 +215,7 @@ def export_pele(
         # Cp(T) = Cp_A + Cp_B * theta + Cp_C * theta^2
         # where theta = (T - 298.15) / 700
         X = fuel.Y2X(fuel.Y_0)
-        Cp_stp = fl.mixing_rule(fuel.Cp_stp / fuel.MW, X)
+        Cp_A = fl.mixing_rule(fuel.Cp_stp / fuel.MW, X)
         Cp_B = fl.mixing_rule(fuel.Cp_B / fuel.MW, X)
         Cp_C = fl.mixing_rule(fuel.Cp_C / fuel.MW, X)
 
@@ -231,7 +232,7 @@ def export_pele(
                 "Tb": [fl.mixing_rule(fuel.Tb, X)],
                 "omega": [fl.mixing_rule(fuel.omega, X)],
                 "Vm_stp": [fl.mixing_rule(fuel.Vm_stp, X) * conv_Vm],
-                "Cp_stp": [Cp_stp * conv_Cp],
+                "Cp_A": [Cp_A * conv_Cp],
                 "Cp_B": [Cp_B * conv_Cp],
                 "Cp_C": [Cp_C * conv_Cp],
                 "Lv_stp": [fl.mixing_rule(fuel.Lv_stp, X) * conv_Lv],
@@ -250,39 +251,16 @@ def export_pele(
             "Tb",
             "omega",
             "Vm_stp",
-            "Cp_stp",
+            "Cp_A",
             "Cp_B",
             "Cp_C",
             "Lv_stp",
         ]
 
-        formatted_names = {
-            "Family": ("family", ["", ""]),
-            "MW": ("molar_weight", ["kg/mol", "g/mol"]),
-            "Tc": ("crit_temp", ["K", "K"]),
-            "Pc": ("crit_press", ["Pa", "dyne/cm^2"]),
-            "Vc": ("crit_vol", ["m^3/mol", "cm^3/mol"]),
-            "Tb": ("boil_temp", ["K", "K"]),
-            "omega": ("acentric_factor", ["-", "-"]),
-            "Vm_stp": ("molar_vol", ["m^3/mol", "cm^3/mol"]),
-            "Cp_stp": ("cp_a", ["J/kg/K", "erg/g/K"]),
-            "Cp_B": ("cp_b", ["J/kg/K", "erg/g/K"]),
-            "Cp_C": ("cp_c", ["J/kg/K", "erg/g/K"]),
-            "Lv_stp": ("latent", ["J/kg", "erg/g"]),
-        }
     else:  # mp method
-        prop_names = ["Tc", "Tb", "Lv_stp", "Cp_stp", "rho"]
+        prop_names = ["MW", "Tc", "Tb", "Lv_stp", "Cp_stp", "rho"]
         if psat_antoine:
             prop_names.append("psat")
-
-        formatted_names = {
-            "Tc": ("crit_temp", ["K", "K"]),
-            "Tb": ("boil_temp", ["K", "K"]),
-            "Lv_stp": ("latent", ["J/kg", "erg/g"]),
-            "Cp_stp": ("cp", ["J/kg/K", "erg/g/K"]),
-            "rho": ("rho", ["kg/m^3", "g/cm^3"]),
-            "psat": ("psat", ["Pa", "dyne/cm^2"]),
-        }
 
         # Calculate density at 298.15 K
         ref_T = 298.15
@@ -310,6 +288,25 @@ def export_pele(
             df["psat_B"] = psat_B
             df["psat_C"] = psat_C
             df["psat_D"] = psat_D
+
+    # Dictionary of formatted names
+    formatted_names = {
+        "Family": ("family", ["", ""]),
+        "MW": ("molar_weight", ["kg/mol", "g/mol"]),
+        "Tc": ("crit_temp", ["K", "K"]),
+        "Pc": ("crit_press", ["Pa", "dyne/cm^2"]),
+        "Vc": ("crit_vol", ["m^3/mol", "cm^3/mol"]),
+        "Tb": ("boil_temp", ["K", "K"]),
+        "omega": ("acentric_factor", ["-", "-"]),
+        "Vm_stp": ("molar_vol", ["m^3/mol", "cm^3/mol"]),
+        "Cp_A": ("cp_a", ["J/kg/K", "erg/g/K"]),  # for GCM model
+        "Cp_B": ("cp_b", ["J/kg/K", "erg/g/K"]),  # for GCM model
+        "Cp_C": ("cp_c", ["J/kg/K", "erg/g/K"]),  # for GCM model
+        "Cp_stp": ("cp", ["J/kg/K", "erg/g/K"]),  # for PeleMP model
+        "Lv_stp": ("latent", ["J/kg", "erg/g"]),
+        "rho": ("rho", ["kg/m^3", "g/cm^3"]),
+        "psat": ("psat", ["Pa", "dyne/cm^2"]),
+    }
 
     # Get date and time for the header
     from datetime import datetime
