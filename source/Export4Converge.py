@@ -72,11 +72,14 @@ def export_converge(
     if not os.path.exists(path):
         os.makedirs(path)
 
-    # Names of the input file
     if export_mix:
+        # Export mixture properties only
         file_name = os.path.join(path, f"mixturePropsGCM_{fuel.name}.csv")
+        components = [fuel.name]
     else:
+        # Export individual component properties and composition
         path = os.path.join(path, fuel.name)
+        components = fuel.compounds
 
     # Unit conversion factors:
     if units.lower() == "cgs":
@@ -133,35 +136,30 @@ def export_converge(
                 f"No temperature in the array is greater than or equal the freezing point {value}. Choose a higher temp_max"
             )
 
-    if export_mix:
-        components = [fuel.name]
-    else:
-        components = fuel.compounds
+    # Estimate freezing point and critical temp of mixture
+    T_freeze = fl.mixing_rule(fuel.Tm, fuel.Y2X(fuel.Y_0))
+    T_crit = fl.mixing_rule(fuel.Tc, fuel.Y2X(fuel.Y_0))
+    T_min_allowed = nearest_temp(T_freeze)
+    T_max_allowed = min(fuel.Tc)
 
-        # Estimate freezing point and critical temp of mixture
-        T_freeze = fl.mixing_rule(fuel.Tm, fuel.Y2X(fuel.Y_0))
-        T_crit = fl.mixing_rule(fuel.Tc, fuel.Y2X(fuel.Y_0))
-        T_min_allowed = nearest_temp(T_freeze)
-        T_max_allowed = min(fuel.Tc)
+    print(f"\nEstimated mixture freezing temp: {T_freeze:.2f} K")
+    print(f"Min freezing temp min(Tm_i): {min(fuel.Tm):.2f} K")
+    print(f"Max freezing temp max(Tm_i): {max(fuel.Tm):.2f} K")
 
-        print(f"\nEstimated mixture freezing temp: {T_freeze:.2f} K")
-        print(f"Min freezing temp min(Tm_i): {min(fuel.Tm):.2f} K")
-        print(f"Max freezing temp max(Tm_i): {max(fuel.Tm):.2f} K")
-
-        if np.any(T < T_min_allowed):
-            T_min_allowed = nearest_ceil(T, T_min_allowed)
-            # Set T_min_allowed to be the next temperature above T_min_allowed in T
-            print(
-                "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-            )
-            print(
-                f"   Warning: Some compounds have freezing temperatures above the estimated\n"
-                f"   freezing temperature of the mixture ({T_freeze:.2f} K). All properties calculated\n"
-                f"   below {T_min_allowed} will be set using a temperature of {T_min_allowed} K."
-            )
-            print(
-                "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-            )
+    if np.any(T < T_min_allowed):
+        T_min_allowed = nearest_ceil(T, T_min_allowed)
+        # Set T_min_allowed to be the next temperature above T_min_allowed in T
+        print(
+            "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        )
+        print(
+            f"   Warning: Some compounds have freezing temperatures above the estimated\n"
+            f"   freezing temperature of the mixture ({T_freeze:.2f} K). All properties calculated\n"
+            f"   below {T_min_allowed} will be set using a temperature of {T_min_allowed} K."
+        )
+        print(
+            "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        )
 
         print(f"\nEstimated mixture critical temp: {T_crit:.2f} K")
         print(f"Min critical temp min(Tc_i): {min(fuel.Tc):.2f} K")
