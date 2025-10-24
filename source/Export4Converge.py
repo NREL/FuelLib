@@ -28,6 +28,7 @@ Options:
         --temp_max <temp_max> (K)
         --temp_step <temp_step> (K)
         --export_dir <export_dir>
+        --export_mix <export_mix>
 """
 
 
@@ -38,9 +39,10 @@ def export_converge(
     temp_min=0,
     temp_max=1000,
     temp_step=10,
+    export_mix=False,
 ):
     """
-    Export mixture fuel properties to .csv for Converge simulations.
+    Export fuel properties to .csv for Converge simulations.
 
     :param fuel: An instance of the fuel class.
     :type fuel: fuel object
@@ -60,6 +62,9 @@ def export_converge(
     :param temp_step: Step size for temperature (K).
     :type temp_step: int, optional (default: 10)
 
+    :export_mix: Whether to export individual component or mixture properties
+    :type export_mix: bool, optional (default: False)
+
     :return: None
     :rtype: None
     """
@@ -67,12 +72,19 @@ def export_converge(
     if not os.path.exists(path):
         os.makedirs(path)
 
-    # Names of the input file
-    file_name = os.path.join(path, f"mixturePropsGCM_{fuel.name}.csv")
+    if export_mix:
+        # Export mixture properties only
+        file_name = os.path.join(path, f"mixturePropsGCM_{fuel.name}.csv")
+        components = [fuel.name]
+    else:
+        # Export individual component properties and composition
+        path = os.path.join(path, fuel.name)
+        components = fuel.compounds
 
     # Unit conversion factors:
     if units.lower() == "cgs":
         # Convert from MKS to CGS
+        conv_mw = 1e3  # kg/mol to g/mol
         conv_mu = 1e2  # Pa*s to Poise
         conv_surfacetension = 1e7  # N/m to dyne/cm
         conv_Lv = 1e4  # J/kg to erg/g
@@ -81,6 +93,7 @@ def export_converge(
         conv_Cl = 1e4  # J/kg/K to erg/g/K
         conv_thermcond = 1e5  # W/m/K to erg/cm/s/K
     else:
+        conv_mw = 1
         conv_mu = 1
         conv_surfacetension = 1
         conv_Lv = 1
@@ -132,6 +145,7 @@ def export_converge(
     print(f"\nEstimated mixture freezing temp: {T_freeze:.2f} K")
     print(f"Min freezing temp min(Tm_i): {min(fuel.Tm):.2f} K")
     print(f"Max freezing temp max(Tm_i): {max(fuel.Tm):.2f} K")
+
     if np.any(T < T_min_allowed):
         T_min_allowed = nearest_ceil(T, T_min_allowed)
         # Set T_min_allowed to be the next temperature above T_min_allowed in T
@@ -147,63 +161,72 @@ def export_converge(
             "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         )
 
-    print(f"\nEstimated mixture critical temp: {T_crit:.2f} K")
-    print(f"Min critical temp min(Tc_i): {min(fuel.Tc):.2f} K")
-    print(f"Max critical temp max(Tc_i): {max(fuel.Tc):.2f} K")
-    if np.any(T > T_max_allowed):
-        T_max_allowed = nearest_floor(T, T_max_allowed)
+        print(f"\nEstimated mixture critical temp: {T_crit:.2f} K")
+        print(f"Min critical temp min(Tc_i): {min(fuel.Tc):.2f} K")
+        print(f"Max critical temp max(Tc_i): {max(fuel.Tc):.2f} K")
+        if np.any(T > T_max_allowed):
+            T_max_allowed = nearest_floor(T, T_max_allowed)
+            print(
+                "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+            )
+            print(
+                f"   Warning: Some compounds have critical temperatures below the estimated\n"
+                f"   critical temperature of the mixture ({T_crit:.2f} K). All properties calculated\n"
+                f"   above {T_max_allowed} will be set using a temperature of {T_max_allowed} K."
+            )
+            print(
+                "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+            )
+
+    for n, compound in enumerate(components):
+        mu = np.zeros_like(T)  # Dynamic viscosity
+        surface_tension = np.zeros_like(T)  # Surface tension
+        Lv = np.zeros_like(T)  # Latent heat of vaporization
+        pv = np.zeros_like(T)  # vapor pressure
+        rho = np.zeros_like(T)  # density
+        Cl = np.zeros_like(T)  # Specific heat
+        thermal_conductivity = np.zeros_like(T)  # Thermal conductivity
+
+        # Calculate GCM properties for a range of temperatures
         print(
-            "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+            f"\nCalculating properties over {len(T)} temperatures from {temp_min} K to {temp_max} K..."
         )
-        print(
-            f"   Warning: Some compounds have critical temperatures below the estimated\n"
-            f"   critical temperature of the mixture ({T_crit:.2f} K). All properties calculated\n"
-            f"   above {T_max_allowed} will be set using a temperature of {T_max_allowed} K."
-        )
-        print(
-            "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        )
+        for k in range(len(T)):
+            if T[k] <= T_min_allowed:
+                Temp = T_min_allowed
+            elif T[k] >= T_max_allowed:
+                Temp = T_max_allowed
+            else:
+                Temp = T[k]
 
-    mu = np.zeros_like(T)  # Dynamic viscosity
-    surface_tension = np.zeros_like(T)  # Surface tension
-    Lv = np.zeros_like(T)  # Latent heat of vaporization
-    pv = np.zeros_like(T)  # vapor pressure
-    rho = np.zeros_like(T)  # density
-    Cl = np.zeros_like(T)  # Specific heat
-    thermal_conductivity = np.zeros_like(T)  # Thermal conductivity
+            if export_mix:
+                Y_li = fuel.Y_0
+                X_li = fuel.Y2X(Y_li)
 
-    # Calculate GCM properties for a range of temperatures
-    print(
-        f"\nCalculating properties over {len(T)} temperatures from {temp_min} K to {temp_max} K..."
-    )
-    for k in range(len(T)):
-        if T[k] <= T_min_allowed:
-            Temp = T_min_allowed
-        elif T[k] >= T_max_allowed:
-            Temp = T_max_allowed
-        else:
-            Temp = T[k]
+                # Standard mixing rules for properties
+                rho[k] = fuel.mixture_density(Y_li, Temp)  # kg/m^3
+                mu[k] = fuel.mixture_dynamic_viscosity(Y_li, Temp)  # Pa*s
+                pv[k] = fuel.mixture_vapor_pressure(Y_li, Temp)  # Pa
+                surface_tension[k] = fuel.mixture_surface_tension(Y_li, Temp)  # N/m
+                thermal_conductivity[k] = fuel.mixture_thermal_conductivity(Y_li, Temp)
 
-        # Correct droplet mass (GCxGC at standard temperature)
-        mass = fl.droplet_mass(fuel, drop_r, fuel.Y_0, Temp)
-        Y_li = fuel.mass2Y(mass)
-        X_li = fuel.Y2X(Y_li)
+                # Generic mixing rules for latent heat and specific heat
+                Lv[k] = fl.mixing_rule(
+                    fuel.latent_heat_vaporization(Temp), X_li
+                )  # J/kg
+                Cl[k] = fl.mixing_rule(fuel.Cl(Temp), X_li)  # J/kg/K
+            else:
+                rho[k] = fuel.density(Temp)[n]  # kg/m^3
+                mu[k] = fuel.viscosity_dynamic(Temp)[n]  # Pa*s
+                pv[k] = fuel.psat(Temp)[n]  # Pa
+                surface_tension[k] = fuel.surface_tension(Temp)[n]  # N/m
+                thermal_conductivity[k] = fuel.thermal_conductivity(Temp)[n]
+                Lv[k] = fuel.latent_heat_vaporization(Temp)[n]  # J/kg
+                Cl[k] = fuel.Cl(Temp)[n]  # J/kg/K
 
-        # Standard mixing rules for properties
-        rho[k] = fuel.mixture_density(Y_li, Temp)  # kg/m^3
-        mu[k] = fuel.mixture_dynamic_viscosity(Y_li, Temp)  # Pa*s
-        pv[k] = fuel.mixture_vapor_pressure(Y_li, Temp)  # Pa
-        surface_tension[k] = fuel.mixture_surface_tension(Y_li, Temp)  # N/m
-        thermal_conductivity[k] = fuel.mixture_thermal_conductivity(Y_li, Temp)
-
-        # Generic mixing rules for latent heat and specific heat
-        Lv[k] = fl.mixing_rule(fuel.latent_heat_vaporization(Temp), X_li)  # J/kg
-        Cl[k] = fl.mixing_rule(fuel.Cl(Temp), X_li)  # J/kg/K
-
-    if units.lower() == "cgs":
-        # Convert properties to CGS units
-        data = pd.DataFrame(
-            {
+        if units.lower() == "cgs":
+            # Convert properties to CGS units
+            data = {
                 "Temperature (K)": T,
                 "Critical Temperature (K)": T_crit + np.zeros_like(T),
                 "Viscosity (Poise)": mu * conv_mu,
@@ -215,11 +238,10 @@ def export_converge(
                 "Thermal Conductivity (erg/cm/s/K)": thermal_conductivity
                 * conv_thermcond,
             }
-        )
-    else:
-        # MKS units
-        data = pd.DataFrame(
-            {
+
+        else:
+            # MKS units
+            data = {
                 "Temperature (K)": T,
                 "Critical Temperature (K)": T_crit + np.zeros_like(T),
                 "Viscosity (Pa*s)": mu,
@@ -230,14 +252,39 @@ def export_converge(
                 "Specific Heat (J/kg/K)": Cl,
                 "Thermal Conductivity (W/m/K)": thermal_conductivity,
             }
-        )
 
-    # Write the properties to the input file
-    print(f"\nWriting mixture properties to {file_name}")
-    if os.path.exists(file_name):
-        os.remove(file_name)
-    df = pd.DataFrame(data)
-    df.to_csv(file_name, index=False)
+        # Write the properties to the input file
+        if export_mix:
+            print(f"\nWriting mixture properties to {file_name}")
+        else:
+            file_name = os.path.join(path, f"{n}_{compound}.csv")
+            print(f"\nWriting properties for {compound} to {file_name}")
+        if not os.path.exists(path):
+            os.makedirs(path)
+        if os.path.exists(file_name):
+            os.remove(file_name)
+        df = pd.DataFrame(data)
+        df.to_csv(file_name, index=False)
+
+    if not export_mix:
+        # Also export the initial mass fractions
+        file_name = os.path.join(path, f"composition_{fuel.name}.csv")
+        if os.path.exists(file_name):
+            os.remove(file_name)
+        print(f"\nWriting mass fractions for {fuel.name} to {file_name}")
+        if units.lower() == "cgs":
+            mw_label = "Molecular Weight (g/mol)"
+        else:
+            mw_label = "Molecular Weight (kg/mol)"
+        data = {
+            "Index": range(len(fuel.compounds)),
+            "Component": fuel.compounds,
+            "Mass Fraction": fuel.Y_0,
+            "Mole Fraction": fuel.Y2X(fuel.Y_0),
+            mw_label: fuel.MW * conv_mw,
+        }
+        dfY = pd.DataFrame(data)
+        dfY.to_csv(file_name, index=False)
 
 
 def main():
@@ -247,23 +294,26 @@ def main():
     :param --fuel_name: Name of the fuel (mandatory).
     :type --fuel_name: str
 
-    :param --fuel_data_dir: Directory where fuel data files are located. Default is FuelLib/fuelData.
-    :type --fuel_data_dir: str, optional
+    :param --fuel_data_dir: Directory where fuel data files are located.
+    :type --fuel_data_dir: str, optional (default: FuelLib/fuelData)
 
-    :param --units: Units for critical properties. Options are "mks" (default) or "cgs".
-    :type --units: str, optional
+    :param --units: Units for critical properties. Options are mks or cgs.
+    :type --units: str, optional (default: mks)
 
-    :param --temp_min: Minimum temperature (K) for the property calculations (optional, default: 0).
-    :type --temp_min: float, optional
+    :param --temp_min: Minimum temperature (K) for the property calculations.
+    :type --temp_min: float, optional (default: 0 K)
 
-    :param --temp_max: Maximum temperature (K) for the property calculations (optional, default: 1000).
-    :type --temp_max: float, optional
+    :param --temp_max: Maximum temperature (K) for the property calculations.
+    :type --temp_max: float, optional (default: 1000 K)
 
-    :param --temp_step: Step size for temperature (K) (optional, default: 10).
-    :type --temp_step: float, optional
+    :param --temp_step: Step size for temperature (K).
+    :type --temp_step: float, optional (default: 10 K)
 
-    :param --export_dir: Directory to export the properties. Default is "FuelLib/exportData".
-    :type --export_dir: str, optional
+    :param --export_dir: Directory to export the properties.
+    :type --export_dir: str, optional (default: FuelLib/exportData)
+
+    :param --export_mix: Whether to export individual component or mixture properties.
+    :type --export_mix: bool, optional (default: False)
 
     :raises FileNotFoundError: If required files for the specified fuel are not found.
     """
@@ -326,6 +376,14 @@ def main():
         help="Directory to export the properties (optional, default: FuelLib/exportData).",
     )
 
+    # Optional argument for exporting mixture properties
+    parser.add_argument(
+        "--export_mix",
+        type=lambda x: str(x).lower() in ["true", "1"],
+        default=False,
+        help="Option to export mixture properties of the fuel (True or False, default: False).",
+    )
+
     # Parse arguments
     args = parser.parse_args()
     fuel_name = args.fuel_name
@@ -335,10 +393,13 @@ def main():
     temp_max = args.temp_max
     temp_step = args.temp_step
     export_dir = args.export_dir
+    export_mix = args.export_mix
 
     # Print the parsed arguments
     print(f"Preparing to export mixture properties:")
     print(f"    Fuel name: {fuel_name}")
+    if export_mix:
+        print(f"    Exporting mixture properties: True")
     print(f"    Units: {units}")
     print(f"    Minimum temperature: {temp_min} K")
     print(f"    Maximum temperature: {temp_max} K")
@@ -369,6 +430,7 @@ def main():
         temp_min=temp_min,
         temp_max=temp_max,
         temp_step=temp_step,
+        export_mix=export_mix,
     )
 
     print("\nExport completed successfully!")
