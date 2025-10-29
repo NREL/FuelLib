@@ -37,10 +37,11 @@ class UnitConverter:
     """Unit conversion factors and labels for different unit systems."""
 
     def __init__(self, units: str):
-        """Initialize converter for specified unit system.
+        """
+        Initialize converter for specified unit system.
 
-        Args:
-            units: Unit system ('cgs' or 'mks')
+        :param units: Unit system ('cgs' or 'mks').
+        :type units: str
         """
         self.units = units.lower()
         self._set_conversion_factors()
@@ -101,7 +102,30 @@ class UnitConverter:
     def create_data_dict(
         self, T, T_crit, mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity
     ):
-        """Create a data dictionary with converted units and appropriate labels."""
+        """
+        Create a data dictionary with converted units and appropriate labels.
+
+        :param T: Temperature array.
+        :type T: np.ndarray
+        :param T_crit: Critical temperature.
+        :type T_crit: float
+        :param mu: Viscosity array.
+        :type mu: np.ndarray
+        :param surface_tension: Surface tension array.
+        :type surface_tension: np.ndarray
+        :param Lv: Heat of vaporization array.
+        :type Lv: np.ndarray
+        :param pv: Vapor pressure array.
+        :type pv: np.ndarray
+        :param rho: Density array.
+        :type rho: np.ndarray
+        :param Cl: Specific heat array.
+        :type Cl: np.ndarray
+        :param thermal_conductivity: Thermal conductivity array.
+        :type thermal_conductivity: np.ndarray
+        :return: Dictionary with converted properties and labels.
+        :rtype: dict
+        """
         return {
             self.labels["temperature"]: T,
             self.labels["critical_temp"]: T_crit + np.zeros_like(T),
@@ -126,13 +150,7 @@ def export_converge(
     export_mix=False,
 ):
     """
-    Export mixture fuel properties for Converge simulations.
-
-    This function exports properties data to csv files for use in converge simulations.
-
-    # Export properties with custom temperature range and units
-    fuel = fl.fuel("jet-a")
-    export_converge(fuel, temp_min=200, temp_max=800, temp_step=20, units="cgs")
+    Export mixture fuel properties to csv files for Converge simulations.
 
     :param fuel: Fuel object containing properties to export.
     :type fuel: fl.fuel
@@ -152,7 +170,7 @@ def export_converge(
     :param temp_step: Step size for temperature (K).
     :type temp_step: int, optional (default: 10)
 
-    :export_mix: Whether to export individual component or mixture properties
+    :param export_mix: Whether to export individual component or mixture properties.
     :type export_mix: bool, optional (default: False)
 
     :return: None
@@ -196,11 +214,30 @@ def export_converge(
     converter = UnitConverter(units)
 
     def nearest_temp(x, base=temp_step):
-        """Round to nearest multiple of temp_step."""
+        """
+        Round to nearest multiple of temp_step.
+
+        :param x: Temperature value to round.
+        :type x: float
+        :param base: Base value for rounding (temp_step).
+        :type base: float
+        :return: Rounded temperature.
+        :rtype: float
+        """
         return base * round(x / base)
 
     def nearest_floor(array, value):
-        """Find the largest value in the array that is less than or equal to the given value."""
+        """
+        Find the largest value in the array that is less than or equal to the given value.
+
+        :param array: Array of temperature values.
+        :type array: np.ndarray
+        :param value: Reference value.
+        :type value: float
+        :return: Largest array value <= reference value.
+        :rtype: float
+        :raises ValueError: If no array value is <= reference value.
+        """
         if np.any(array <= value):
             return array[array <= value].max()
         else:
@@ -209,7 +246,17 @@ def export_converge(
             )
 
     def nearest_ceil(array, value):
-        """Find the smallest value in the array that is greater than or equal to the given value."""
+        """
+        Find the smallest value in the array that is greater than or equal to the given value.
+
+        :param array: Array of temperature values.
+        :type array: np.ndarray
+        :param value: Reference value.
+        :type value: float
+        :return: Smallest array value >= reference value.
+        :rtype: float
+        :raises ValueError: If no array value is >= reference value.
+        """
         if np.any(array >= value):
             return array[array >= value].min()
         else:
@@ -221,8 +268,16 @@ def export_converge(
         """
         Validate and adjust temperature range based on freezing and critical temperatures.
 
-        Returns:
-            tuple: (T_min_allowed, T_max_allowed, adjusted_T_array)
+        :param T_array: Array of temperature values.
+        :type T_array: np.ndarray
+        :param T_freeze: Freezing temperature.
+        :type T_freeze: float
+        :param T_crit: Critical temperature.
+        :type T_crit: float
+        :param is_mixture: Whether this is for mixture properties.
+        :type is_mixture: bool
+        :return: Tuple of (T_min_allowed, T_max_allowed, adjusted_T_array).
+        :rtype: tuple
         """
         T_min_allowed = nearest_temp(T_freeze)
         T_max_allowed = T_crit if is_mixture else T_crit
@@ -267,8 +322,12 @@ def export_converge(
         """
         Calculate mixture properties for a range of temperatures.
 
-        Returns:
-            tuple: (mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity)
+        :param T_array: Array of temperature values.
+        :type T_array: np.ndarray
+        :param fuel: Fuel object.
+        :type fuel: fl.fuel
+        :return: Tuple of property arrays (mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity).
+        :rtype: tuple
         """
         # Initialize property arrays
         mu = np.zeros_like(T_array)
@@ -300,8 +359,14 @@ def export_converge(
         """
         Calculate individual component properties for a range of temperatures.
 
-        Returns:
-            tuple: (mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity)
+        :param T_array: Array of temperature values.
+        :type T_array: np.ndarray
+        :param fuel: Fuel object.
+        :type fuel: fl.fuel
+        :param comp_idx: Index of the component.
+        :type comp_idx: int
+        :return: Tuple of property arrays (mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity).
+        :rtype: tuple
         """
         # Initialize property arrays
         mu = np.zeros_like(T_array)
@@ -327,10 +392,12 @@ def export_converge(
         """
         Export properties data to CSV file.
 
-        Args:
-            file_path: Path to the output CSV file
-            data_dict: Dictionary containing property data
-            overwrite: Whether to overwrite existing file
+        :param file_path: Path to the output CSV file.
+        :type file_path: str
+        :param data_dict: Dictionary containing property data.
+        :type data_dict: dict
+        :param overwrite: Whether to overwrite existing file.
+        :type overwrite: bool
         """
         # Create directory if it doesn't exist
         directory = os.path.dirname(file_path)
@@ -433,12 +500,11 @@ def validate_fuel_files(fuel_name, fuel_data_dir):
     """
     Validate that required fuel data files exist.
 
-    Args:
-        fuel_name: Name of the fuel
-        fuel_data_dir: Directory containing fuel data files
-
-    Raises:
-        FileNotFoundError: If required files are missing
+    :param fuel_name: Name of the fuel.
+    :type fuel_name: str
+    :param fuel_data_dir: Directory containing fuel data files.
+    :type fuel_data_dir: str
+    :raises FileNotFoundError: If required files are missing.
     """
     gcxgc_file = os.path.join(fuel_data_dir, f"gcData/{fuel_name}_init.csv")
     decomp_file = os.path.join(fuel_data_dir, f"groupDecompositionData/{fuel_name}.csv")

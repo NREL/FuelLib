@@ -45,22 +45,29 @@ class UnitConverter:
     """Unit conversion factors for different unit systems used in Pele exports."""
 
     def __init__(self, units: str):
-        """Initialize converter for specified unit system.
+        """
+        Initialize converter for specified unit system.
 
-        Args:
-            units: Unit system ('cgs' or 'mks')
+        :param units: Unit system ('cgs' or 'mks').
+        :type units: str
         """
         self.units = units.lower()
         self._validate_units()
         self._set_conversion_factors()
 
     def _validate_units(self):
-        """Validate that the unit system is supported."""
+        """
+        Validate that the unit system is supported.
+
+        :raises ValueError: If unit system is not 'mks' or 'cgs'.
+        """
         if self.units not in ["mks", "cgs"]:
             raise ValueError(f"Units must be 'mks' or 'cgs', got '{self.units}'")
 
     def _set_conversion_factors(self):
-        """Set conversion factors based on unit system."""
+        """
+        Set conversion factors based on unit system.
+        """
         if self.units == "cgs":
             # Convert from MKS to CGS
             self.MW = 1e3  # kg/mol to g/mol
@@ -78,7 +85,12 @@ class UnitConverter:
 
 
 def get_git_info():
-    """Get git commit hash and remote URL for file header."""
+    """
+    Get git commit hash and remote URL for file header.
+
+    :return: Tuple containing git commit hash and remote URL.
+    :rtype: tuple[str, str]
+    """
     try:
         git_commit = (
             subprocess.check_output(["git", "rev-parse", "HEAD"])
@@ -101,7 +113,20 @@ def get_git_info():
 
 
 def get_filename(fuel_name, liq_prop_model, export_mix, path):
-    """Generate appropriate filename based on parameters."""
+    """
+    Generate appropriate filename based on parameters.
+
+    :param fuel_name: Name of the fuel.
+    :type fuel_name: str
+    :param liq_prop_model: Liquid property model ('gcm' or 'mp').
+    :type liq_prop_model: str
+    :param export_mix: Whether exporting mixture properties.
+    :type export_mix: bool
+    :param path: Directory path for output file.
+    :type path: str
+    :return: Full path to output file.
+    :rtype: str
+    """
     if liq_prop_model.lower() == "gcm":
         if not export_mix:
             return os.path.join(path, f"sprayPropsGCM_{fuel_name}.inp")
@@ -115,7 +140,18 @@ def get_filename(fuel_name, liq_prop_model, export_mix, path):
 
 
 def create_individual_compounds_dataframe(fuel, compound_names, converter):
-    """Create DataFrame for individual compound properties."""
+    """
+    Create DataFrame for individual compound properties.
+
+    :param fuel: Fuel object containing compound properties.
+    :type fuel: FuelLib.Fuel
+    :param compound_names: List of compound names.
+    :type compound_names: list[str]
+    :param converter: Unit converter instance.
+    :type converter: UnitConverter
+    :return: DataFrame with compound properties.
+    :rtype: pd.DataFrame
+    """
     # Terms for liquid specific heat capacity in (J/kg/K) or (erg/g/K)
     # Cp(T) = Cp_A + Cp_B * theta + Cp_C * theta^2
     # where theta = (T - 298.15) / 700
@@ -145,7 +181,18 @@ def create_individual_compounds_dataframe(fuel, compound_names, converter):
 
 
 def create_mixture_dataframe(fuel, export_mix_name, converter):
-    """Create DataFrame for mixture properties."""
+    """
+    Create DataFrame for mixture properties.
+
+    :param fuel: Fuel object containing mixture properties.
+    :type fuel: FuelLib.Fuel
+    :param export_mix_name: Name for the exported mixture.
+    :type export_mix_name: str or None
+    :param converter: Unit converter instance.
+    :type converter: UnitConverter
+    :return: DataFrame with mixture properties.
+    :rtype: pd.DataFrame
+    """
     if export_mix_name is None:
         export_mix_name = fuel.name
     if "posf" in export_mix_name.lower():
@@ -185,7 +232,9 @@ def vec_to_str(vec):
     Convert a list or numpy array to a string representation.
 
     :param vec: List or numpy array to convert.
+    :type vec: list or pd.Series or pd.DataFrame
     :return: String representation of the vector.
+    :rtype: str
     """
 
     # If strings return string[0] string[1] ... string[n]
