@@ -559,8 +559,8 @@ class fuel:
             Vm_stp = self.Vm_stp
         else:
             Tc = np.array([self.Tc[comp_idx]])
-            omega = self.omega[comp_idx]
-            Vm_stp = self.Vm_stp[comp_idx]
+            omega = np.array([self.omega[comp_idx]])
+            Vm_stp = np.array([self.Vm_stp[comp_idx]])
         phi = np.zeros_like(Tc)
         for i in range(len(Tc)):
             if T > Tc[i]:
@@ -723,7 +723,6 @@ class fuel:
             omega = np.array([self.omega[comp_idx]])
         Tr = T / Tc
         Pc = Pc * 1e-5  # convert from Pa to bar
-        Tc = Tc  # K
 
         if correlation.casefold() == "Brock-Bird".casefold():
             Tbr = Tb / Tc

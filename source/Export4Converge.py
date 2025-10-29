@@ -279,7 +279,7 @@ def export_converge(
         :rtype: tuple
         """
         T_min_allowed = nearest_temp(T_freeze)
-        T_max_allowed = T_crit if is_mixture else T_crit
+        T_max_allowed = T_crit
 
         # Handle minimum temperature warnings
         if np.any(T_array < T_min_allowed):
@@ -459,13 +459,25 @@ def export_converge(
         )
 
         if export_mix:
-            mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity = (
-                calculate_mixture_properties(T, fuel)
-            )
+            (
+                mu,
+                surface_tension,
+                Lv,
+                pv,
+                rho,
+                Cl,
+                thermal_conductivity,
+            ) = calculate_mixture_properties(T, fuel)
         else:
-            mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity = (
-                calculate_component_properties(T, fuel, comp_idx)
-            )
+            (
+                mu,
+                surface_tension,
+                Lv,
+                pv,
+                rho,
+                Cl,
+                thermal_conductivity,
+            ) = calculate_component_properties(T, fuel, comp_idx)
 
         # Create data dictionary with converted units
         data = converter.create_data_dict(
