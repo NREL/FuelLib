@@ -539,20 +539,7 @@ class fuel:
 
         # Antoine equation log10(p) = A - B/(C + T)
         def antoine_eq(T, A, B, C):
-            """
-            Antoine equation for vapor pressure.
-
-            :param T: Temperature.
-            :type T: float or np.ndarray
-            :param A: Antoine coefficient A.
-            :type A: float
-            :param B: Antoine coefficient B.
-            :type B: float
-            :param C: Antoine coefficient C.
-            :type C: float
-            :return: log10(pressure).
-            :rtype: float or np.ndarray
-            """
+            """Antoine equation for vapor pressure."""
             return A - B / (T + C)
 
         # Determine conversion factor for pressure in MKS, CGS, bar, or atm
@@ -604,12 +591,12 @@ class fuel:
             omega = self.omega[comp_idx]
             Vm_stp = self.Vm_stp[comp_idx]
         phi = np.zeros_like(Tc)
-        for k in range(len(Tc)):
-            if T > Tc[k]:
-                phi[k] = -((1 - (Tstp / Tc[k])) ** (2.0 / 7.0))
+        for i in range(len(Tc)):
+            if T > Tc[i]:
+                phi[i] = -((1 - (Tstp / Tc[i])) ** (2.0 / 7.0))
             else:
-                phi[k] = ((1 - (T / Tc[k])) ** (2.0 / 7.0)) - (
-                    (1 - (Tstp / Tc[k])) ** (2.0 / 7.0)
+                phi[i] = ((1 - (T / Tc[i])) ** (2.0 / 7.0)) - (
+                    (1 - (Tstp / Tc[i])) ** (2.0 / 7.0)
                 )
         z = 0.29056 - 0.08775 * omega
         Vmi = Vm_stp * np.power(z, phi)
@@ -642,11 +629,11 @@ class fuel:
         Trb = Tb / Tc
 
         Lvi = np.zeros_like(Tc)
-        for k in range(len(Tc)):
-            if T > Tc[k]:
-                Lvi[k] = 0.0
+        for i in range(len(Tc)):
+            if T > Tc[i]:
+                Lvi[i] = 0.0
             else:
-                Lvi[k] = self.Lv_stp[k] * (((1.0 - Tr[k]) / (1.0 - Trb[k])) ** 0.38)
+                Lvi[i] = Lv_stp[i] * (((1.0 - Tr[i]) / (1.0 - Trb[i])) ** 0.38)
 
         if comp_idx is not None:
             Lvi = Lvi[0]
@@ -820,20 +807,20 @@ class fuel:
         MW_beta = MW * 1e3  # convert from kg/mol to g/mol
         Tr = T / Tc
 
-        for k in range(len(Tc)):
-            if fam[k] == 1:
+        for i in range(len(Tc)):
+            if fam[i] == 1:
                 # Aromatics
-                Astar[k] = 0.0346
-                beta[k] = 1.0
-            elif fam[k] == 2:
+                Astar[i] = 0.0346
+                beta[i] = 1.0
+            elif fam[i] == 2:
                 # Cycloparaffins
-                Astar[k] = 0.0310
-                beta[k] = 1.0
-            elif fam[k] == 3:
+                Astar[i] = 0.0310
+                beta[i] = 1.0
+            elif fam[i] == 3:
                 # Olefins
-                Astar[k] = 0.0361
-                beta[k] = 1.0
-            MW_beta[k] = MW_beta[k] ** beta[k]
+                Astar[i] = 0.0361
+                beta[i] = 1.0
+            MW_beta[i] = MW_beta[i] ** beta[i]
 
         A = Astar * Tb**alpha / (MW_beta * Tc**gamma)
         tc = A * (1 - Tr) ** (0.38) / (Tr ** (1 / 6))
