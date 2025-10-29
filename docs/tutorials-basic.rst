@@ -37,11 +37,11 @@ Decomposing Fuel Components into Fundamental Groups
 The decomposition process is a manual process that requires knowledge of the chemical structure of each component in the fuel. 
 For example, consider a multicomponent fuel consisting of heptane (C7H16), decane (C10H22), and (1,5-dimethylhexyl)cyclohexane (C14H28).
 
-.. figure:: /figures/decomp-example.pdf
+.. figure:: /figures/decomp-example.png
    :width: 300pt
    :align: center
    
-   Chemical structures of heptane (top), decane (middle), and (1,5-dimethylhexyl)cyclohexane (bottom). The CH3 groups are highlighted in green, the CH2 groups in blue, and the CH group in gold. The additional second order structures of (1,5-dimethylhexyl)cyclohexane are shown in purple.
+   Chemical structures of heptane (top), decane (middle), and (1,5-dimethylhexyl)cyclohexane (bottom). The CH3 groups are highlighted in green, the CH2 groups in blue, and the CH group in gold. The additional second order structures of (1,5-dimethylhexyl)cyclohexane are shown in orange.
 
 The decomposition of heptane and decane into the groups defined in the `gcmTable`_ is straightforward, as both compounds consist of only CH3 and CH2 groups. 
 (1,5-dimethylhexyl)cyclohexane is a branched cycloalkane with a six-membered ring and 

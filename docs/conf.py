@@ -24,7 +24,7 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # The name of an image file to place at the top of the sidebar.
-html_logo = "comms/FuelLibLogo_Blue.pdf"
+html_logo = "comms/FuelLibLogo_Blue.png"
 
 # -- General configuration ---------------------------------------------------
 
