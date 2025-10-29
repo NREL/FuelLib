@@ -105,10 +105,6 @@ def export_converge(
     # Assume droplet of 50 microns to account for compositional changes with temp
     drop_r = 50 * 1e-6  # initial droplet radius (m)
 
-    # Vector of evenly space temperatures
-    nT = int((temp_max - temp_min) / temp_step) + 1
-    T = np.linspace(temp_min, temp_max, nT)
-
     # Round to nearest multiple of temp_step
     def nearest_temp(x, base=temp_step):
         return base * round(x / base)
@@ -136,49 +132,69 @@ def export_converge(
                 f"No temperature in the array is greater than or equal the freezing point {value}. Choose a higher temp_max"
             )
 
-    # Estimate freezing point and critical temp of mixture
-    T_freeze = fl.mixing_rule(fuel.Tm, fuel.Y2X(fuel.Y_0))
-    T_crit = fl.mixing_rule(fuel.Tc, fuel.Y2X(fuel.Y_0))
-    T_min_allowed = nearest_temp(T_freeze)
-    T_max_allowed = min(fuel.Tc)
+    if export_mix:
+        # Vector of evenly space temperatures
+        nT = int((temp_max - temp_min) / temp_step) + 1
+        T = np.linspace(temp_min, temp_max, nT)
 
-    print(f"\nEstimated mixture freezing temp: {T_freeze:.2f} K")
-    print(f"Min freezing temp min(Tm_i): {min(fuel.Tm):.2f} K")
-    print(f"Max freezing temp max(Tm_i): {max(fuel.Tm):.2f} K")
+        # Estimate freezing point and critical temp of mixture
+        T_freeze = fl.mixing_rule(fuel.Tm, fuel.Y2X(fuel.Y_0))
+        T_crit = fl.mixing_rule(fuel.Tc, fuel.Y2X(fuel.Y_0))
+        T_min_allowed = nearest_temp(T_freeze)
+        T_max_allowed = min(fuel.Tc)
 
-    if np.any(T < T_min_allowed):
-        T_min_allowed = nearest_ceil(T, T_min_allowed)
-        # Set T_min_allowed to be the next temperature above T_min_allowed in T
-        print(
-            "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        )
-        print(
-            f"   Warning: Some compounds have freezing temperatures above the estimated\n"
-            f"   freezing temperature of the mixture ({T_freeze:.2f} K). All properties calculated\n"
-            f"   below {T_min_allowed} will be set using a temperature of {T_min_allowed} K."
-        )
-        print(
-            "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        )
+        print(f"\nEstimated mixture freezing temp: {T_freeze:.2f} K")
+        print(f"Min freezing temp min(Tm_i): {min(fuel.Tm):.2f} K")
+        print(f"Max freezing temp max(Tm_i): {max(fuel.Tm):.2f} K")
 
-        print(f"\nEstimated mixture critical temp: {T_crit:.2f} K")
-        print(f"Min critical temp min(Tc_i): {min(fuel.Tc):.2f} K")
-        print(f"Max critical temp max(Tc_i): {max(fuel.Tc):.2f} K")
-        if np.any(T > T_max_allowed):
-            T_max_allowed = nearest_floor(T, T_max_allowed)
+        if np.any(T < T_min_allowed):
+            T_min_allowed = nearest_ceil(T, T_min_allowed)
+            # Set T_min_allowed to be the next temperature above T_min_allowed in T
             print(
                 "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
             )
             print(
-                f"   Warning: Some compounds have critical temperatures below the estimated\n"
-                f"   critical temperature of the mixture ({T_crit:.2f} K). All properties calculated\n"
-                f"   above {T_max_allowed} will be set using a temperature of {T_max_allowed} K."
+                f"   Warning: Some compounds have freezing temperatures above the estimated\n"
+                f"   freezing temperature of the mixture ({T_freeze:.2f} K). All properties calculated\n"
+                f"   below {T_min_allowed} will be set using a temperature of {T_min_allowed} K."
             )
             print(
                 "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
             )
+
+            print(f"\nEstimated mixture critical temp: {T_crit:.2f} K")
+            print(f"Min critical temp min(Tc_i): {min(fuel.Tc):.2f} K")
+            print(f"Max critical temp max(Tc_i): {max(fuel.Tc):.2f} K")
+            if np.any(T > T_max_allowed):
+                T_max_allowed = nearest_floor(T, T_max_allowed)
+                print(
+                    "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+                )
+                print(
+                    f"   Warning: Some compounds have critical temperatures below the estimated\n"
+                    f"   critical temperature of the mixture ({T_crit:.2f} K). All properties will be\n"
+                    f"   calculated up to {T_max_allowed} K."
+                )
+                print(
+                    "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+                )
+            # Remove temperatures outside allowed range
+            T = T[(T >= T_min_allowed) & (T <= T_max_allowed)]
 
     for n, compound in enumerate(components):
+        if not export_mix:
+            # Estimate freezing point and critical temp of mixture
+            T_freeze = fuel.Tm[n]
+            T_crit = fuel.Tc[n]
+            T_min_allowed = nearest_temp(T_freeze)
+            T_max_allowed = T_crit
+            maxtemps = np.array([nearest_temp(T_crit) - temp_step, 
+                                 nearest_temp(T_crit), 
+                                 nearest_temp(T_crit) + temp_step])
+            T_nearest_floor = nearest_floor(maxtemps, T_crit)
+            nT = int((T_nearest_floor - T_min_allowed) / temp_step) + 1
+            T = np.linspace(T_min_allowed, T_nearest_floor, nT)
+            T = np.append(T, T_crit, axis=None)
         mu = np.zeros_like(T)  # Dynamic viscosity
         surface_tension = np.zeros_like(T)  # Surface tension
         Lv = np.zeros_like(T)  # Latent heat of vaporization
@@ -188,16 +204,14 @@ def export_converge(
         thermal_conductivity = np.zeros_like(T)  # Thermal conductivity
 
         # Calculate GCM properties for a range of temperatures
+        if export_mix:
+            comp_text = ""
+        else:
+            comp_text = f"for {compound}"
         print(
-            f"\nCalculating properties over {len(T)} temperatures from {temp_min} K to {temp_max} K..."
+            f"\nCalculating properties {comp_text} over {len(T)} temperatures from {T_min_allowed} K to {T_max_allowed} K..."
         )
-        for k in range(len(T)):
-            if T[k] <= T_min_allowed:
-                Temp = T_min_allowed
-            elif T[k] >= T_max_allowed:
-                Temp = T_max_allowed
-            else:
-                Temp = T[k]
+        for k, Temp in enumerate(T):
 
             if export_mix:
                 Y_li = fuel.Y_0
@@ -216,13 +230,13 @@ def export_converge(
                 )  # J/kg
                 Cl[k] = fl.mixing_rule(fuel.Cl(Temp), X_li)  # J/kg/K
             else:
-                rho[k] = fuel.density(Temp)[n]  # kg/m^3
-                mu[k] = fuel.viscosity_dynamic(Temp)[n]  # Pa*s
-                pv[k] = fuel.psat(Temp)[n]  # Pa
-                surface_tension[k] = fuel.surface_tension(Temp)[n]  # N/m
-                thermal_conductivity[k] = fuel.thermal_conductivity(Temp)[n]
-                Lv[k] = fuel.latent_heat_vaporization(Temp)[n]  # J/kg
-                Cl[k] = fuel.Cl(Temp)[n]  # J/kg/K
+                rho[k] = fuel.density(Temp, comp_idx=n)  # kg/m^3
+                mu[k] = fuel.viscosity_dynamic(Temp, comp_idx=n)  # Pa*s
+                pv[k] = fuel.psat(Temp, comp_idx=n)  # Pa
+                surface_tension[k] = fuel.surface_tension(Temp, comp_idx=n)  # N/m
+                thermal_conductivity[k] = fuel.thermal_conductivity(Temp, comp_idx=n)
+                Lv[k] = fuel.latent_heat_vaporization(Temp, comp_idx=n)  # J/kg
+                Cl[k] = fuel.Cl(Temp, comp_idx=n)  # J/kg/K
 
         if units.lower() == "cgs":
             # Convert properties to CGS units
