@@ -760,15 +760,12 @@ class fuel:
             MW = self.MW
             Tc = self.Tc
             Tb = self.Tb
-            Pc = self.Pc
             fam = self.fam
         else:
             MW = np.array([self.MW[comp_idx]])
             Tc = np.array([self.Tc[comp_idx]])
             Tb = np.array([self.Tb[comp_idx]])
-            Pc = np.array([self.Pc[comp_idx]])
             fam = np.array([self.fam[comp_idx]])
-        Pc = Pc * 1e-5  # convert from Pa to bar
 
         Astar = 0.00350 + np.zeros_like(Tc)
         alpha = 1.2
