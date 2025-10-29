@@ -30,9 +30,25 @@ class fuel:
     # Boltzmann's constant J/K
     k_B = 1.380649e-23
 
+    # Group indices for hydrocarbon family classification
+    AROMATICS_START_IDX = 10
+    AROMATICS_COUNT = 5
+    CYCLOS_START_IDX = 84
+    CYCLOS_COUNT = 5
+    OLEFINS_START_IDX = 4
+    OLEFINS_COUNT = 6
+
     def __init__(self, name, decompName=None, fuelDataDir=FUELDATA_DIR):
-        # Initializes the composition and calculates the GCM properties for the
-        # specified mixture.
+        """
+        Initialize the fuel object and calculate GCM properties.
+
+        :param name: Name of the mixture as it appears in its gcData file.
+        :type name: str
+        :param decompName: Name of the groupDecomposition file if different from name.
+        :type decompName: str, optional
+        :param fuelDataDir: Directory where the fuel data is stored.
+        :type fuelDataDir: str, optional
+        """
 
         self.name = name
         if decompName is None:
@@ -64,21 +80,42 @@ class fuel:
         # 2: cycloparaffins
         # 3: olefins
         self.fam = np.zeros(self.num_compounds, dtype=int)
-        aromatics = 10  # starting index for aromatic groups
-        num_aromatics = 5
-        cyclos = 84  # starting index for membered ring groups
-        num_cyclos = 5
-        olefins = 4  # starting index for double bound groups
-        num_olefins = 6
         for i in range(self.num_compounds):
             # Check if aromatic: does it contain AC's?
-            if sum(self.Nij[i, aromatics : aromatics + num_aromatics]) > 0:
+            if (
+                sum(
+                    self.Nij[
+                        i,
+                        self.AROMATICS_START_IDX : self.AROMATICS_START_IDX
+                        + self.AROMATICS_COUNT,
+                    ]
+                )
+                > 0
+            ):
                 self.fam[i] = 1
             # Check if cycloparaffin: does it contain rings?
-            elif sum(self.Nij[i, cyclos : cyclos + num_cyclos]) > 0:
+            elif (
+                sum(
+                    self.Nij[
+                        i,
+                        self.CYCLOS_START_IDX : self.CYCLOS_START_IDX
+                        + self.CYCLOS_COUNT,
+                    ]
+                )
+                > 0
+            ):
                 self.fam[i] = 2
             # Check if olefin: does it contain double bonds?
-            elif sum(self.Nij[i, olefins : olefins + num_olefins]) > 0:
+            elif (
+                sum(
+                    self.Nij[
+                        i,
+                        self.OLEFINS_START_IDX : self.OLEFINS_START_IDX
+                        + self.OLEFINS_COUNT,
+                    ]
+                )
+                > 0
+            ):
                 self.fam[i] = 3
 
         # Read initial liquid composition of mixture and normalize to get mass frac
@@ -115,6 +152,15 @@ class fuel:
         df_table = df_table.drop(columns=["Units"])
 
         def get_row(property_name):
+            """
+            Get property row from GCM table.
+
+            :param property_name: Name of the property to retrieve.
+            :type property_name: str
+            :return: Property values for all functional groups.
+            :rtype: np.ndarray
+            :raises ValueError: If property not found in GCM table.
+            """
             row = df_table[df_table["Property"] == property_name]
             if row.empty:
                 raise ValueError(f"Property '{property_name}' not found in GCM table.")
@@ -493,6 +539,20 @@ class fuel:
 
         # Antoine equation log10(p) = A - B/(C + T)
         def antoine_eq(T, A, B, C):
+            """
+            Antoine equation for vapor pressure.
+
+            :param T: Temperature.
+            :type T: float or np.ndarray
+            :param A: Antoine coefficient A.
+            :type A: float
+            :param B: Antoine coefficient B.
+            :type B: float
+            :param C: Antoine coefficient C.
+            :type C: float
+            :return: log10(pressure).
+            :rtype: float or np.ndarray
+            """
             return A - B / (T + C)
 
         # Determine conversion factor for pressure in MKS, CGS, bar, or atm
@@ -909,6 +969,20 @@ class fuel:
 
         # Antoine equation log10(p) = A - B/(C + T)
         def antoine_eq(T, A, B, C):
+            """
+            Antoine equation for vapor pressure.
+
+            :param T: Temperature.
+            :type T: float or np.ndarray
+            :param A: Antoine coefficient A.
+            :type A: float
+            :param B: Antoine coefficient B.
+            :type B: float
+            :param C: Antoine coefficient C.
+            :type C: float
+            :return: log10(pressure).
+            :rtype: float or np.ndarray
+            """
             return A - B / (T + C)
 
         # Determine conversion factor for pressure in MKS, CGS, bar, or atm
