@@ -3,7 +3,6 @@ import sys
 import numpy as np
 import pandas as pd
 import argparse
-from dataclasses import dataclass
 import FuelLib as fl
 
 # Add the FuelLib directory to the Python path
