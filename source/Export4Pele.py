@@ -3,6 +3,8 @@ import sys
 import numpy as np
 import pandas as pd
 import argparse
+import subprocess
+from datetime import datetime
 from scipy import stats as st
 import FuelLib as fl
 
@@ -37,6 +39,145 @@ Options:
         --liq_prop_model <gcm or mp>
         --psat_antoine <True or False for Antoine coefficients in MP model>
 """
+
+
+class UnitConverter:
+    """Unit conversion factors for different unit systems used in Pele exports."""
+
+    def __init__(self, units: str):
+        """Initialize converter for specified unit system.
+
+        Args:
+            units: Unit system ('cgs' or 'mks')
+        """
+        self.units = units.lower()
+        self._validate_units()
+        self._set_conversion_factors()
+
+    def _validate_units(self):
+        """Validate that the unit system is supported."""
+        if self.units not in ["mks", "cgs"]:
+            raise ValueError(f"Units must be 'mks' or 'cgs', got '{self.units}'")
+
+    def _set_conversion_factors(self):
+        """Set conversion factors based on unit system."""
+        if self.units == "cgs":
+            # Convert from MKS to CGS
+            self.MW = 1e3  # kg/mol to g/mol
+            self.Cp = 1e4  # J/kg/K to erg/g/K
+            self.Vm = 1e6  # m^3/mol to cm^3/mol
+            self.Lv = 1e4  # J/kg to erg/g
+            self.P = 1e1  # Pa to dyne/cm^2
+        else:
+            # MKS units (no conversion)
+            self.MW = 1.0
+            self.Cp = 1.0
+            self.Vm = 1.0
+            self.Lv = 1.0
+            self.P = 1.0
+
+
+def get_git_info():
+    """Get git commit hash and remote URL for file header."""
+    try:
+        git_commit = (
+            subprocess.check_output(["git", "rev-parse", "HEAD"])
+            .strip()
+            .decode("utf-8")
+        )
+    except Exception:
+        git_commit = "N/A"
+
+    try:
+        git_remote = (
+            subprocess.check_output(["git", "config", "--get", "remote.origin.url"])
+            .strip()
+            .decode("utf-8")
+        )
+    except Exception:
+        git_remote = "N/A"
+
+    return git_commit, git_remote
+
+
+def get_filename(fuel_name, liq_prop_model, export_mix, path):
+    """Generate appropriate filename based on parameters."""
+    if liq_prop_model.lower() == "gcm":
+        if not export_mix:
+            return os.path.join(path, f"sprayPropsGCM_{fuel_name}.inp")
+        else:
+            return os.path.join(path, f"sprayPropsGCM_mixture_{fuel_name}.inp")
+    else:  # mp method
+        if not export_mix:
+            return os.path.join(path, f"sprayPropsMP_{fuel_name}.inp")
+        else:
+            return os.path.join(path, f"sprayPropsMP_mixture_{fuel_name}.inp")
+
+
+def create_individual_compounds_dataframe(fuel, compound_names, converter):
+    """Create DataFrame for individual compound properties."""
+    # Terms for liquid specific heat capacity in (J/kg/K) or (erg/g/K)
+    # Cp(T) = Cp_A + Cp_B * theta + Cp_C * theta^2
+    # where theta = (T - 298.15) / 700
+    Cp_A = fuel.Cp_stp / fuel.MW
+    Cp_B = fuel.Cp_B / fuel.MW
+    Cp_C = fuel.Cp_C / fuel.MW
+
+    return pd.DataFrame(
+        {
+            "Compound": compound_names,
+            "Family": fuel.fam,
+            "Y_0": fuel.Y_0,
+            "MW": fuel.MW * converter.MW,
+            "Tc": fuel.Tc,
+            "Pc": fuel.Pc * converter.P,
+            "Vc": fuel.Vc * converter.Vm,
+            "Tb": fuel.Tb,
+            "omega": fuel.omega,
+            "Vm_stp": fuel.Vm_stp * converter.Vm,
+            "Cp_A": Cp_A * converter.Cp,
+            "Cp_B": Cp_B * converter.Cp,
+            "Cp_C": Cp_C * converter.Cp,
+            "Cp_stp": Cp_A * converter.Cp,  # For PeleMP model
+            "Lv_stp": fuel.Lv_stp * converter.Lv,
+        }
+    )
+
+
+def create_mixture_dataframe(fuel, export_mix_name, converter):
+    """Create DataFrame for mixture properties."""
+    if export_mix_name is None:
+        export_mix_name = fuel.name
+    if "posf" in export_mix_name.lower():
+        export_mix_name = export_mix_name.upper()
+
+    # Terms for liquid specific heat capacity in (J/kg/K) or (erg/g/K)
+    # Cp(T) = Cp_A + Cp_B * theta + Cp_C * theta^2
+    # where theta = (T - 298.15) / 700
+    X = fuel.Y2X(fuel.Y_0)
+    Cp_A = fl.mixing_rule(fuel.Cp_stp / fuel.MW, X)
+    Cp_B = fl.mixing_rule(fuel.Cp_B / fuel.MW, X)
+    Cp_C = fl.mixing_rule(fuel.Cp_C / fuel.MW, X)
+
+    return pd.DataFrame(
+        {
+            "Compound": [export_mix_name],
+            "Family": [st.mode(fuel.fam).mode],
+            "Y_0": [1.0],
+            "MW": [fuel.mean_molecular_weight(fuel.Y_0) * converter.MW],
+            "Tc": [fl.mixing_rule(fuel.Tc, X)],
+            "Pc": [fl.mixing_rule(fuel.Pc, X) * converter.P],
+            "Vc": [fl.mixing_rule(fuel.Vc, X) * converter.Vm],
+            "Tb": [fl.mixing_rule(fuel.Tb, X)],
+            "omega": [fl.mixing_rule(fuel.omega, X)],
+            "Vm_stp": [fl.mixing_rule(fuel.Vm_stp, X) * converter.Vm],
+            "Cp_A": [Cp_A * converter.Cp],
+            "Cp_B": [Cp_B * converter.Cp],
+            "Cp_C": [Cp_C * converter.Cp],
+            "Cp_stp": [Cp_A * converter.Cp],  # For MP model: Cp_stp = Cp_A
+            "Lv_stp": [fl.mixing_rule(fuel.Lv_stp, X) * converter.Lv],
+        }
+    )
 
 
 def vec_to_str(vec):
@@ -98,22 +239,28 @@ def export_pele(
 
     :return: None
     :rtype: None
-    """
 
+    :raises ValueError: If input parameters are invalid
+    :raises TypeError: If fuel object is not a FuelLib fuel instance
+    """
+    # Input validation
+    if not hasattr(fuel, "compounds") or not hasattr(fuel, "Y_0"):
+        raise TypeError("fuel parameter must be a valid FuelLib fuel object")
+
+    if liq_prop_model.lower() not in ["gcm", "mp"]:
+        raise ValueError(
+            f"liq_prop_model must be 'gcm' or 'mp', got '{liq_prop_model}'"
+        )
+
+    # Initialize unit converter (also validates units)
+    converter = UnitConverter(units)
+
+    # Ensure output directory exists
     if not os.path.exists(path):
         os.makedirs(path)
 
-    # Name of the input file
-    if liq_prop_model.lower() == "gcm":
-        if not export_mix:
-            file_name = os.path.join(path, f"sprayPropsGCM_{fuel.name}.inp")
-        else:
-            file_name = os.path.join(path, f"sprayPropsGCM_mixture_{fuel.name}.inp")
-    else:  # mp method
-        if not export_mix:
-            file_name = os.path.join(path, f"sprayPropsMP_{fuel.name}.inp")
-        else:
-            file_name = os.path.join(path, f"sprayPropsMP_mixture_{fuel.name}.inp")
+    # Generate output filename
+    file_name = get_filename(fuel.name, liq_prop_model, export_mix, path)
 
     # Check if PelePhysics keys are available
     if use_pp_keys:
@@ -142,26 +289,14 @@ def export_pele(
                 f"Compound '{compound}' contains spaces. Use a '-' instead."
             )
 
-    # Unit conversion factors:
-    if units.lower() == "cgs":
-        # Convert from MKS to CGS
-        conv_MW = 1e3  # kg/mol to g/mol
-        conv_Cp = 1e4  # J/kg/K to erg/g/K
-        conv_Vm = 1e6  # m^3/mol to cm^3/mol
-        conv_Lv = 1e4  # J/kg to erg/g
-        conv_P = 1e1  # Pa to dyne/cm^2
-    else:
-        conv_MW = 1.0
-        conv_Cp = 1.0
-        conv_Vm = 1.0
-        conv_Lv = 1.0
-        conv_P = 1.0
+    # Unit conversion factors are now handled by the UnitConverter class
 
     if not export_mix:
         print(
             f"\nCalculating GCM properties for individual compounds in {fuel.name}..."
         )
-        # If dep_fuel_names is not provided, use compound_names
+
+        # Validate and setup deposition fuel names
         if dep_fuel_names is None:
             dep_fuel_names = compound_names
         elif len(dep_fuel_names) == 1:
@@ -172,72 +307,20 @@ def export_pele(
                 "Length of dep_fuel_names must be one or match the number of compounds in the fuel."
             )
 
-        # Terms for liquid specific heat capacity in (J/kg/K) or (erg/g/K)
-        # Cp(T) = Cp_A + Cp_B * theta + Cp_C * theta^2
-        # where theta = (T - 298.15) / 700
-        Cp_A = fuel.Cp_stp / fuel.MW
-        Cp_B = fuel.Cp_B / fuel.MW
-        Cp_C = fuel.Cp_C / fuel.MW
-
-        # Dataframe of all properties with unit conversions to be exported
-        df = pd.DataFrame(
-            {
-                "Compound": compound_names,
-                "Family": fuel.fam,
-                "Y_0": fuel.Y_0,
-                "MW": fuel.MW * conv_MW,
-                "Tc": fuel.Tc,
-                "Pc": fuel.Pc * conv_P,
-                "Vc": fuel.Vc * conv_Vm,
-                "Tb": fuel.Tb,
-                "omega": fuel.omega,
-                "Vm_stp": fuel.Vm_stp * conv_Vm,
-                "Cp_A": Cp_A * conv_Cp,
-                "Cp_B": Cp_B * conv_Cp,
-                "Cp_C": Cp_C * conv_Cp,
-                "Cp_stp": Cp_A * conv_Cp,  # For PeleMP model
-                "Lv_stp": fuel.Lv_stp * conv_Lv,
-            }
-        )
+        # Create DataFrame with all properties and unit conversions
+        df = create_individual_compounds_dataframe(fuel, compound_names, converter)
 
     else:
         print("\nCalculating mixture GCM properties at standard conditions...")
-        if export_mix_name is None:
-            export_mix_name = fuel.name
-        if "posf" in export_mix_name.lower():
-            export_mix_name = export_mix_name.upper()
+
+        # Setup mixture parameters
         if dep_fuel_names is None:
-            dep_fuel_names = [export_mix_name]
+            dep_fuel_names = [export_mix_name if export_mix_name else fuel.name]
 
-        compound_names = [export_mix_name]
+        compound_names = [export_mix_name if export_mix_name else fuel.name]
 
-        # Terms for liquid specific heat capacity in (J/kg/K) or (erg/g/K)
-        # Cp(T) = Cp_A + Cp_B * theta + Cp_C * theta^2
-        # where theta = (T - 298.15) / 700
-        X = fuel.Y2X(fuel.Y_0)
-        Cp_A = fl.mixing_rule(fuel.Cp_stp / fuel.MW, X)
-        Cp_B = fl.mixing_rule(fuel.Cp_B / fuel.MW, X)
-        Cp_C = fl.mixing_rule(fuel.Cp_C / fuel.MW, X)
-
-        # Dataframe of all properties with unit conversions to be exported
-        df = pd.DataFrame(
-            {
-                "Compound": [export_mix_name],
-                "Family": [st.mode(fuel.fam).mode],
-                "Y_0": [1.0],
-                "MW": [fuel.mean_molecular_weight(fuel.Y_0) * conv_MW],
-                "Tc": [fl.mixing_rule(fuel.Tc, X)],
-                "Pc": [fl.mixing_rule(fuel.Pc, X) * conv_P],
-                "Vc": [fl.mixing_rule(fuel.Vc, X) * conv_Vm],
-                "Tb": [fl.mixing_rule(fuel.Tb, X)],
-                "omega": [fl.mixing_rule(fuel.omega, X)],
-                "Vm_stp": [fl.mixing_rule(fuel.Vm_stp, X) * conv_Vm],
-                "Cp_A": [Cp_A * conv_Cp],
-                "Cp_B": [Cp_B * conv_Cp],
-                "Cp_C": [Cp_C * conv_Cp],
-                "Lv_stp": [fl.mixing_rule(fuel.Lv_stp, X) * conv_Lv],
-            }
-        )
+        # Create DataFrame with mixture properties and unit conversions
+        df = create_mixture_dataframe(fuel, export_mix_name, converter)
 
     # Specific properties required for GCM method
     if liq_prop_model.lower() == "gcm":
@@ -308,33 +391,10 @@ def export_pele(
         "psat": ("psat", ["Pa", "dyne/cm^2"]),
     }
 
-    # Get date and time for the header
-    from datetime import datetime
-
+    # Get header information
     now = datetime.now()
     dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
-
-    # Get git commit hash for the header
-    import subprocess
-
-    try:
-        git_commit = (
-            subprocess.check_output(["git", "rev-parse", "HEAD"])
-            .strip()
-            .decode("utf-8")
-        )
-    except Exception:
-        git_commit = "N/A"
-
-    # Get the remote url for the header
-    try:
-        git_remote = (
-            subprocess.check_output(["git", "config", "--get", "remote.origin.url"])
-            .strip()
-            .decode("utf-8")
-        )
-    except Exception:
-        git_remote = "N/A"
+    git_commit, git_remote = get_git_info()
 
     # Write the properties to the input file
     print(f"Writing properties to {file_name}.")
@@ -367,6 +427,13 @@ def export_pele(
                         unit_txt = unit_txt[1]
                     else:
                         unit_txt = unit_txt[0]
+                    # MP model: Write Cp_stp as 'cp' for each component
+                    if liq_prop_model.lower() == "mp" and prop == "Cp_stp":
+                        value = df.loc[df["Compound"] == comp_name, prop].values[0]
+                        f.write(
+                            f"particles.{comp_name}_cp = {value:.6f} # {unit_txt}\n"
+                        )
+                        continue
                     # Write the property to the file
                     if prop == "Family":
                         value = df.loc[df["Compound"] == comp_name, prop].values[0]
@@ -390,7 +457,7 @@ def export_pele(
                         f.write(
                             f"particles.{comp_name}_{prop_name} = {vec_to_str(psat_coeffs)} # {unit_txt}\n"
                         )
-                    else:
+                    elif not (liq_prop_model.lower() == "mp" and prop == "Cp_stp"):
                         value = df.loc[df["Compound"] == comp_name, prop].values[0]
                         f.write(
                             f"particles.{comp_name}_{prop_name} = {value:.6f} # {unit_txt}\n"
