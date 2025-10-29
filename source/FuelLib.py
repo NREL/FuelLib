@@ -291,7 +291,7 @@ class fuel:
 
         return Xi
 
-    def density(self, T, comp_idx = None):
+    def density(self, T, comp_idx=None):
         """
         Calculate the density of each component at temperature T.
 
@@ -312,7 +312,7 @@ class fuel:
         rho = MW / Vm  # kg/m^3
         return rho
 
-    def viscosity_kinematic(self, T, comp_idx = None):
+    def viscosity_kinematic(self, T, comp_idx=None):
         """
         Calculate the viscosity using Dutt's equation.
 
@@ -333,7 +333,7 @@ class fuel:
             Tb_cels = K2C(self.Tb)
         else:
             Tb_cels = K2C(self.Tb[comp_idx])
-        
+
         # RHS of Dutt's equation (4.23) in Viscosity of Liquids
         rhs = -3.0171 + (442.78 + 1.6452 * Tb_cels) / (T_cels + 239 - 0.19 * Tb_cels)
         nu_i = np.exp(rhs)  # Viscosity in mm^2/s
@@ -343,7 +343,7 @@ class fuel:
 
         return nu_i
 
-    def viscosity_dynamic(self, T, comp_idx = None):
+    def viscosity_dynamic(self, T, comp_idx=None):
         """
         Calculate liquid dynamic viscosity based on droplet temperature and density.
 
@@ -362,7 +362,7 @@ class fuel:
         mu_i = nu_i * rho_i  # Pa*s
         return mu_i
 
-    def Cp(self, T, comp_idx = None):
+    def Cp(self, T, comp_idx=None):
         """
         Compute specific heat capacity at a given temperature.
 
@@ -385,10 +385,10 @@ class fuel:
             Cp_C = self.Cp_C[comp_idx]
 
         cp = Cp_stp + Cp_B * theta + Cp_C * theta**2
-            
+
         return cp
 
-    def Cl(self, T, comp_idx = None):
+    def Cl(self, T, comp_idx=None):
         """
         Compute liquid specific heat capacity in J/kg/K at a given temperature.
 
@@ -406,7 +406,7 @@ class fuel:
         cp = self.Cp(T, comp_idx=comp_idx)
         return cp / MW
 
-    def psat(self, T, comp_idx = None, correlation = "Lee-Kesler"):
+    def psat(self, T, comp_idx=None, correlation="Lee-Kesler"):
         """
         Compute saturated vapor pressure.
 
@@ -522,7 +522,7 @@ class fuel:
         D = D + np.zeros(self.num_compounds)  # make D an array
         return A, B, C, D
 
-    def molar_liquid_vol(self, T, comp_idx = None):
+    def molar_liquid_vol(self, T, comp_idx=None):
         """
         Compute molar liquid volume with temperature correction.
 
@@ -542,7 +542,7 @@ class fuel:
         else:
             Tc = np.array([self.Tc[comp_idx]])
             omega = self.omega[comp_idx]
-            Vm_stp = self.Vm_stp[comp_idx]       
+            Vm_stp = self.Vm_stp[comp_idx]
         phi = np.zeros_like(Tc)
         for k in range(len(Tc)):
             if T > Tc[k]:
@@ -557,7 +557,7 @@ class fuel:
             Vmi = Vmi[0]
         return Vmi
 
-    def latent_heat_vaporization(self, T, comp_idx = None):
+    def latent_heat_vaporization(self, T, comp_idx=None):
         """
         Calculate latent heat of vaporization adjusted for temperature.
 
@@ -576,7 +576,7 @@ class fuel:
             Tc = np.array([self.Tc[comp_idx]])
             Tb = np.array([self.Tb[comp_idx]])
             Lv_stp = np.array([self.Lv_stp[comp_idx]])
-        
+
         # Reduced temperatures
         Tr = T / Tc
         Trb = Tb / Tc
@@ -587,7 +587,7 @@ class fuel:
                 Lvi[k] = 0.0
             else:
                 Lvi[k] = self.Lv_stp[k] * (((1.0 - Tr[k]) / (1.0 - Trb[k])) ** 0.38)
-        
+
         if comp_idx is not None:
             Lvi = Lvi[0]
         return Lvi
@@ -678,7 +678,7 @@ class fuel:
 
         return D_AB_i
 
-    def surface_tension(self, T, comp_idx = None, correlation="Brock-Bird"):
+    def surface_tension(self, T, comp_idx=None, correlation="Brock-Bird"):
         """
         Calculate surface tension of each compound at a given temperature.
 
@@ -726,7 +726,7 @@ class fuel:
 
         return st
 
-    def thermal_conductivity(self, T, comp_idx = None):
+    def thermal_conductivity(self, T, comp_idx=None):
         """
         Calculate thermal conductivity at a given temperature.
 
@@ -740,16 +740,16 @@ class fuel:
         :rtype: np.ndarray
         """
         if comp_idx is None:
-            MW = self.MW   
+            MW = self.MW
             Tc = self.Tc
             Tb = self.Tb
-            Pc = self.Pc 
+            Pc = self.Pc
             fam = self.fam
         else:
-            MW = np.array([self.MW[comp_idx]])  
+            MW = np.array([self.MW[comp_idx]])
             Tc = np.array([self.Tc[comp_idx]])
             Tb = np.array([self.Tb[comp_idx]])
-            Pc = np.array([self.Pc[comp_idx]]) 
+            Pc = np.array([self.Pc[comp_idx]])
             fam = np.array([self.fam[comp_idx]])
         Pc *= 1e-5  # convert from Pa to bar
 
@@ -757,7 +757,7 @@ class fuel:
         alpha = 1.2
         beta = 0.5 + np.zeros_like(Tc)
         gamma = 0.167
-        MW_beta = MW * 1e3 # convert from kg/mol to g/mol
+        MW_beta = MW * 1e3  # convert from kg/mol to g/mol
         Tr = T / Tc
 
         for k in range(len(Tc)):
@@ -922,7 +922,9 @@ class fuel:
 
         Pvals = np.zeros_like(T)
         for k in range(len(T)):
-            Pvals[k] = self.mixture_vapor_pressure(Yi, T[k], correlation=correlation) / D
+            Pvals[k] = (
+                self.mixture_vapor_pressure(Yi, T[k], correlation=correlation) / D
+            )
 
         logP = np.log10(Pvals)
         popt, _ = curve_fit(antoine_eq, T, logP, p0=[1, 1e3, -1])  # initial guess

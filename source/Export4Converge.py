@@ -188,9 +188,13 @@ def export_converge(
             T_crit = fuel.Tc[n]
             T_min_allowed = nearest_temp(T_freeze)
             T_max_allowed = T_crit
-            maxtemps = np.array([nearest_temp(T_crit) - temp_step, 
-                                 nearest_temp(T_crit), 
-                                 nearest_temp(T_crit) + temp_step])
+            maxtemps = np.array(
+                [
+                    nearest_temp(T_crit) - temp_step,
+                    nearest_temp(T_crit),
+                    nearest_temp(T_crit) + temp_step,
+                ]
+            )
             T_nearest_floor = nearest_floor(maxtemps, T_crit)
             nT = int((T_nearest_floor - T_min_allowed) / temp_step) + 1
             T = np.linspace(T_min_allowed, T_nearest_floor, nT)
