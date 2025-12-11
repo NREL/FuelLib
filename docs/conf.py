@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.abspath("../source"))
 # -- Project information -----------------------------------------------------
 
 project = "FuelLib"
-copyright = "2025 Alliance for Sustainable Energy, LLC"
+copyright = "2025 Alliance for Energy Innovation, LLC"
 author = ""
 
 # The full version, including alpha/beta/rc tags
