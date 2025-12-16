@@ -43,7 +43,6 @@ class CompTestCase(unittest.TestCase):
 
         # Compare to NIST predictions and previous model predictions
         for fuel_name in fuel_names:
-
             baseline_file = os.path.join(TESTS_BASELINE_DIR, f"{fuel_name}.csv")
             df_base = pd.read_csv(baseline_file, skiprows=[1])
 

@@ -54,7 +54,6 @@ def get_unit_for_column(col_name):
 
 # Loop through each fuel and generate csv of baseline property predictions
 for fuel_name in fuel_names:
-
     export_name = os.path.join(baseline_dir, f"{fuel_name}.csv")
     df_combined = None
 

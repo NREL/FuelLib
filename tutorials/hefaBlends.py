@@ -104,7 +104,6 @@ figW = 5.25 * len(prop_names)
 fig, ax = plt.subplots(1, len(prop_names), figsize=(figW, 5.5), constrained_layout=True)
 
 for i in range(len(prop_names)):
-
     for fuel_name in fuel_names:
         T, prop_data, blend_data, pred = getPredAndData(
             fuel_name, prop_names[i], blends
