@@ -1,6 +1,5 @@
 import os
 import sys
-import numpy as np
 import pandas as pd
 import argparse
 import subprocess
@@ -362,14 +361,15 @@ def export_pele(
     else:
         print("\nCalculating mixture GCM properties at standard conditions...")
 
-        # Setup mixture parameters
-        if dep_fuel_names is None:
-            dep_fuel_names = [export_mix_name if export_mix_name else fuel.name]
-
-        compound_names = [export_mix_name if export_mix_name else fuel.name]
-
         # Create DataFrame with mixture properties and unit conversions
         df = create_mixture_dataframe(fuel, export_mix_name, converter)
+
+        # Get the actual compound name from the DataFrame (may be modified by create_mixture_dataframe)
+        compound_names = df["Compound"].tolist()
+
+        # Setup mixture parameters
+        if dep_fuel_names is None:
+            dep_fuel_names = compound_names
 
     # Specific properties required for GCM method
     if liq_prop_model.lower() == "gcm":
