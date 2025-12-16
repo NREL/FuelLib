@@ -21,7 +21,7 @@ GCxGC data for HEFA fuels produced from diﬀerent feedstocks (camelina, tallow,
 # Group Decomposition Data
 
 ## POSF Fuels
-The decompositions of each compound into its functional groups for the POSF fuels originated from [Govindaraju & Ihme (2016)](https://doi.org/10.1016/j.ijheatmasstransfer.2016.06.079), but has been updated for additional accuracy:
+The decompositions of each compound into its functional groups for the POSF fuels originated from [Govindaraju & Ihme (2016)](https://doi.org/10.1016/j.ijheatmasstransfer.2016.06.079), but have been updated for additional accuracy and to include the specific reference compounds used:
 * groupDecompositionData/posf4658.csv
 * groupDecompositionData/posf10264.csv
 * groupDecompositionData/posf10289.csv
